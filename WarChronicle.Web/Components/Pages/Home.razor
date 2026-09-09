@@ -1,0 +1,2367 @@
+@page "/"
+@rendermode InteractiveServer
+@implements IDisposable
+@inject GameSession Session
+@inject WcDataCatalog Catalog
+@inject GameLogFileStore GameLogFiles
+@inject IJSRuntime JS
+
+<PageTitle>War Chronicle</PageTitle>
+
+@if (_showResumePrompt)
+{
+    <div class="save-resume-overlay">
+        <section class="save-resume-card" role="dialog" aria-modal="true" aria-label="Saved War Chronicle campaign">
+            <div class="eyebrow">Saved Chronicle</div>
+            <h2>Continue your campaign?</h2>
+            <p>A saved War Chronicle campaign was found in this browser.</p>
+            @if (!string.IsNullOrWhiteSpace(_resumeError))
+            {
+                <p class="save-error">@_resumeError</p>
+            }
+            <div class="save-resume-actions">
+                <button class="primary-save-action" @onclick="ContinueSavedGameAsync">Continue Saved Game</button>
+                <button @onclick="StartFreshGameAsync">Start New Game</button>
+            </div>
+            <small>The save stays on this browser and device.</small>
+        </section>
+    </div>
+}
+
+@if (_showContentSetup)
+{
+    <div class="save-resume-overlay">
+        <section class="save-resume-card content-setup-card" role="dialog" aria-modal="true" aria-label="Choose War Chronicle content">
+            <div class="eyebrow">New Chronicle</div>
+            <h2>Choose Content</h2>
+            <p>Base content is required. Add either expansion pack, or both, before the decks are built.</p>
+            <div class="content-pack-list">
+                <label class="content-pack mandatory">
+                    <input type="checkbox" checked disabled />
+                    <span><strong>Base Game</strong><small>Required</small></span>
+                </label>
+                <label class="content-pack">
+                    <input type="checkbox" @bind="_includeSeasons" />
+                    <span><strong>Seasons in the Abyss</strong><small>Optional Scene, Echo, and Explore content</small></span>
+                </label>
+                <label class="content-pack">
+                    <input type="checkbox" @bind="_includeStrangers" />
+                    <span><strong>Stranger in a Strange Land</strong><small>Optional Scene, Echo, and Explore content</small></span>
+                </label>
+            </div>
+            <div class="save-resume-actions">
+                <button class="primary-save-action" @onclick="BeginNewChronicle">Begin Chronicle</button>
+            </div>
+        </section>
+    </div>
+}
+
+<div class="game-screen @(CombatInspectionMode ? "combat-inspection-mode" : string.Empty)">
+    <section class="state-panel">
+        <header class="state-header">
+            <div>
+                <div class="eyebrow">War Chronicle <span class="app-version" @onclick="HandleVersionTap">@AppVersion</span></div>
+                <h1>The Host</h1>
+            </div>
+            <div class="dev-test-tools">
+                <button class="save-game" disabled="@(!Session.CanSaveGame)" title="@SaveButtonTitle" @onclick="SaveGameAsync">Save Game</button>
+                <a class="header-action-link" href="War_Chronicle_Rulebook.pdf" target="_blank" rel="noopener" title="Open the War Chronicle rulebook in a new browser tab">Rulebook</a>
+                @if (Session.Finale is { Step: FinaleStep.Complete } && _finaleSummaryDismissed)
+                {
+                    <button class="combat-demo" @onclick="OpenFinaleSummary">Finale Summary</button>
+                }
+                @if (!string.IsNullOrWhiteSpace(_saveStatus))
+                {
+                    <span class="save-status">@_saveStatus</span>
+                }
+                @if (_debugMode)
+                {
+                    <div class="debug-tools" aria-label="Debug tools">
+                        <span class="debug-tools-label">Debug</span>
+                        <button class="combat-demo" disabled="@(Session.IsCombatActive || Session.IsFinaleActive)" @onclick="Session.ForceTestCombat">Test Combat</button>
+                        <button class="combat-demo" disabled="@(Session.IsCombatActive || Session.IsFinaleActive)" @onclick="Session.ForceTestFinale">Test Finale</button>
+                        <div class="debug-card-simulator">
+                            <select class="debug-card-select" @bind="_debugSelectedCardId" aria-label="Scene or Echo to simulate">
+                                <option value="">Simulate Scene / Echo…</option>
+                                @foreach (var card in DebugSceneEchoCards)
+                                {
+                                    <option value="@card.Id">@DebugCardLabel(card)</option>
+                                }
+                            </select>
+                            <button class="combat-demo" disabled="@(!Session.CanSimulateCampCard || string.IsNullOrWhiteSpace(_debugSelectedCardId))" @onclick="SimulateDebugCard">Simulate</button>
+                        </div>
+                        <button class="combat-demo" @onclick="ExitDebugMode">Exit Debug</button>
+                    </div>
+                }
+            </div>
+        </header>
+
+        <section class="calendar-strip" aria-label="Calendar">
+            <div class="calendar-strip-header">
+                <span>Calendar</span>
+                <strong>@Session.Season.ToUpperInvariant() • YEAR @Session.Year</strong>
+            </div>
+            <div class="calendar-spaces">
+                @for (var i = 1; i <= 33; i++)
+                {
+                    var seasonClass = i <= 11 ? "spring" : i <= 22 ? "summer" : "autumn";
+                    var fillClass = i <= Session.Time ? "elapsed" : "future";
+                    <span class="calendar-space @seasonClass @fillClass" title="Time @i"></span>
+                }
+            </div>
+            <div class="calendar-season-labels">
+                <span>Spring</span>
+                <span>Summer</span>
+                <span>Autumn</span>
+            </div>
+        </section>
+
+        <div class="state-grid">
+            <article class="state-card resources-card">
+                <div class="resource-title-grid">
+                    <h2>Resources</h2>
+                    <span>Have</span>
+                    <span class="market-column-head">Market<small>Buy / Sell</small></span>
+                </div>
+                <div class="resource-table">
+                    @foreach (var resource in Session.Resources)
+                    {
+                        var market = Session.Market.FirstOrDefault(m => m.Resource == resource.Name);
+                        var tokenPath = ResourceTokenPath(resource.Name);
+                        <div class="resource-table-row">
+                            <span class="resource-name">@resource.Name</span>
+                            @if (tokenPath is not null)
+                            {
+                                <span class="resource-have resource-count-display" title="@($"{resource.Name}: {resource.Value}")" aria-label="@($"{resource.Name}: {resource.Value}")">
+                                    <span class="resource-count-icon-slot" aria-hidden="true">
+                                        <img class="state-token resource-count-icon" src="@tokenPath" alt="" />
+                                    </span>
+                                    <span class="resource-count-multiplier">× @resource.Value</span>
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="resource-have resource-count-display">
+                                    <span class="resource-count-icon-slot"></span>
+                                    <span class="resource-count-multiplier">× @resource.Value</span>
+                                </span>
+                            }
+                            <span class="market-value">
+                                @(market is not null ? $"{market.BuyPrice}/{market.SellPrice}" : string.Empty)
+                            </span>
+                        </div>
+                    }
+                    <div class="resource-table-row">
+                        <span class="resource-name">Leadership</span>
+                        <span class="resource-have resource-count-display leadership-have" title="@($"Leadership: {Session.Leadership}")" aria-label="@($"Leadership: {Session.Leadership}")">
+                            <span class="resource-count-icon-slot" aria-hidden="true">
+                                <i class="leadership-gem"></i>
+                            </span>
+                            <span class="resource-count-multiplier">× @Session.Leadership</span>
+                        </span>
+                        <span class="market-value"></span>
+                    </div>
+                </div>
+            </article>
+
+            <article class="state-card host-card">
+                <div class="host-title-row">
+                    <h2>Host</h2>
+                    <div class="host-tracks">
+                        <span>Morale <strong>@Session.Morale</strong></span>
+                                            </div>
+                </div>
+                @foreach (var unit in Session.Host)
+                {
+                    var hostTokenPath = PlayerUnitTokenPath(unit.Type);
+                    <div class="host-row">
+                        <span class="host-unit-label">
+                            @if (hostTokenPath is not null)
+                            {
+                                <img class="host-unit-token @UnitArtClass(unit.Type)" src="@hostTokenPath" alt="" />
+                            }
+                            else if (string.Equals(unit.Type, "Levy", StringComparison.OrdinalIgnoreCase))
+                            {
+                                <i class="host-unit-cube player" aria-hidden="true"></i>
+                            }
+                            <span>@unit.Type</span>
+                        </span>
+                        <strong>@unit.Count</strong>
+                    </div>
+                }
+                @if (Session.HasPriest)
+                {
+                    <div class="host-row" title="@PriestHostTooltip()">
+                        <span>Priest</span>
+                        <strong>1</strong>
+                    </div>
+                }
+            </article>
+
+            <article class="state-card progression-card">
+                <div class="progression-title-row">
+                    <h2>Advancements</h2>
+                </div>
+
+                <div class="progression-section">
+                    <h3>On Offer</h3>
+                    <div class="chip-list">
+                        @foreach (var offer in Session.AdvancementOffer)
+                        {
+                            <span class="state-chip" title="@offer.Effect">@offer.Name@(string.IsNullOrWhiteSpace(offer.Cost) ? "" : $" ({offer.Cost})")</span>
+                        }
+                    </div>
+                </div>
+
+                @if (Session.AcquiredAdvancements.Count > 0)
+                {
+                    <div class="progression-section">
+                        <h3>Acquired</h3>
+                        <div class="chip-list">
+                            @foreach (var advancement in Session.AcquiredAdvancements)
+                            {
+                                <span class="state-chip" title="@advancement.Effect">@advancement.Name</span>
+                            }
+                        </div>
+                    </div>
+                }
+
+                <div class="progression-section">
+                    <h3>Available Forces</h3>
+                    <div class="available-force-grid">
+                        @foreach (var force in Session.AvailableForces)
+                        {
+                            var forceTokenPath = PlayerUnitTokenPath(force.Type);
+                            <span class="available-force-label">
+                                @if (forceTokenPath is not null)
+                                {
+                                    <img class="available-force-token @UnitArtClass(force.Type)" src="@forceTokenPath" alt="" />
+                                }
+                                else if (string.Equals(force.Type, "Levy", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    <i class="available-force-cube player" aria-hidden="true"></i>
+                                }
+                                <span>@force.Type</span>
+                            </span><strong>@force.Available</strong>
+                        }
+                    </div>
+                </div>
+
+                <div class="progression-section persistent-section">
+                    <h3>Buildings &amp; Roles</h3>
+                    @if (Session.PersistentItems.Count == 0)
+                    {
+                        <span class="empty-state">None</span>
+                    }
+                    else
+                    {
+                        <div class="chip-list">
+                            @foreach (var item in Session.PersistentItems)
+                            {
+                                <span class="state-chip" title="@PersistentTooltip(item.Name)">@item.Name@(string.IsNullOrWhiteSpace(item.Detail) ? "" : $": {item.Detail}")</span>
+                            }
+                        </div>
+                    }
+                </div>
+
+                @if (Session.VisibleReminders.Count > 0)
+                {
+                    <div class="progression-section">
+                        <h3>Reminders</h3>
+                        <div class="chip-list">
+                            @foreach (var reminder in Session.VisibleReminders)
+                            {
+                                var reminderTokenPath = PersistentTokenPath(reminder);
+                                <span class="state-chip reminder-state-chip @(reminderTokenPath is not null ? "has-token-art" : string.Empty)" title="@PersistentTooltip(reminder)">
+                                    @if (reminderTokenPath is not null)
+                                    {
+                                        <img class="reminder-token-art" src="@reminderTokenPath" alt="" />
+                                    }
+                                    <span>@reminder</span>
+                                </span>
+                            }
+                        </div>
+                    </div>
+                }
+            </article>
+
+            <article class="state-card baggage-card">
+                <h2>Baggage Train</h2>
+                <div class="baggage-grid">
+                    @foreach (var slot in Session.Baggage)
+                    {
+                        var baggageTokenPath = BaggageTokenPath(slot);
+                        <div class="baggage-slot @(slot.Damaged ? "damaged" : null)" title="@BaggageLabel(slot)">
+                            <small>@slot.Position</small>
+                            @if (slot.Damaged)
+                            {
+                                <span class="baggage-empty">Damaged</span>
+                            }
+                            else if (baggageTokenPath is not null)
+                            {
+                                <span class="baggage-token-stack" aria-label="@BaggageLabel(slot)">
+                                    @for (var tokenIndex = 0; tokenIndex < Math.Max(1, slot.Quantity); tokenIndex++)
+                                    {
+                                        <img class="baggage-token" src="@baggageTokenPath" alt="" />
+                                    }
+                                </span>
+                            }
+                            else if (!string.IsNullOrWhiteSpace(slot.Contents))
+                            {
+                                <span class="baggage-special">@slot.Contents</span>
+                            }
+                            else
+                            {
+                                <span class="baggage-empty">Empty</span>
+                            }
+                        </div>
+                    }
+                </div>
+            </article>
+
+            <article class="state-card rapport-card">
+                <h2>Rapport</h2>
+                @foreach (var tribe in Session.Tribes)
+                {
+                    <div class="rapport-row" title="@RapportTooltip(tribe)">
+                        <span>@tribe.Name</span>
+                        <strong class="rapport @(tribe.Rapport.ToLowerInvariant())">@tribe.Rapport</strong>
+                    </div>
+                }
+            </article>
+        </div>
+
+        <article class="play-area-card">
+            <div class="play-area-heading">
+                <div>
+                    <span class="eyebrow">Explored Country</span>
+                    <h2>Play Area</h2>
+                </div>
+                <div class="legend">
+                    <span><i class="legend-shape clearing"></i> Clearing</span>
+                    <span><i class="legend-shape plains"></i> Plains</span>
+                    <span><i class="legend-shape forest"></i> Forest</span>
+                    <span><i class="legend-shape mountain"></i> Mountain</span>
+                </div>
+            </div>
+
+            <div class="play-area-visual" aria-label="Current explored play area">
+                @for (var i = 0; i < Session.PlayArea.Count; i++)
+                {
+                    var index = i;
+                    var element = Session.PlayArea[index];
+                    <div class="map-piece @PieceClass(element)" style="@PieceStyle(element.Sequence)" title="@PieceTitle(element)">
+                        @if (element.Kind == PlayAreaKind.Clearing && element.HasBarbarianIcon && string.IsNullOrWhiteSpace(element.Controller))
+                        {
+                            <span class="barbarian-site-mark" aria-label="Barbarian clearing">✦</span>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(element.Controller))
+                        {
+                            <span class="control-mark @ControlClass(element)" aria-label="@ControlAria(element)">
+                                @ControlLabel(element)
+                            </span>
+                        }
+                        @if (element.BonusFood > 0)
+                        {
+                            <span class="terrain-resource-bonus" title="Bonus Food: @element.BonusFood" aria-label="Bonus Food: @element.BonusFood">
+                                <img src="images/tokens/food.png" alt="" />
+                                @if (element.BonusFood > 1)
+                                {
+                                    <span class="terrain-resource-bonus-count">×@element.BonusFood</span>
+                                }
+                            </span>
+                        }
+                        @if (IsDepleted(index))
+                        {
+                            <img class="depleted-token" src="images/tokens/depleted.png" title="Depleted or suppressed terrain" aria-label="Depleted or suppressed terrain" alt="" />
+                        }
+                        @if (element.IsHostLocation)
+                        {
+                            <span class="host-marker">HOST</span>
+                        }
+                    </div>
+                }
+
+                <div class="control-legend" aria-label="Control marker legend">
+                    <span><i class="mini-control player"></i> You</span>
+                    <span><i class="mini-control suntouched">ST</i></span>
+                    <span><i class="mini-control nightstone">NS</i></span>
+                    <span><i class="mini-control palehands">PH</i></span>
+                    <span><i class="mini-control quietus">TQ</i></span>
+                    <span><i class="hostile-key">!</i> Hostile</span>
+                </div>
+            </div>
+        </article>
+    </section>
+
+    <section class="chronicle-panel">
+        <header class="chronicle-header">
+            <div>
+                <div class="eyebrow">Chronicle</div>
+                <h2>The Chronicle</h2>
+            </div>
+        </header>
+
+        <div class="chronicle-scroll">
+            @for (var chronicleIndex = 0; chronicleIndex < Session.Chronicle.Count; chronicleIndex++)
+            {
+                var entry = Session.Chronicle[chronicleIndex];
+                var decisionActive = Session.IsChronicleDecisionActive(chronicleIndex);
+                var chronicleTypeClass = entry.Calendar.Contains("• Scene", StringComparison.OrdinalIgnoreCase)
+                    ? "scene-event"
+                    : entry.Calendar.Contains("• Echo", StringComparison.OrdinalIgnoreCase)
+                        ? "echo-event"
+                        : string.Empty;
+                var chronicleIconPath = ChronicleIconPath(entry);
+                <article class="chronicle-entry @(entry.Tone.ToString().ToLowerInvariant()) @(entry.Choices is not null ? "chronicle-decision" : string.Empty) @(string.IsNullOrWhiteSpace(entry.Heading) ? "follow-on" : string.Empty) @chronicleTypeClass">
+                    <div class="chronicle-stamp">
+                        <span>@entry.Calendar</span>
+                    </div>
+                    @if (!string.IsNullOrWhiteSpace(entry.Heading))
+                    {
+                        <div class="chronicle-title">
+                            @if (chronicleIconPath is not null)
+                            {
+                                <img class="chronicle-title-icon" src="@chronicleIconPath" alt="" />
+                            }
+                            <span>@entry.Heading</span>
+                            @if (chronicleIconPath is not null)
+                            {
+                                <img class="chronicle-title-icon chronicle-title-icon-trailing" src="@chronicleIconPath" alt="" />
+                            }
+                        </div>
+                    }
+                    <p>@ChronicleText(entry)</p>
+                    @if (entry.Choices is not null)
+                    {
+                        <div class="chronicle-choice-options">
+                            @foreach (var choice in entry.Choices)
+                            {
+                                var selected = string.Equals(entry.SelectedChoiceId, choice.Id, StringComparison.OrdinalIgnoreCase);
+                                <button class="chronicle-choice @(selected ? "is-selected" : string.Empty) @(choice.Disabled ? "is-unavailable" : string.Empty)"
+                                        disabled="@(!decisionActive || choice.Disabled)"
+                                        @onclick="() => Session.ResolveFlowPrompt(choice.Id)">
+                                    <strong>@ChronicleChoiceText(choice.Label)</strong>
+                                    @if (!string.IsNullOrWhiteSpace(choice.Detail))
+                                    {
+                                        <span>@ChronicleChoiceText(choice.Detail)</span>
+                                    }
+                                </button>
+                            }
+                        </div>
+                    }
+                </article>
+            }
+
+            @if (Session.HasPendingCombat && Session.Combat is { } pendingCombat)
+            {
+                <article class="decision-block combat-gate-block">
+                    <div class="decision-kicker">Combat</div>
+                    <h3>@pendingCombat.EnemyName</h3>
+                    <p><strong>@pendingCombat.SourceLabel</strong> has brought the Host into battle. Review the Chronicle above, then open the battlefield when you are ready.</p>
+                    <div class="decision-options">
+                        <button @onclick="Session.OpenPendingCombat">
+                            <strong>Begin Combat: @pendingCombat.EnemyName</strong>
+                            <span>Open the Battle Board.</span>
+                        </button>
+                    </div>
+                </article>
+            }
+
+            @if (Session.HasPendingCombat)
+            {
+            }
+            else if (Session.Phase == GamePhase.Camp)
+            {
+                @if (Session.CampStep == CampStep.Ready)
+                {
+                    <article class="decision-block">
+                        <div class="decision-kicker">Camp Phase</div>
+                        <h3>Make Camp</h3>
+                        <p>The Host pauses after the march. Draw the Camp hand and see what the road has brought with it.</p>
+                        <div class="decision-options">
+                            <button @onclick="Session.BeginCamp">
+                                <strong>Begin Camp</strong>
+                            </button>
+                        </div>
+                    </article>
+                }
+                else if (Session.CampStep is CampStep.ResolvingSpecial or CampStep.ResolvingAction)
+                {
+                }
+                else if (Session.CampStep == CampStep.ChoosingAction)
+                {
+                    <article class="decision-block camp-choice-block">
+                        <div class="decision-kicker">Camp Phase</div>
+                        <h3>Choose Camp Action</h3>
+                        <p>Choose one Field or Civic card from the Camp hand, or Work.</p>
+                        <div class="camp-choice-list">
+                            @foreach (var card in Session.CampActionChoices)
+                            {
+                                var available = Session.CanChooseCampCard(card);
+                                var reason = Session.CampChoiceAvailability(card);
+                                var keywordIcon = CampKeywordIconPath(card);
+                                var locationIcon = CampLocationIconPath(card.Location);
+                                <article class="camp-choice-card @(!available ? "is-unavailable" : string.Empty)">
+                                    <div class="camp-choice-heading">
+                                        <strong>@card.Title</strong>
+                                        <span class="camp-card-meta">
+                                            @if (keywordIcon is not null)
+                                            {
+                                                <span class="camp-meta-item" title="@card.Keyword"><img src="@keywordIcon" alt="" />@card.Keyword</span>
+                                            }
+                                            @if (locationIcon is not null)
+                                            {
+                                                <span class="camp-meta-item" title="@($"{card.Location} location")"><img src="@locationIcon" alt="" />@card.Location</span>
+                                            }
+                                        </span>
+                                    </div>
+                                    @if (!string.IsNullOrWhiteSpace(card.Flavor))
+                                    {
+                                        <p class="camp-choice-flavor">@card.Flavor</p>
+                                    }
+                                    <div class="camp-choice-effect">@((MarkupString)card.Effect)</div>
+                                    @if (string.Equals(card.Id, "CAMP-001", StringComparison.OrdinalIgnoreCase) && Session.HasCampSteward)
+                                    {
+                                        <div class="camp-card-rules-note">
+                                            <strong>Camp Steward active</strong>
+                                            <span>When you Work, you may instead gain 1 Resource matching the adjacent Terrain, or buy 1 Resource from the Market for 1 Coin less than its current Buy value.</span>
+                                        </div>
+                                    }
+                                    @if (string.Equals(card.Id, "CAMP-012", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        <div class="camp-card-rules-note">
+                                            <strong>Role effects</strong>
+                                            <span><b>Scouting:</b> When Exploring, draw 2 Terrain cards and choose 1.</span>
+                                            <span><b>Camp Steward:</b> During Work, you may instead gain 1 Resource matching the adjacent Terrain or buy 1 Resource for 1 Coin less than its Market Buy value.</span>
+                                        </div>
+                                    }
+                                    @if (!available && !string.IsNullOrWhiteSpace(reason))
+                                    {
+                                        <div class="camp-choice-unavailable">@reason</div>
+                                    }
+                                    <button class="camp-choice-select" disabled="@(!available)" @onclick="() => Session.ChooseCampCard(card.Id)">
+                                        Choose @card.Title
+                                    </button>
+                                </article>
+                            }
+                        </div>
+                    </article>
+                }
+                else if (Session.CampStep == CampStep.Complete)
+                {
+                    <div class="awaiting-event"><strong>Camp complete.</strong></div>
+                }
+            }
+            else if (Session.Phase == GamePhase.EndOfSeason)
+            {
+                @if (Session.EndOfSeasonStep == EndOfSeasonStep.Ready)
+                {
+                    <article class="decision-block eos-block">
+                        <div class="decision-kicker">End of Season</div>
+                        <h3>End of @Session.EndOfSeasonName</h3>
+                        <p>The campaigning season has crossed its threshold. Resolve the seasonal reckoning before play continues.</p>
+                        <div class="decision-options">
+                            <button @onclick="Session.BeginEndOfSeason">
+                                <strong>Begin End of @Session.EndOfSeasonName</strong>
+                                <span>Vulnerability, Harvest, and consolidation follow.</span>
+                            </button>
+                        </div>
+                    </article>
+                }
+                else if (Session.EndOfSeasonStep == EndOfSeasonStep.VulnerabilityReady)
+                {
+                    <article class="decision-block eos-block">
+                        <div class="decision-kicker">End of @Session.EndOfSeasonName</div>
+                        <h3>Vulnerability</h3>
+                        <p>The Market shifts and Hostile tribes may raid the road behind you.</p>
+                        <div class="decision-options">
+                            <button @onclick="Session.ResolveEndOfSeasonVulnerability">
+                                <strong>Resolve Vulnerability</strong>
+                            </button>
+                        </div>
+                    </article>
+                }
+                else if (Session.EndOfSeasonStep == EndOfSeasonStep.HarvestReady)
+                {
+                    <article class="decision-block eos-block">
+                        <div class="decision-kicker">End of @Session.EndOfSeasonName</div>
+                        <h3>Harvest</h3>
+                        <p>Eligible Terrain now produces Food, Wood, or Stone. New resources are staged before the Baggage Train is repacked.</p>
+                        <div class="decision-options">
+                            <button @onclick="Session.BeginEndOfSeasonHarvest">
+                                <strong>Gather the Harvest</strong>
+                            </button>
+                        </div>
+                    </article>
+                }
+                else if (Session.EndOfSeasonStep == EndOfSeasonStep.HarvestPreparing)
+                {
+                    <article class="decision-block eos-block harvest-block">
+                        <div class="decision-kicker">Harvest</div>
+                        <h3>Prepare the Baggage Train</h3>
+                        <p>The Harvest is staged beside the Host. Before packing any of it, you may purge carried Resources or dump carried Firepots to make room. If you have a Market, you may sell up to 2 purged Resources instead.</p>
+
+                        <div class="eos-subsection">
+                            <h4>Staged Harvest</h4>
+                            <div class="eos-resource-grid">
+                                @foreach (var staged in Session.HarvestStaging.Where(x => x.Value > 0))
+                                {
+                                    <div class="eos-resource-row">
+                                        <span><strong>@staged.Value</strong> @staged.Key waiting to be packed</span>
+                                    </div>
+                                }
+                                @if (!Session.HarvestStaging.Any(x => x.Value > 0))
+                                {
+                                    <span class="empty-state">No resources were staged this Harvest.</span>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="eos-subsection">
+                            <h4>Carried Stores</h4>
+                            @if (Session.PersistentItems.Any(p => p.Name == "Market"))
+                            {
+                                <p class="eos-note">Market sales remaining: <strong>@Session.HarvestMarketSalesRemaining</strong></p>
+                            }
+                            <div class="eos-baggage-list">
+                                @foreach (var slot in Session.Baggage)
+                                {
+                                    <div class="eos-baggage-row">
+                                        <span>Slot @slot.Position: <strong>@BaggageLabel(slot)</strong>@(slot.Damaged ? " (Damaged)" : string.Empty)</span>
+                                        <div class="eos-inline-actions">
+                                            <button disabled="@(!Session.CanPurgeHarvestBaggage(slot.Position))" @onclick="() => Session.PurgeHarvestBaggage(slot.Position)">@(string.Equals(slot.Contents, "Firepots", StringComparison.OrdinalIgnoreCase) ? "Dump Firepots" : "Purge 1")</button>
+                                            @if (Session.PersistentItems.Any(p => p.Name == "Market"))
+                                            {
+                                                <button disabled="@(!Session.CanSellHarvestBaggage(slot.Position))" @onclick="() => Session.SellHarvestBaggage(slot.Position)">Sell 1</button>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="harvest-undo-row">
+                            <button class="secondary-action" disabled="@(!Session.CanUndoHarvestPreparation)" @onclick="Session.UndoHarvestPreparation">Undo Last</button>
+                            <span>Undo purge or sale actions until packing begins.</span>
+                        </div>
+
+                        <div class="decision-options eos-finish-row">
+                            <button @onclick="Session.BeginEndOfSeasonPacking">
+                                <strong>Pack the Harvest</strong>
+                                <span>Finish clearing space, then choose which staged Resources to carry forward.</span>
+                            </button>
+                        </div>
+                    </article>
+                }
+                else if (Session.EndOfSeasonStep == EndOfSeasonStep.HarvestPacking)
+                {
+                    <article class="decision-block eos-block harvest-block">
+                        <div class="decision-kicker">Harvest</div>
+                        <h3>Pack the Harvest</h3>
+                        <p>Choose which staged Resources to place in the Baggage Train. Anything left behind when you finish is returned to the supply.</p>
+
+                        <div class="eos-subsection">
+                            <h4>Staged Harvest</h4>
+                            <div class="eos-resource-grid">
+                                @foreach (var staged in Session.HarvestStaging.Where(x => x.Value > 0))
+                                {
+                                    <div class="eos-resource-row">
+                                        <span><strong>@staged.Value</strong> @staged.Key</span>
+                                        <button disabled="@(!Session.CanPackHarvestResource(staged.Key))" @onclick="() => Session.PackHarvestResource(staged.Key)">Pack 1</button>
+                                    </div>
+                                }
+                                @if (!Session.HarvestStaging.Any(x => x.Value > 0))
+                                {
+                                    <span class="empty-state">No staged resources remain.</span>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="eos-subsection">
+                            <h4>Baggage Train</h4>
+                            <div class="eos-baggage-list">
+                                @foreach (var slot in Session.Baggage)
+                                {
+                                    <div class="eos-baggage-row">
+                                        <span>Slot @slot.Position: <strong>@BaggageLabel(slot)</strong>@(slot.Damaged ? " (Damaged)" : string.Empty)</span>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="harvest-undo-row">
+                            <button class="secondary-action" disabled="@(!Session.CanUndoHarvestPacking)" @onclick="Session.UndoHarvestPacking">Undo Last</button>
+                            <span>Undo packed Resources until Harvest is finished.</span>
+                        </div>
+
+                        <div class="decision-options eos-finish-row">
+                            <button @onclick="Session.FinishEndOfSeasonHarvest">
+                                <strong>Finish Harvest</strong>
+                                <span>Unpacked staged Resources are returned to the supply.</span>
+                            </button>
+                        </div>
+                    </article>
+                }
+                else if (Session.EndOfSeasonStep == EndOfSeasonStep.ConsolidationReady)
+                {
+                    <article class="decision-block eos-block">
+                        <div class="decision-kicker">End of @Session.EndOfSeasonName</div>
+                        <h3>Supply Line Consolidation</h3>
+                        <p>Keep the first two Clearings behind the Host. Older Clearings and disconnected Terrain fall away from the active route.</p>
+                        <div class="decision-options">
+                            <button @onclick="Session.ResolveEndOfSeasonConsolidation">
+                                <strong>Consolidate the Route</strong>
+                            </button>
+                        </div>
+                    </article>
+                }
+                else if (Session.EndOfSeasonStep == EndOfSeasonStep.RefitReform)
+                {
+                    <article class="decision-block eos-block refit-block">
+                        <div class="decision-kicker">End of Summer</div>
+                        <h3>Refit &amp; Reform</h3>
+                        <p>Recruit units and purchase available Advancements. Make as many purchases as you can afford, then continue.</p>
+
+                        <div class="eos-subsection">
+                            <h4>Recruit</h4>
+                            <div class="decision-options refit-recruit-grid">
+                                @foreach (var type in new[] { "Archers", "Infantry", "Cavalry", "Levy" })
+                                {
+                                    <button disabled="@(!Session.CanRefitRecruit(type))" @onclick="() => Session.RefitRecruit(type)">
+                                        <strong>@Session.RefitRecruitLabel(type)</strong>
+                                    </button>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="eos-subsection refit-dismiss-block">
+                            <h4>Reconfigure Host</h4>
+                            <p>Dismiss a unit back to Available Forces with no refund. Dismissing a Military Unit frees a Military slot; dismissing Levy only frees Levy capacity.</p>
+                            <div class="decision-options refit-dismiss-grid">
+                                @foreach (var type in new[] { "Archers", "Infantry", "Cavalry", "Levy" })
+                                {
+                                    <button disabled="@(!Session.CanRefitDismiss(type))" @onclick="() => Session.RefitDismiss(type)">
+                                        <strong>Dismiss 1 @Session.RefitDismissLabel(type)</strong>
+                                    </button>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="eos-subsection">
+                            <h4>Advancements on Offer</h4>
+                            <div class="camp-choice-list refit-offer-list">
+                                @foreach (var offer in Session.AdvancementOffer)
+                                {
+                                    <article class="camp-choice-card @(!Session.CanBuyRefitAdvancement(offer.Id) ? "is-unavailable" : string.Empty)">
+                                        <div class="camp-choice-heading">
+                                            <strong>@offer.Name</strong>
+                                            <span>@offer.Cost</span>
+                                        </div>
+                                        <p class="camp-choice-flavor">@offer.Effect</p>
+                                        <button class="camp-choice-select" disabled="@(!Session.CanBuyRefitAdvancement(offer.Id))" @onclick="() => Session.BuyRefitAdvancement(offer.Id)">
+                                            Buy @offer.Name
+                                        </button>
+                                    </article>
+                                }
+                            </div>
+                            <button class="secondary-action" disabled="@(!Session.CanCycleRefitAdvancement)" @onclick="Session.CycleRefitAdvancement">Pay 1 Coin to discard the top Advancement</button>
+                        </div>
+
+                        <div class="refit-undo-row">
+                            <button class="secondary-action" disabled="@(!Session.CanUndoRefitReform)" @onclick="Session.UndoRefitReform">Undo Last R&amp;R Action</button>
+                            <span>Available until you finish this Refit &amp; Reform phase.</span>
+                        </div>
+
+                        <div class="decision-options eos-finish-row">
+                            <button @onclick="Session.FinishRefitReform">
+                                <strong>Finish Refit &amp; Reform</strong>
+                            </button>
+                        </div>
+                    </article>
+                }
+            }
+            else if (Session.Phase == GamePhase.Winter)
+            {
+                @if (Session.WinterStep == WinterStep.Ready)
+                {
+                    <article class="decision-block eos-block winter-block">
+                        <div class="decision-kicker">Winter • Year @Session.Year</div>
+                        <h3>Winter Phase</h3>
+                        <p>The campaigning year is over. Mercenaries depart, the Host faces Attrition, Morale resets, and one final Refit &amp; Reform prepares the march for the next year.</p>
+                        <div class="decision-options">
+                            <button @onclick="Session.BeginWinter">
+                                <strong>Begin Winter</strong>
+                                <span>Resolve the year-end reckoning.</span>
+                            </button>
+                        </div>
+                    </article>
+                }
+                else if (Session.WinterStep == WinterStep.Attrition)
+                {
+                    @if (Session.FlowPrompt is null)
+                    {
+                        <div class="awaiting-event"><strong>Resolving Winter Attrition...</strong></div>
+                    }
+                }
+                else if (Session.WinterStep == WinterStep.RefitReform)
+                {
+                    <article class="decision-block eos-block refit-block winter-block">
+                        <div class="decision-kicker">Winter • Year @Session.Year</div>
+                        <h3>Refit &amp; Reform</h3>
+                        <p>Rebuild after Attrition. Recruit units and purchase available Advancements, then finish Winter.</p>
+
+                        <div class="eos-subsection">
+                            <h4>Recruit</h4>
+                            <div class="decision-options refit-recruit-grid">
+                                @foreach (var type in new[] { "Archers", "Infantry", "Cavalry", "Levy" })
+                                {
+                                    <button disabled="@(!Session.CanRefitRecruit(type))" @onclick="() => Session.RefitRecruit(type)">
+                                        <strong>@Session.RefitRecruitLabel(type)</strong>
+                                    </button>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="eos-subsection refit-dismiss-block">
+                            <h4>Reconfigure Host</h4>
+                            <p>Dismiss a unit back to Available Forces with no refund. Dismissing a Military Unit frees a Military slot; dismissing Levy only frees Levy capacity.</p>
+                            <div class="decision-options refit-dismiss-grid">
+                                @foreach (var type in new[] { "Archers", "Infantry", "Cavalry", "Levy" })
+                                {
+                                    <button disabled="@(!Session.CanRefitDismiss(type))" @onclick="() => Session.RefitDismiss(type)">
+                                        <strong>Dismiss 1 @Session.RefitDismissLabel(type)</strong>
+                                    </button>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="eos-subsection">
+                            <h4>Advancements on Offer</h4>
+                            <div class="camp-choice-list refit-offer-list">
+                                @foreach (var offer in Session.AdvancementOffer)
+                                {
+                                    <article class="camp-choice-card @(!Session.CanBuyRefitAdvancement(offer.Id) ? "is-unavailable" : string.Empty)">
+                                        <div class="camp-choice-heading">
+                                            <strong>@offer.Name</strong>
+                                            <span>@offer.Cost</span>
+                                        </div>
+                                        <p class="camp-choice-flavor">@offer.Effect</p>
+                                        <button class="camp-choice-select" disabled="@(!Session.CanBuyRefitAdvancement(offer.Id))" @onclick="() => Session.BuyRefitAdvancement(offer.Id)">
+                                            Buy @offer.Name
+                                        </button>
+                                    </article>
+                                }
+                            </div>
+                            <button class="secondary-action" disabled="@(!Session.CanCycleRefitAdvancement)" @onclick="Session.CycleRefitAdvancement">Pay 1 Coin to discard the top Advancement</button>
+                        </div>
+
+                        <div class="refit-undo-row">
+                            <button class="secondary-action" disabled="@(!Session.CanUndoRefitReform)" @onclick="Session.UndoRefitReform">Undo Last R&amp;R Action</button>
+                            <span>Available until you finish this Refit &amp; Reform phase.</span>
+                        </div>
+
+                        <div class="decision-options eos-finish-row">
+                            <button @onclick="Session.FinishRefitReform">
+                                <strong>Finish Winter Refit &amp; Reform</strong>
+                                <span>Check for defeat, reset the Camp deck, stabilize the Market, and begin the next Year.</span>
+                            </button>
+                        </div>
+                    </article>
+                }
+                else if (Session.WinterStep == WinterStep.Defeat)
+                {
+                    <article class="decision-block eos-block winter-block">
+                        <div class="decision-kicker">Winter • Year @Session.Year</div>
+                        <h3>The Host Is Gone</h3>
+                        <p>No Units remain after Winter Refit &amp; Reform. The campaign ends here.</p>
+                    </article>
+                }
+            }
+            else if (Session.Phase == GamePhase.Finale)
+            {
+                <article class="decision-block">
+                    <div class="decision-kicker">Finale</div>
+                    <h3>Middelalderen</h3>
+                    <p>The campaign has reached its final test. Resolve the Finale preparation window to begin the assault.</p>
+                </article>
+            }
+            else if (Session.Phase == GamePhase.GameOver)
+            {
+                <article class="decision-block game-over-block">
+                    <div class="decision-kicker">Campaign Complete</div>
+                    <h3>@(Session.CampaignOutcome ?? "The Chronicle Ends")</h3>
+                    <p>@Session.CampaignEndReason</p>
+                    <div class="game-log-complete">
+                        <p>The complete game log is saved automatically to the local <code>GameLogs</code> folder and retained in this browser as a backup.</p>
+                        @if (!string.IsNullOrWhiteSpace(_gameLogFilename))
+                        {
+                            <code>@_gameLogFilename</code>
+                        }
+                        <div class="game-log-actions">
+                            <button class="secondary-action" @onclick="DownloadGameLogAsync">Download Game Log</button>
+                            @if (string.Equals(Session.CampaignOutcome, "Defeat", StringComparison.OrdinalIgnoreCase))
+                            {
+                                <button class="secondary-action" @onclick="StartNewGameFromDefeatAsync">New Game</button>
+                            }
+                        </div>
+                    </div>
+                </article>
+            }
+            else if (Session.MobilizationStep == MobilizationStep.ExploreReady)
+            {
+                <article class="decision-block">
+                    <div class="decision-kicker">Mobilization Phase</div>
+                    <h3>Explore Step</h3>
+                    <p>The Host is ready to leave the Starting Clearing.</p>
+                    <div class="decision-options">
+                        <button @onclick="Session.BeginExplore">
+                            <strong>Explore</strong>
+                            <span>Advance along the road.</span>
+                        </button>
+                    </div>
+                </article>
+            }
+            else if (Session.MobilizationStep == MobilizationStep.TerrainChoice)
+            {
+                <article class="decision-block">
+                    <div class="decision-kicker">Scouting</div>
+                    <h3>Choose Terrain</h3>
+                    <div class="decision-options">
+                        @foreach (var terrain in Session.PendingTerrainChoices)
+                        {
+                            <button @onclick="() => Session.ChooseTerrain(terrain)"><strong>@terrain</strong></button>
+                        }
+                    </div>
+                </article>
+            }
+            else if (Session.MobilizationStep == MobilizationStep.ExploreEncounter && Session.PendingExploreCard is not null)
+            {
+                @* The live encounter is represented by append-only Chronicle entries above. *@
+            }
+            else if (Session.MobilizationStep == MobilizationStep.ArrivalReady)
+            {
+                <div class="awaiting-event"><strong>Arrival Step</strong></div>
+            }
+            else if (Session.MobilizationStep == MobilizationStep.ArrivalEncounter)
+            {
+                @* Arrival reveal, tests, and choices remain in the append-only Chronicle above. *@
+            }
+            else if (Session.MobilizationStep == MobilizationStep.ArrivalComplete)
+            {
+                <div class="awaiting-event"><strong>Camp Phase</strong></div>
+            }
+        </div>
+    </section>
+</div>
+
+@if (Session.Finale is { } finale && Session.Combat is null && (finale.Step != FinaleStep.Complete || !_finaleSummaryDismissed))
+{
+    <div class="modal-backdrop finale-backdrop">
+        <section class="finale-modal" role="dialog" aria-modal="true" aria-label="Finale">
+            <header>
+                <div>
+                    <div class="eyebrow">@(finale.IsTest ? "Test Finale" : "Finale")</div>
+                    <h2>Middelalderen</h2>
+                    <div class="combat-phase-label">@FinaleStepLabel(finale.Step)</div>
+                </div>
+                <div class="combat-header-tools">
+                    <a class="combat-window-button combat-window-link" href="War_Chronicle_Rulebook.pdf" target="_blank" rel="noopener">Rulebook</a>
+                    @if (finale.IsTest)
+                    {
+                        <div class="combat-test-tools">
+                            @if (finale.TestSeed is int finaleSeed)
+                            {
+                                <span>Seed @finaleSeed</span>
+                                <button class="combat-test-cancel" @onclick="Session.RestartTestFinale">Restart Seed</button>
+                            }
+                            <button class="combat-test-cancel" @onclick="Session.CancelTestFinale">Cancel Test Finale</button>
+                        </div>
+                    }
+                </div>
+            </header>
+
+            <div class="finale-workspace">
+                <aside class="finale-host-summary">
+                    <h3>Your Host</h3>
+                    <div class="finale-stat-row"><span>Morale</span><strong>@finale.Morale</strong></div>
+                    <div class="finale-stat-row"><span>Leadership</span><strong>@finale.Leadership</strong></div>
+                    <div class="finale-stat-row"><span>Priest</span><strong>@(finale.HasPriest ? "Yes" : "No")</strong></div>
+                    @foreach (var type in new[] { "Archers", "Cavalry", "Infantry", "Levy" })
+                    {
+                        <div class="finale-stat-row"><span>@type</span><strong>@(finale.PlayerUnits[type])</strong></div>
+                    }
+
+                    @if (finale.PlayerAdvancements.Count > 0)
+                    {
+                        <h4>Advancements</h4>
+                        <div class="finale-chip-list">
+                            @foreach (var id in finale.PlayerAdvancements.OrderBy(id => id))
+                            {
+                                <span class="combat-status-chip" title="@Session.CombatTacticEffect(id)">@Session.CombatTacticName(id)</span>
+                            }
+                        </div>
+                    }
+                </aside>
+
+                <main class="finale-control-pane">
+                    @if (finale.Step == FinaleStep.ResolveReady)
+                    {
+                        <section class="finale-step-card">
+                            <div class="decision-kicker">Host Resolve Check</div>
+                            <h3>Steel the Host for the final assault</h3>
+                            <p>Roll 1d10 against Morale. You may spend 1 Leadership to roll 2d10 and choose 1 result.</p>
+                            <div class="finale-button-row">
+                                <button class="combat-primary" @onclick="() => Session.ResolveFinaleCheck(false)">Roll 1d10</button>
+                                <button class="combat-primary" disabled="@(!Session.CanSpendLeadershipForFinaleResolve)" @onclick="() => Session.ResolveFinaleCheck(true)">Spend 1 Leadership • Roll 2d10</button>
+                            </div>
+                        </section>
+                    }
+                    else if (finale.Step == FinaleStep.ResolveChoose)
+                    {
+                        <section class="finale-step-card">
+                            <div class="decision-kicker">Host Resolve Check</div>
+                            <h3>Choose the Resolve result</h3>
+                            <div class="finale-roll-choice">
+                                @for (var i = 0; i < finale.ResolveRolls.Count; i++)
+                                {
+                                    var rollIndex = i;
+                                    <button @onclick="() => Session.ChooseFinaleResolveRoll(rollIndex)">@finale.ResolveRolls[i]</button>
+                                }
+                            </div>
+                        </section>
+                    }
+                    else if (finale.Step == FinaleStep.DeployHost)
+                    {
+                        <section class="finale-step-card">
+                            <div class="decision-kicker">Deploy Your Host</div>
+                            <h3>Commit Tactics before Middelalderen reveals its Advancements</h3>
+                            <p>Committed Tactics cost 1 Leadership. Inspired and Loose Formation remain available for their normal in-combat triggers.</p>
+                            <div class="combat-tactic-grid">
+                                @foreach (var tacticId in finale.PlayerAdvancements.Where(id => TacticNumber(id) is >= 7 and <= 15).OrderBy(id => id))
+                                {
+                                    var number = TacticNumber(tacticId);
+                                    var isSpecial = number is 14 or 15;
+                                    var committed = finale.CommittedTactics.Contains(tacticId);
+                                    <button class="combat-tactic @(committed ? "is-committed" : string.Empty) @(isSpecial ? "is-special" : string.Empty)"
+                                            disabled="@(isSpecial || !Session.CanToggleFinaleTactic(tacticId))"
+                                            @onclick="() => Session.ToggleFinaleTactic(tacticId)">
+                                        <strong>@Session.CombatTacticName(tacticId)</strong>
+                                        <span>@Session.CombatTacticEffect(tacticId)</span>
+                                        <small>@(isSpecial ? "Available when its trigger occurs" : committed ? "Committed" : "Commit: 1 Leadership")</small>
+                                    </button>
+                                }
+                            </div>
+
+                            @if (finale.CommittedTactics.Contains("ADV-013"))
+                            {
+                                <div class="finale-steady-advance">
+                                    <strong>Steady Advance:</strong> choose the Military unit type now, before Middelalderen is revealed.
+                                    <div class="finale-button-row compact">
+                                        @foreach (var type in new[] { "Archers", "Cavalry", "Infantry" }.Where(t => finale.PlayerUnits[t] > 0))
+                                        {
+                                            <button class="@(finale.SteadyAdvanceType == type ? "is-selected" : string.Empty)" @onclick="() => Session.SetFinaleSteadyAdvanceType(type)">@type</button>
+                                        }
+                                    </div>
+                                </div>
+                            }
+
+                            <button class="combat-primary" disabled="@(!Session.CanRevealMiddelalderen)" @onclick="Session.RevealMiddelalderen">Lock Deployment &amp; Reveal Middelalderen</button>
+                        </section>
+                    }
+                    else if (finale.Step == FinaleStep.RevealMiddelalderen)
+                    {
+                        <section class="finale-step-card">
+                            <div class="decision-kicker">Deploy Middelalderen's Host</div>
+                            <h3>Middelalderen reveals 3 Advancements</h3>
+                            <div class="finale-enemy-grid">
+                                @foreach (var id in finale.MiddelalderenAdvancements.OrderBy(id => id))
+                                {
+                                    <article>
+                                        <strong>@Session.CombatTacticName(id)</strong>
+                                        <span>@Session.CombatTacticEffect(id)</span>
+                                    </article>
+                                }
+                            </div>
+                            <div class="finale-enemy-force">
+                                @foreach (var type in new[] { "Archers", "Cavalry", "Infantry", "Levy" })
+                                {
+                                    <span>@type <strong>@(finale.MiddelalderenUnits[type])</strong></span>
+                                }
+                            </div>
+                            <button class="combat-primary" @onclick="Session.StartFinaleCombat">Begin Final Combat</button>
+                        </section>
+                    }
+                    else if (finale.Step == FinaleStep.Complete)
+                    {
+                        <section class="finale-step-card finale-result-card">
+                            <div class="decision-kicker">Finale Complete</div>
+                            <h3>@(finale.Outcome == "Won" ? "Middelalderen Falls" : "The Host Is Destroyed")</h3>
+                            <p>@(finale.Outcome == "Won" ? "The Host survives the final battle and takes Middelalderen." : "The campaign ends before the walls of Middelalderen.")</p>
+                            <div class="finale-button-row">
+                                <button class="combat-primary" @onclick="CloseFinaleSummary">Close &amp; Read Chronicle</button>
+                                @if (finale.IsTest)
+                                {
+                                    <button class="combat-primary" @onclick="Session.RestartTestFinale">Restart Seed</button>
+                                    <button class="combat-primary" @onclick="Session.EndTestFinale">End Test Finale</button>
+                                }
+                            </div>
+                        </section>
+                    }
+
+                    <section class="finale-log-panel">
+                        <h3>Finale Chronicle</h3>
+                        @foreach (var line in finale.Log)
+                        {
+                            <p>@line</p>
+                        }
+                    </section>
+                </main>
+            </div>
+        </section>
+    </div>
+}
+
+@if (Session.CombatVisible && Session.Combat is { } combat)
+{
+    <div class="modal-backdrop combat-backdrop @(IsCombatMinimized(combat) ? "is-minimized" : string.Empty)">
+        @if (IsCombatMinimized(combat))
+        {
+            <section class="combat-minimized-bar" role="status" aria-label="Combat minimized for inspection">
+                <div class="combat-minimized-summary">
+                    <span class="eyebrow">Combat • Inspection only</span>
+                    <strong>@combat.EnemyName</strong>
+                    <span>Round @combat.Round • @Session.CombatStepLabel</span>
+                </div>
+                <div class="combat-header-tools">
+                    <a class="combat-window-button combat-window-link" href="War_Chronicle_Rulebook.pdf" target="_blank" rel="noopener">Rulebook</a>
+                    <button class="combat-window-button" @onclick="MaximizeCombat" title="Restore the Combat window">Maximize</button>
+                </div>
+            </section>
+        }
+        else
+        {
+        <section class="combat-modal battleboard-modal" role="dialog" aria-modal="true" aria-label="Combat">
+            <header>
+                <div>
+                    <div class="eyebrow">@combat.SourceLabel</div>
+                    <h2>@combat.EnemyName</h2>
+                    <div class="combat-phase-label">Round @combat.Round • @Session.CombatStepLabel</div>
+                </div>
+                <div class="combat-header-tools">
+                    <a class="combat-window-button combat-window-link" href="War_Chronicle_Rulebook.pdf" target="_blank" rel="noopener">Rulebook</a>
+                    @if (combat.IsTest)
+                    {
+                        <div class="combat-test-tools">
+                            @if (combat.TestSeed is int seed)
+                            {
+                                <span>Seed @seed</span>
+                                <button class="combat-test-cancel" @onclick="Session.RestartTestCombat">Restart Seed</button>
+                            }
+                            <button class="combat-test-cancel" @onclick="Session.CancelTestCombat">@(combat.IsFinale ? "Cancel Test Finale" : "Cancel Test Combat")</button>
+                        </div>
+                    }
+                    <button class="combat-window-button" @onclick="() => MinimizeCombat(combat)" title="Temporarily collapse Combat so you can inspect the campaign state">Minimize</button>
+                </div>
+            </header>
+
+            <div class="combat-workspace">
+                <div class="combat-battle-pane">
+                    <div class="battle-board-shell">
+                        <img src="images/WC-BattleBoard.png" alt="War Chronicle Battle Board" class="battle-board-image" />
+                        <div class="battle-enemy-name">@combat.EnemyName</div>
+
+                        @if (combat.ChoiceTargetSide is "enemy" or "player")
+                        {
+                            <div class="battle-casualty-highlight @combat.ChoiceTargetSide" aria-hidden="true">
+                                <span>@(combat.ChoiceTargetSide == "enemy" ? "CHOOSE ENEMY CASUALTY" : "CHOOSE YOUR CASUALTY")</span>
+                            </div>
+                        }
+
+                        @foreach (var side in new[] { "enemy", "player" })
+                        {
+                            foreach (var type in new[] { "Archers", "Cavalry", "Infantry", "Levy" })
+                            {
+                                var battlePieces = BattlePieces(side, type, combat).ToList();
+                                <div class="battle-unit-stack @side @BattleLaneClass(type)">
+                                    @for (var pieceIndex = 0; pieceIndex < battlePieces.Count; pieceIndex++)
+                                    {
+                                        var piece = battlePieces[pieceIndex];
+                                        var stackStyle = BattlePieceStackStyle(pieceIndex, battlePieces.Count);
+                                        @if (piece.ImagePath is not null)
+                                        {
+                                            <img class="battle-unit-image @piece.CssClass" style="@stackStyle" src="@piece.ImagePath" title="@piece.Title" alt="" />
+                                        }
+                                        else
+                                        {
+                                            <span class="battle-unit @piece.CssClass" style="@stackStyle" title="@piece.Title"></span>
+                                        }
+                                    }
+                                </div>
+                            }
+                        }
+
+                        @if (combat.EnemyPriest)
+                        {
+                            <span class="battle-priest enemy" title="Enemy Priest"></span>
+                        }
+                        @if (combat.PlayerPriest)
+                        {
+                            <span class="battle-priest player" title="Player Priest"></span>
+                        }
+
+                        <div class="battle-leadership-readout">
+                            <strong>L @combat.PlayerLeadership</strong>
+                            @if (combat.PlayerShields > 0)
+                            {
+                                <span class="combat-shield-count" title="@($"Shields: {combat.PlayerShields}")" aria-label="@($"Shields: {combat.PlayerShields}")">
+                                    @for (var shieldIndex = 0; shieldIndex < combat.PlayerShields; shieldIndex++)
+                                    {
+                                        <img src="images/tokens/shield.png" alt="" />
+                                    }
+                                </span>
+                            }
+                        </div>
+                    </div>
+
+                    @{
+                        var combatTokenReminders = Session.VisibleReminders
+                            .Where(IsCombatTokenReminder)
+                            .ToArray();
+                    }
+                    @if (combatTokenReminders.Length > 0)
+                    {
+                        <div class="combat-token-strip" aria-label="Active expansion tokens">
+                            <span class="combat-status-label">Active Tokens</span>
+                            @foreach (var tokenName in combatTokenReminders)
+                            {
+                                var combatTokenPath = PersistentTokenPath(tokenName);
+                                <span class="combat-token-reminder" title="@PersistentTooltip(tokenName)">
+                                    @if (combatTokenPath is not null)
+                                    {
+                                        <img src="@combatTokenPath" alt="" />
+                                    }
+                                    <span>@tokenName</span>
+                                </span>
+                            }
+                        </div>
+                    }
+
+                    @if (combat.PlayerDevelopments.Count > 0 || combat.PlayerTactics.Count > 0)
+                    {
+                        <div class="combat-status-strip">
+                            @if (combat.PlayerDevelopments.Count > 0)
+                            {
+                                <span class="combat-status-label">Developments</span>
+                                @foreach (var developmentId in combat.PlayerDevelopments.OrderBy(id => id))
+                                {
+                                    <span class="combat-status-chip" title="@Session.CombatTacticEffect(developmentId)">@Session.CombatTacticName(developmentId)</span>
+                                }
+                            }
+                            @if (combat.CommittedTactics.Count > 0)
+                            {
+                                <span class="combat-status-label">Committed Tactics</span>
+                                @foreach (var tacticId in combat.CommittedTactics.OrderBy(id => id))
+                                {
+                                    <span class="combat-status-chip tactic" title="@Session.CombatTacticEffect(tacticId)">@Session.CombatTacticName(tacticId)</span>
+                                }
+                            }
+                            @foreach (var tacticId in combat.PlayerTactics.Where(id => TacticNumber(id) is 14 or 15).OrderBy(id => id))
+                            {
+                                <span class="combat-status-chip special" title="@Session.CombatTacticEffect(tacticId)">@Session.CombatTacticName(tacticId)</span>
+                            }
+                        </div>
+                    }
+
+                    @if (combat.EnemyAdvancements.Count > 0)
+                    {
+                        <div class="combat-status-strip enemy-status-strip">
+                            <span class="combat-status-label">Middelalderen</span>
+                            @foreach (var advancementId in combat.EnemyAdvancements.OrderBy(id => id))
+                            {
+                                <span class="combat-status-chip enemy" title="@Session.CombatTacticEffect(advancementId)">@Session.CombatTacticName(advancementId)</span>
+                            }
+                            @if (combat.EnemyShields > 0)
+                            {
+                                <span class="combat-status-chip enemy combat-enemy-shields" title="@($"Shields: {combat.EnemyShields}")">
+                                    @for (var shieldIndex = 0; shieldIndex < combat.EnemyShields; shieldIndex++)
+                                    {
+                                        <img src="images/tokens/shield.png" alt="" />
+                                    }
+                                </span>
+                            }
+                        </div>
+                    }
+
+                    <div class="combat-initiative" aria-label="Combat initiative">
+                        @foreach (var lane in new[] { "Priest", "Archers", "Cavalry", "Infantry", "Levy" })
+                        {
+                            <span class="@CombatInitiativeClass(lane, combat)">@lane</span>
+                        }
+                    </div>
+                </div>
+
+                <div class="combat-control-pane">
+                    @if (combat.Step == CombatStep.Setup && combat.PlayerTactics.Count > 0)
+                    {
+                        <div class="combat-tactics-panel">
+                            <h3>Tactics</h3>
+                            <p>@(combat.LockPlayerTactics ? "Finale Tactics were locked before Middelalderen revealed its Advancements." : "Commit any available Tactics before the first round. Most committed Tactics cost 1 Leadership.")</p>
+                            <div class="combat-tactic-grid">
+                                @foreach (var tacticId in combat.PlayerTactics.OrderBy(id => id))
+                                {
+                                    var number = TacticNumber(tacticId);
+                                    var isSpecial = number is 14 or 15;
+                                    var committed = combat.CommittedTactics.Contains(tacticId);
+                                    <button class="combat-tactic @(committed ? "is-committed" : string.Empty) @(isSpecial ? "is-special" : string.Empty)"
+                                            disabled="@(isSpecial || !Session.CanToggleCombatTactic(tacticId))"
+                                            @onclick="() => Session.ToggleCombatTactic(tacticId)">
+                                        <strong>@Session.CombatTacticName(tacticId)</strong>
+                                        <span>@Session.CombatTacticEffect(tacticId)</span>
+                                        <small>@(isSpecial ? "Available when its trigger occurs" : committed ? "Committed" : "Commit: 1 Leadership")</small>
+                                    </button>
+                                }
+                            </div>
+                        </div>
+                    }
+
+                    @if (combat.Step != CombatStep.Setup && combat.CommittedTactics.Count > 0)
+                    {
+                        <div class="combat-tactics-panel active-tactics-panel">
+                            <h3>Committed Tactics</h3>
+                            <p>These Tactics remain in effect for this Combat.</p>
+                            <div class="combat-tactic-grid">
+                                @foreach (var tacticId in combat.CommittedTactics.OrderBy(id => id))
+                                {
+                                    <div class="combat-tactic is-committed persistent-tactic-card">
+                                        <strong>@Session.CombatTacticName(tacticId)</strong>
+                                        <span>@Session.CombatTacticEffect(tacticId)</span>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+
+                    <div class="combat-action-panel">
+                        <div class="decision-kicker">@Session.CombatStepLabel</div>
+                        @if (!string.IsNullOrWhiteSpace(combat.CurrentUnitType) && (combat.PlayerRoll.Count > 0 || combat.EnemyRoll.Count > 0))
+                        {
+                            <div class="combat-roll-summary">
+                                <div class="combat-roll-row">
+                                    <span>Host</span>
+                                    <div class="combat-dice">
+                                        @foreach (var die in combat.PlayerRoll)
+                                        {
+                                            <i class="combat-die @(die.Hit ? "is-hit" : string.Empty) @(die.Rout ? "is-rout" : string.Empty) @(die.Rerolled ? "is-rerolled" : string.Empty)" title="@(die.Rout ? "Rout result" : die.Hit ? "Hit" : null)">@die.Value</i>
+                                        }
+                                        @if (combat.PlayerRoll.Count == 0)
+                                        {
+                                            <em>no dice</em>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="combat-roll-row">
+                                    <span>Enemy</span>
+                                    <div class="combat-dice">
+                                        @foreach (var die in combat.EnemyRoll)
+                                        {
+                                            <i class="combat-die @(die.Hit ? "is-hit" : string.Empty) @(die.Rout ? "is-rout" : string.Empty)" title="@(die.Rout ? "Rout result" : die.Hit ? "Hit" : null)">@die.Value</i>
+                                        }
+                                        @if (combat.EnemyRoll.Count == 0)
+                                        {
+                                            <em>no dice</em>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        @if (combat.ChoiceTargetSide is "enemy" or "player")
+                        {
+                            <div class="combat-casualty-target-banner @combat.ChoiceTargetSide">
+                                <strong>@(combat.ChoiceTargetSide == "enemy" ? "ENEMY HOST" : "YOUR HOST")</strong>
+                                <span>Choose the casualty from this force.</span>
+                            </div>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(combat.ChoicePrompt))
+                        {
+                            <p>@combat.ChoicePrompt</p>
+                        }
+
+                        @if (combat.Choices.Count > 0)
+                        {
+                            <div class="decision-options combat-choice-options">
+                                @foreach (var choice in combat.Choices)
+                                {
+                                    <button @onclick="() => Session.ResolveCombatChoice(choice.Id)">
+                                        <strong>@choice.Label</strong>
+                                        @if (!string.IsNullOrWhiteSpace(choice.Detail))
+                                        {
+                                            <span>@choice.Detail</span>
+                                        }
+                                    </button>
+                                }
+                            </div>
+                        }
+                        else if (combat.AwaitingClose)
+                        {
+                            <button class="combat-primary" @onclick="Session.CloseCombat">@(combat.IsFinale ? "Resolve Finale" : combat.IsTest ? "End Test Combat" : combat.Outcome == "Lost" ? "End Campaign" : "Return to the Chronicle")</button>
+                        }
+                        else
+                        {
+                            <button class="combat-primary" @onclick="Session.AdvanceCombat">@Session.CombatAdvanceLabel</button>
+                        }
+                    </div>
+
+                    <div class="combat-log-panel">
+                        <h3>Battle Chronicle</h3>
+                        <div class="combat-log">
+                            @foreach (var item in combat.Log)
+                            {
+                                <p class="@(item.Subdued ? "subdued" : string.Empty)">@item.Text</p>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        }
+    </div>
+}
+
+@code {
+    private const string AppVersion = "v0.5.0.13";
+
+    // Presentation coordinates only, expressed as fixed pixel offsets from
+    // the center of the play-area panel. This keeps the physical relationship
+    // between pieces constant as the browser width changes. Adjacent Clearings
+    // and Terrain overlap slightly, like the tabletop layout. Sequence is
+    // persistent across Supply Line Consolidation so trimming the rear of
+    // the route does not shift the next turn onto the wrong piece.
+    private static readonly (int X, int Y, int Rotation)[] Positions =
+    [
+        // Closed two-row route. Even sequence positions are Clearings, odd
+        // positions are Terrain. Positions 9 and 19 are the vertical Terrain
+        // cards that turn the road at the right and left edges.
+        (-240, 44, 0),
+        (-193, 44, 0),
+        (-146, 44, 0),
+        (-99, 44, 0),
+        (-52, 44, 0),
+        (-5, 44, 0),
+        (42, 44, 0),
+        (89, 44, 0),
+        (136, 44, 0),
+        (136, 91, 90),
+        (136, 138, 0),
+        (89, 138, 0),
+        (42, 138, 0),
+        (-5, 138, 0),
+        (-52, 138, 0),
+        (-99, 138, 0),
+        (-146, 138, 0),
+        (-193, 138, 0),
+        (-240, 138, 0),
+        (-240, 91, 90)
+    ];
+
+    private bool _debugMode;
+    private string? _debugSelectedCardId;
+    private int _debugTapCount;
+    private DateTime _debugTapWindowStart = DateTime.MinValue;
+
+    private IEnumerable<CampCardState> DebugSceneEchoCards => Catalog
+        .GetCampCards(includeOptional: true)
+        .Where(c => c.CardType is "Scene" or "Echo")
+        .OrderBy(c => c.CardType == "Scene" ? 0 : 1)
+        .ThenBy(c => c.CardNum ?? int.MaxValue)
+        .ThenBy(c => c.EchoPool)
+        .ThenBy(c => c.EchoNum ?? int.MaxValue)
+        .ThenBy(c => c.Title);
+
+    private static string DebugCardLabel(CampCardState card)
+    {
+        var identity = card.CardType == "Scene"
+            ? $"Scene {card.CardNum?.ToString() ?? "?"}"
+            : $"Echo {card.EchoPool}-{card.EchoNum?.ToString("00") ?? "??"}";
+        return $"{card.Title} — {identity} [{card.Id}]";
+    }
+
+    private void SimulateDebugCard()
+    {
+        if (!string.IsNullOrWhiteSpace(_debugSelectedCardId))
+            Session.SimulateCampCard(_debugSelectedCardId);
+    }
+
+    private void HandleVersionTap()
+    {
+        var now = DateTime.UtcNow;
+        if (_debugTapCount == 0 || now - _debugTapWindowStart > TimeSpan.FromSeconds(3))
+        {
+            _debugTapCount = 1;
+            _debugTapWindowStart = now;
+            return;
+        }
+
+        _debugTapCount++;
+        if (_debugTapCount < 5)
+            return;
+
+        _debugMode = !_debugMode;
+        _debugTapCount = 0;
+        _debugTapWindowStart = DateTime.MinValue;
+    }
+
+    private void ExitDebugMode()
+    {
+        _debugMode = false;
+        _debugTapCount = 0;
+        _debugTapWindowStart = DateTime.MinValue;
+    }
+
+    private bool _showResumePrompt;
+    private bool _showContentSetup;
+    private bool _includeSeasons;
+    private bool _includeStrangers;
+    private bool _saveCheckComplete;
+    private string? _saveStatus;
+    private string? _resumeError;
+    private object? _minimizedCombat;
+    private bool _finaleSummaryDismissed;
+    private Guid? _archivedGameLogId;
+    private string? _gameLogFilename;
+    private bool _gameLogDirty;
+    private string SaveButtonTitle => Session.CanSaveGame ? "Save this campaign in this browser." : Session.SaveUnavailableReason;
+    private bool CombatInspectionMode => Session.CombatVisible && Session.Combat is { } combat && IsCombatMinimized(combat);
+
+    protected override async Task OnInitializedAsync()
+    {
+        Session.Changed += OnSessionChanged;
+        await Catalog.InitializeAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && !_saveCheckComplete)
+        {
+            _saveCheckComplete = true;
+            try
+            {
+                _showResumePrompt = await JS.InvokeAsync<bool>("wcSave.hasSave");
+                _showContentSetup = !_showResumePrompt;
+            }
+            catch
+            {
+                _showResumePrompt = false;
+                _showContentSetup = true;
+            }
+
+            await InvokeAsync(StateHasChanged);
+        }
+
+        if (Session.GameEndedUtc is not null && _archivedGameLogId != Session.GameLogId)
+            await ArchiveCompletedGameLogAsync();
+        else if (Session.GameEndedUtc is null && _gameLogDirty && !_showResumePrompt && !_showContentSetup)
+            await PersistActiveGameLogAsync();
+    }
+
+    private async Task SaveGameAsync()
+    {
+        if (!Session.CanSaveGame)
+            return;
+
+        try
+        {
+            var json = Session.CreateSaveJson();
+            await JS.InvokeVoidAsync("wcSave.save", json);
+            _saveStatus = "Saved";
+        }
+        catch
+        {
+            _saveStatus = "Save failed";
+        }
+    }
+
+    private async Task ContinueSavedGameAsync()
+    {
+        _resumeError = null;
+        try
+        {
+            var json = await JS.InvokeAsync<string?>("wcSave.load");
+            if (!string.IsNullOrWhiteSpace(json) && Session.TryRestoreSaveJson(json, Catalog))
+            {
+                _showResumePrompt = false;
+                _showContentSetup = false;
+                _saveStatus = "Save loaded";
+                return;
+            }
+
+            _resumeError = "That save could not be restored. You can start a new campaign instead.";
+        }
+        catch
+        {
+            _resumeError = "That save could not be restored. You can start a new campaign instead.";
+        }
+    }
+
+    private async Task StartFreshGameAsync()
+    {
+        await JS.InvokeVoidAsync("wcSave.clear");
+        await JS.InvokeVoidAsync("wcGameLog.clearActive");
+        _showResumePrompt = false;
+        _showContentSetup = true;
+        _includeSeasons = false;
+        _includeStrangers = false;
+        _saveStatus = null;
+        _resumeError = null;
+        _archivedGameLogId = null;
+        _gameLogFilename = null;
+    }
+
+    private async Task StartNewGameFromDefeatAsync()
+    {
+        // Make one final archive attempt before leaving the completed campaign.
+        if (Session.GameEndedUtc is not null && _archivedGameLogId != Session.GameLogId)
+            await ArchiveCompletedGameLogAsync();
+
+        // Clear only resumable campaign state, then return to content selection.
+        await JS.InvokeVoidAsync("wcSave.clear");
+        await JS.InvokeVoidAsync("wcGameLog.clearActive");
+        _showResumePrompt = false;
+        _showContentSetup = true;
+        _includeSeasons = false;
+        _includeStrangers = false;
+        _saveStatus = null;
+        _resumeError = null;
+        _archivedGameLogId = null;
+        _gameLogFilename = null;
+        _finaleSummaryDismissed = false;
+    }
+
+    private void BeginNewChronicle()
+    {
+        var sets = new List<string> { "Base" };
+        if (_includeSeasons)
+            sets.Add("SitA");
+        if (_includeStrangers)
+            sets.Add("SiaSL");
+
+        Session.StartNewGame(Catalog, sets);
+        _gameLogDirty = true;
+        _archivedGameLogId = null;
+        _gameLogFilename = null;
+        _finaleSummaryDismissed = false;
+        _showContentSetup = false;
+        _saveStatus = null;
+        _resumeError = null;
+    }
+
+    private async Task PersistActiveGameLogAsync()
+    {
+        _gameLogDirty = false;
+        try
+        {
+            var json = Session.CreateGameLogJson(AppVersion);
+            await JS.InvokeVoidAsync("wcGameLog.saveActive", json);
+        }
+        catch
+        {
+            // Logging is best-effort and must never interrupt play.
+        }
+    }
+
+    private async Task ArchiveCompletedGameLogAsync()
+    {
+        if (Session.GameEndedUtc is null || _archivedGameLogId == Session.GameLogId)
+            return;
+
+        var json = Session.CreateGameLogJson(AppVersion);
+        var fileSaved = false;
+
+        try
+        {
+            // The real playtest archive is a JSON file on disk.
+            _gameLogFilename = await GameLogFiles.SaveCompletedGameAsync(json, Session.GameEndedUtc.Value);
+            fileSaved = true;
+        }
+        catch
+        {
+            // Filesystem logging is best-effort and must never interrupt play.
+        }
+
+        try
+        {
+            // Browser storage remains a redundant backup and supports manual download.
+            var browserFilename = await JS.InvokeAsync<string>("wcGameLog.archive", json);
+            if (string.IsNullOrWhiteSpace(_gameLogFilename))
+                _gameLogFilename = browserFilename;
+        }
+        catch
+        {
+            // Browser backup is also best-effort.
+        }
+
+        // Once either automatic archive path succeeds, do not create duplicate files
+        // on later renders. If both fail, leave this unset so a later render retries.
+        if (fileSaved || !string.IsNullOrWhiteSpace(_gameLogFilename))
+            _archivedGameLogId = Session.GameLogId;
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task DownloadGameLogAsync()
+    {
+        try
+        {
+            var json = Session.CreateGameLogJson(AppVersion);
+            if (string.IsNullOrWhiteSpace(_gameLogFilename))
+                _gameLogFilename = await JS.InvokeAsync<string>("wcGameLog.archive", json);
+            await JS.InvokeVoidAsync("wcGameLog.download", json, _gameLogFilename);
+        }
+        catch
+        {
+            _saveStatus = "Log download failed";
+        }
+    }
+
+    private void CloseFinaleSummary()
+    {
+        _finaleSummaryDismissed = true;
+    }
+
+    private void OpenFinaleSummary()
+    {
+        _finaleSummaryDismissed = false;
+    }
+
+    private bool IsCombatMinimized(CombatState combat)
+        => ReferenceEquals(_minimizedCombat, combat);
+
+    private void MinimizeCombat(CombatState combat)
+    {
+        _minimizedCombat = combat;
+    }
+
+    private void MaximizeCombat()
+    {
+        _minimizedCombat = null;
+    }
+
+    private void OnSessionChanged()
+    {
+        _saveStatus = null;
+        _gameLogDirty = true;
+        if (!Session.CombatVisible || Session.Combat is null)
+            _minimizedCombat = null;
+        if (Session.Finale is not { Step: FinaleStep.Complete })
+            _finaleSummaryDismissed = false;
+        InvokeAsync(StateHasChanged);
+    }
+
+    private static string PersistentTooltip(string name) => name switch
+    {
+        "Scouting" => "When Exploring, draw 2 Terrain cards and choose 1.",
+        "Camp Steward" => "During Work, you may instead gain 1 Resource matching the adjacent Terrain or buy 1 Resource for 1 Coin less than its Market Buy value.",
+        "Academy" => "Whenever you gain Research, roll 1d6 for each Research gained. Each 4–6 grants +1 additional Research.",
+        "Market" => "During Harvest, sell up to 2 Resources purged from the Baggage Train. Market Day may also be used at a Player Controlled Settlement.",
+        "Chapel" => PriestTooltip(),
+        "Baggage Cart" => "Increases Baggage Train capacity by 2 spaces.",
+        "Firepots" => "Before the first round of Combat, you may remove Firepots and roll 3d6. Each 4+ inflicts 1 casualty as if from a Cavalry attack.",
+        "Painkiller" => "Whenever a Military Unit or Levy would be lost from any game effect, roll 1d6 for that loss. On 5–6, prevent it.",
+        "Forced March" => "While active, normal Explore costs 1 Time instead of 2.",
+        "Reign in Blood" => "While active, the Host may not Disengage from Combat.",
+        _ => name
+    };
+
+    private static string PriestTooltip()
+        => "Priest: support unit; does not count against Host limits, cannot be chosen as a Combat casualty, and does not count as a surviving unit to avoid defeat. Before the first Combat round, if exactly one Host has a Priest, that Host may Proselytize: roll 1d6; on 5–6 convert 1 enemy unit in order Levy → Infantry → Archers → Cavalry. Remove the converted unit from the current Combat; if the converting Host survives, add it afterward while respecting Host limits, otherwise remove it. Leadership cannot be spent on Proselytization. If both Hosts have Priests, they cancel and no Proselytization occurs. In Winter, after Attrition losses are determined, prevent 1 unit loss of your choice. In the Finale Resolve Check, lose 1 fewer Leadership or gain +1 additional Leadership; that extra gain may exceed the normal +3 cap.";
+
+    private string PriestHostTooltip()
+    {
+        var rules = PriestTooltip();
+        return Session.PriestSource is not null
+            && Session.PriestSource.Contains("Quietus", StringComparison.OrdinalIgnoreCase)
+            ? rules + " This Priest accompanies the Host only while the Quietus remain Allied; if a Chapel is built later, replace the Quietus Priest with the Host's own Priest."
+            : rules;
+    }
+
+    private static string RapportTooltip(TribeState tribe) => tribe.Rapport switch
+    {
+        "Allied" => $"{tribe.Name}: Allied. +2 DRM on tests related to this tribe. Its Settlements count as Controlled Settlements for Camp-card location requirements. Some Arrival and Echo effects grant additional Allied benefits.",
+        "Friendly" => $"{tribe.Name}: Friendly. +1 DRM on tests related to this tribe.",
+        "Neutral" => $"{tribe.Name}: Neutral. No Rapport DRM.",
+        "Hostile" => $"{tribe.Name}: Hostile. -1 DRM on tests related to this tribe. Hostile tribes may attack or raid and block adjacent Terrain from Harvest.",
+        _ => $"{tribe.Name}: {tribe.Rapport}."
+    };
+
+    private static MarkupString ChronicleText(ChronicleEntry entry)
+        => ChronicleMarkup(entry.Text);
+
+    private static MarkupString ChronicleChoiceText(string text)
+        => ChronicleMarkup(text);
+
+    private static MarkupString ChronicleMarkup(string? rawText)
+    {
+        var text = System.Text.Encodings.Web.HtmlEncoder.Default.Encode(rawText ?? string.Empty);
+        if (string.IsNullOrWhiteSpace(text))
+            return new MarkupString(text);
+
+        // Chronicle iconography belongs to mechanical statements, not the narrative
+        // prose around them. Iconify only action/cost sentences, then let the normal
+        // die renderer work on the same encoded string.
+        text = IconifyChronicleMechanics(text);
+
+        // HtmlEncoder may encode arithmetic operators. Match both literal and
+        // encoded forms so every Chronicle path reaches the same die renderer.
+        const string plus = @"(?:\+|&#x2B;|&#43;)";
+
+        // d10 checks stay numeric.
+        text = System.Text.RegularExpressions.Regex.Replace(
+            text,
+            @"^Winter Attrition rolls: (?<a>\d+), (?<b>\d+)",
+            m => $"Winter Attrition rolls: {NumericDieBadge(m.Groups["a"].Value)}, {NumericDieBadge(m.Groups["b"].Value)}");
+        text = System.Text.RegularExpressions.Regex.Replace(
+            text,
+            @"^Winter Attrition roll: (?<a>\d+)",
+            m => $"Winter Attrition roll: {NumericDieBadge(m.Groups["a"].Value)}");
+
+        // d3 is not rendered as a d6 face.
+        text = System.Text.RegularExpressions.Regex.Replace(
+            text,
+            @"^D3 roll: (?<a>\d+)",
+            m => $"D3 roll: {NumericDieBadge(m.Groups["a"].Value)}");
+
+        // Standard 2d6 Leadership test. The first two are primary dice; the
+        // third is the Leadership die and receives its own treatment.
+        text = System.Text.RegularExpressions.Regex.Replace(
+            text,
+            @"^Roll: (?<a>[1-6]), (?<b>[1-6]), (?<c>[1-6]) \(keep best 2\)",
+            m => $"Roll: {D6Badge(m.Groups["a"].Value)} {D6Badge(m.Groups["b"].Value)} {D6Badge(m.Groups["c"].Value, true)} (keep best 2)");
+
+        // Ordinary 2d6 tests and First Contact. These use + in the raw text,
+        // which HtmlEncoder can turn into &#x2B; before we get here.
+        text = System.Text.RegularExpressions.Regex.Replace(
+            text,
+            $@"^Roll: (?<a>[1-6]) {plus} (?<b>[1-6])",
+            m => $"Roll: {D6Badge(m.Groups["a"].Value)} + {D6Badge(m.Groups["b"].Value)}");
+        text = System.Text.RegularExpressions.Regex.Replace(
+            text,
+            $@"^First Contact roll: (?<a>[1-6]) {plus} (?<b>[1-6])",
+            m => $"First Contact roll: {D6Badge(m.Groups["a"].Value)} + {D6Badge(m.Groups["b"].Value)}");
+
+        // Single d6 breadcrumbs.
+        text = System.Text.RegularExpressions.Regex.Replace(
+            text,
+            @"^(?<prefix>Roll|Forage roll|Academy roll): (?<a>[1-6])(?=[\.,]|$)",
+            m => $"{m.Groups["prefix"].Value}: {D6Badge(m.Groups["a"].Value)}");
+
+        // Generic collections of d6 results. This catches plain lists as well
+        // as labelled per-unit rolls and prevents mixed pip/number displays.
+        if (text.StartsWith("Rolls:", StringComparison.OrdinalIgnoreCase)
+            || text.StartsWith("Academy rolls:", StringComparison.OrdinalIgnoreCase))
+        {
+            var period = text.IndexOf('.');
+            var head = period >= 0 ? text[..period] : text;
+            var tail = period >= 0 ? text[period..] : string.Empty;
+            head = System.Text.RegularExpressions.Regex.Replace(
+                head,
+                @"(?<!\d)(?<d>[1-6])(?!\d)",
+                m => D6Badge(m.Groups["d"].Value));
+            text = head + tail;
+        }
+
+        // Painkiller can report one or several d6s in prose.
+        if (text.StartsWith("Painkiller: roll ", StringComparison.OrdinalIgnoreCase))
+        {
+            var period = text.IndexOf('.');
+            var head = period >= 0 ? text[..period] : text;
+            var tail = period >= 0 ? text[period..] : string.Empty;
+            head = System.Text.RegularExpressions.Regex.Replace(
+                head,
+                @"(?<!\d)(?<d>[1-6])(?!\d)",
+                m => D6Badge(m.Groups["d"].Value));
+            text = head + tail;
+        }
+
+        // A bare die face is punctuation enough. Do not leave a stray period
+        // hanging after lines such as "Roll: [d6]".
+        text = System.Text.RegularExpressions.Regex.Replace(
+            text,
+            @"(</span>)\.$",
+            "$1");
+
+        // Once a Chronicle line contains a rendered die, let one shared flex
+        // row control the vertical relationship between labels, die faces,
+        // operators, DRM text, and totals. This avoids browser text-baseline
+        // behavior pulling the die boxes below the surrounding type.
+        if (text.Contains("chronicle-die", StringComparison.Ordinal))
+            text = $"<span class='chronicle-roll-line'>{text}</span>";
+
+        return new MarkupString(text);
+    }
+
+    private static string IconifyChronicleMechanics(string text)
+    {
+        // Mechanical clauses are deliberately scoped to sentence/line starts so prose
+        // such as "the villagers speak of Food" remains untouched. If a narrative
+        // sentence ends with "Gain 1 Coin...", only that following Gain sentence is
+        // iconified.
+        const string actionStart = @"(?:^|(?<=[.!?]\s)|(?<=\n))";
+        const string actionVerb = @"(?:Gain|Gains|Lose|Loses|Pay|Pays|Spend|Spends|Receive|Receives|Collect|Collects|Recruit|Recruits|Remove|Removes|Discard|Discards|Return|Returns|Add|Adds|Prevent|Prevents|Recover|Recovers|Restore|Restores|Suffer|Suffers)";
+
+        text = System.Text.RegularExpressions.Regex.Replace(
+            text,
+            $@"(?<lead>{actionStart}{actionVerb}\b)(?<body>[^.!?\n]*)",
+            m => m.Groups["lead"].Value + IconifyChronicleMechanicBody(m.Groups["body"].Value),
+            System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+
+        // Costs and Tributes are often shown as compact designer-facing statements
+        // rather than verb sentences, but they are still mechanical information.
+        text = System.Text.RegularExpressions.Regex.Replace(
+            text,
+            $@"(?<lead>{actionStart}(?:Cost|Tribute):)(?<body>[^.!?\n]*)",
+            m => m.Groups["lead"].Value + IconifyChronicleMechanicBody(m.Groups["body"].Value),
+            System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+
+        return text;
+    }
+
+    private static string IconifyChronicleMechanicBody(string body)
+    {
+        return System.Text.RegularExpressions.Regex.Replace(
+            body,
+            @"(?<qty>(?:\+|&#x2B;|&#43;)?\d+)\s+(?<thing>Coins?|Leadership|Food|Wood|Stone|Research(?:\s+Tokens?)?|Shields?|Archers?|Cavalry|Infantry|Levy|Mercenary|Mercenaries|Hedge\s+Knights?)\b",
+            m => ChronicleMechanicAmount(m.Groups["qty"].Value, m.Groups["thing"].Value),
+            System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+    }
+
+    private static string ChronicleMechanicAmount(string quantity, string thing)
+    {
+        var number = quantity.StartsWith("&#x2B;", StringComparison.OrdinalIgnoreCase)
+            ? quantity[6..]
+            : quantity.StartsWith("&#43;", StringComparison.OrdinalIgnoreCase)
+                ? quantity[5..]
+                : quantity.TrimStart('+');
+        var key = thing.Trim().ToLowerInvariant();
+
+        string? imagePath = key switch
+        {
+            "coin" or "coins" => "images/tokens/coin.png",
+            "food" => "images/tokens/food.png",
+            "wood" => "images/tokens/wood.png",
+            "stone" => "images/tokens/stone.png",
+            "research" or "research token" or "research tokens" => "images/tokens/research.png",
+            "shield" or "shields" => "images/tokens/shield.png",
+            "archer" or "archers" => "images/units/player-archer.png",
+            "cavalry" => "images/units/player-cavalry.png",
+            "infantry" => "images/units/player-infantry.png",
+            "mercenary" or "mercenaries" => "images/units/player-mercenary.png",
+            "hedge knight" or "hedge knights" => "images/units/player-hedge-knight.png",
+            _ => null
+        };
+
+        var label = key switch
+        {
+            "coins" => "Coin",
+            "research token" or "research tokens" => "Research",
+            "shields" => "Shield",
+            "archers" => "Archer",
+            "mercenaries" => "Mercenary",
+            "hedge knights" => "Hedge Knight",
+            _ => char.ToUpperInvariant(key[0]) + key[1..]
+        };
+
+        if (key == "leadership")
+            return $"<span class='chronicle-mech-amount' title='Leadership' aria-label='{number} Leadership'><span class='chronicle-mech-number'>{number}</span><i class='chronicle-mech-icon chronicle-leadership-icon' aria-hidden='true'></i></span>";
+
+        if (key == "levy")
+            return $"<span class='chronicle-mech-amount' title='Levy' aria-label='{number} Levy'><span class='chronicle-mech-number'>{number}</span><i class='chronicle-mech-icon chronicle-levy-icon' aria-hidden='true'></i></span>";
+
+        if (imagePath is null)
+            return $"{number} {thing}";
+
+        return $"<span class='chronicle-mech-amount' title='{label}' aria-label='{number} {label}'><span class='chronicle-mech-number'>{number}</span><img class='chronicle-mech-icon' src='{imagePath}' alt='' aria-hidden='true' /></span>";
+    }
+
+    private static string NumericDieBadge(string value, bool leadership = false)
+    {
+        var cssClass = leadership ? "chronicle-die leadership-die" : "chronicle-die";
+        var titleAttribute = leadership ? " title='Leadership die'" : string.Empty;
+        return $"<span class='{cssClass}'{titleAttribute}>{value}</span>";
+    }
+
+    private static string D6Badge(string value, bool leadership = false)
+    {
+        if (!int.TryParse(value, out var die) || die is < 1 or > 6)
+            return NumericDieBadge(value, leadership);
+
+        var positions = die switch
+        {
+            1 => new[] { 5 },
+            2 => new[] { 1, 9 },
+            3 => new[] { 1, 5, 9 },
+            4 => new[] { 1, 3, 7, 9 },
+            5 => new[] { 1, 3, 5, 7, 9 },
+            6 => new[] { 1, 3, 4, 6, 7, 9 },
+            _ => Array.Empty<int>()
+        };
+
+        var pips = string.Concat(positions.Select(position => $"<i class='chronicle-pip p{position}'></i>"));
+        var cssClass = leadership ? "chronicle-die d6-die leadership-die" : "chronicle-die d6-die";
+        var title = leadership ? $"Leadership die: {die}" : $"d6: {die}";
+        return $"<span class='{cssClass}' title='{title}' aria-label='{title}'>{pips}</span>";
+    }
+
+    private static string? CampKeywordIconPath(CampCardState card) => card.CardType switch
+    {
+        "Scene" => "images/card-ui/wc_icon_scene.png",
+        "Echo" when string.Equals(card.Keyword, "Hostile", StringComparison.OrdinalIgnoreCase) => "images/card-ui/wc_icon_hostile.png",
+        "Echo" => "images/card-ui/wc_icon_echo.png",
+        _ when string.Equals(card.Keyword, "Civic", StringComparison.OrdinalIgnoreCase) => "images/card-ui/wc_icon_civic.png",
+        _ when string.Equals(card.Keyword, "Field", StringComparison.OrdinalIgnoreCase) => "images/card-ui/wc_icon_field.png",
+        _ => null
+    };
+
+    private static string? CampLocationIconPath(string location) => location switch
+    {
+        "Any" => "images/card-ui/wc_icon_any.png",
+        "Controlled" => "images/card-ui/wc_icon_controlled.png",
+        "Barbarian" => "images/card-ui/wc_icon_barbarian.png",
+        "Both" => "images/card-ui/wc_icon_both.png",
+        _ => null
+    };
+
+    private string? ChronicleIconPath(ChronicleEntry entry)
+    {
+        if (entry.Calendar.Contains("• Scene", StringComparison.OrdinalIgnoreCase))
+            return "images/card-ui/wc_icon_scene.png";
+        if (!entry.Calendar.Contains("• Echo", StringComparison.OrdinalIgnoreCase))
+            return null;
+
+        var echo = Catalog.GetCampCards(includeOptional: true)
+            .FirstOrDefault(c => string.Equals(c.CardType, "Echo", StringComparison.OrdinalIgnoreCase)
+                && string.Equals(c.Title, entry.Heading, StringComparison.OrdinalIgnoreCase));
+        return echo is not null && string.Equals(echo.Keyword, "Hostile", StringComparison.OrdinalIgnoreCase)
+            ? "images/card-ui/wc_icon_hostile.png"
+            : "images/card-ui/wc_icon_echo.png";
+    }
+
+    private bool IsDepleted(int index)
+    {
+        if (index < 0 || index >= Session.PlayArea.Count)
+            return false;
+
+        var element = Session.PlayArea[index];
+        if (element.Kind != PlayAreaKind.Terrain)
+            return false;
+
+        bool hostileBefore = index > 0
+            && Session.PlayArea[index - 1].Kind == PlayAreaKind.Clearing
+            && Session.PlayArea[index - 1].IsHostile;
+
+        bool hostileAfter = index < Session.PlayArea.Count - 1
+            && Session.PlayArea[index + 1].Kind == PlayAreaKind.Clearing
+            && Session.PlayArea[index + 1].IsHostile;
+
+        return element.IsDepleted || hostileBefore || hostileAfter;
+    }
+
+    private static string? ResourceTokenPath(string resource) => resource.ToLowerInvariant() switch
+    {
+        "food" => "images/tokens/food.png",
+        "wood" => "images/tokens/wood.png",
+        "stone" => "images/tokens/stone.png",
+        "research" => "images/tokens/research.png",
+        "coin" => "images/tokens/coin.png",
+        _ => null
+    };
+
+    private static string? PersistentTokenPath(string token) => token switch
+    {
+        "Firepots" => "images/tokens/firepots.png",
+        "Painkiller" => "images/tokens/painkiller.png",
+        "ForcedMarch" or "Forced March" => "images/tokens/forced-march.png",
+        "ReignInBlood" or "Reign in Blood" => "images/tokens/reign-in-blood.png",
+        _ => null
+    };
+
+    private static bool IsCombatTokenReminder(string token)
+        => token is "Firepots" or "Painkiller" or "ReignInBlood" or "Reign in Blood";
+
+    private static string? BaggageTokenPath(BaggageSlot slot) =>
+        string.IsNullOrWhiteSpace(slot.Contents)
+            ? null
+            : ResourceTokenPath(slot.Contents) ?? PersistentTokenPath(slot.Contents);
+
+    private static string BaggageLabel(BaggageSlot slot)
+    {
+        if (string.IsNullOrWhiteSpace(slot.Contents))
+            return "Empty";
+
+        if (string.Equals(slot.Contents, "Food", StringComparison.OrdinalIgnoreCase))
+            return $"Food ({slot.Quantity})";
+
+        return slot.Contents;
+    }
+
+    private static string PieceClass(PlayAreaElement element)
+    {
+        if (element.Kind == PlayAreaKind.Clearing)
+            return $"clearing-piece {(element.IsHostile ? "hostile-clearing" : string.Empty)}";
+
+        return element.Terrain switch
+        {
+            TerrainType.Plains => "terrain-piece plains-piece",
+            TerrainType.Forest => "terrain-piece forest-piece",
+            TerrainType.Mountain => "terrain-piece mountain-piece",
+            _ => "terrain-piece"
+        };
+    }
+
+
+    private static string ControlClass(PlayAreaElement element)
+    {
+        var controller = element.Controller?.Trim().ToLowerInvariant();
+        var ownerClass = controller switch
+        {
+            "player" => "player",
+            "sun-touched" => "suntouched",
+            "nightstone" => "nightstone",
+            "pale hands" => "palehands",
+            "quietus" => "quietus",
+            _ => "unknown-control"
+        };
+
+        return element.IsHostile ? $"{ownerClass} hostile" : ownerClass;
+    }
+
+    private static string ControlLabel(PlayAreaElement element)
+    {
+        return element.Controller?.Trim().ToLowerInvariant() switch
+        {
+            "player" => string.Empty,
+            "sun-touched" => "ST",
+            "nightstone" => "NS",
+            "pale hands" => "PH",
+            "quietus" => "TQ",
+            _ => "?"
+        };
+    }
+
+    private static string ControlAria(PlayAreaElement element)
+    {
+        var state = element.IsHostile ? ", hostile" : string.Empty;
+        return element.Controller == "Player"
+            ? "Player controlled clearing"
+            : $"Controlled by {element.Controller}{state}";
+    }
+
+    private static string PieceTitle(PlayAreaElement element)
+    {
+        if (element.Kind == PlayAreaKind.Clearing)
+        {
+            var parts = new List<string> { "Clearing" };
+            if (element.HasBarbarianIcon) parts.Add("Barbarian icon");
+            if (!string.IsNullOrWhiteSpace(element.Controller)) parts.Add($"Controlled by {element.Controller}");
+            if (element.IsHostile) parts.Add("Hostile");
+            if (element.IsHostLocation) parts.Add("Host location");
+            return string.Join(" · ", parts);
+        }
+
+        var terrainParts = new List<string> { element.Terrain.ToString() };
+        if (element.IsDepleted) terrainParts.Add("Depleted");
+        if (element.BonusFood > 0) terrainParts.Add($"Bonus Food {element.BonusFood}");
+        return string.Join(" · ", terrainParts);
+    }
+
+    private static string PieceStyle(int index)
+    {
+        var p = Positions[index % Positions.Length];
+        return $"left:calc(50% + {p.X}px); top:{p.Y}px; --piece-rotation:{p.Rotation}deg;";
+    }
+
+    private static string BattleLaneClass(string type) => type.ToLowerInvariant();
+
+    private static string BattlePieceStackStyle(int index, int count)
+    {
+        // Fan pieces diagonally like a physical stack. The total spread is capped so even
+        // large unit groups remain inside their printed battle-board lane while every
+        // token still exposes enough of itself to be counted.
+        if (count <= 1)
+        {
+            return "left:50%;top:50%;z-index:1;";
+        }
+
+        var midpoint = (count - 1) / 2.0;
+        var horizontalStep = Math.Min(13.0, 62.0 / (count - 1));
+        var verticalStep = Math.Min(8.0, 32.0 / (count - 1));
+        var left = 50.0 + ((index - midpoint) * horizontalStep);
+        var top = 50.0 + ((index - midpoint) * verticalStep);
+
+        return FormattableString.Invariant($"left:{left:0.###}%;top:{top:0.###}%;z-index:{index + 1};");
+    }
+
+    private static string BattleUnitClass(string type) => type switch
+    {
+        "Archers" => "unit-archer",
+        "Cavalry" => "unit-cavalry",
+        "Infantry" => "unit-infantry",
+        "Levy" => "unit-levy",
+        _ => "unit-infantry"
+    };
+
+    private sealed record BattlePiece(string? ImagePath, string CssClass, string Title);
+
+    private IEnumerable<BattlePiece> BattlePieces(string side, string type, CombatState combat)
+    {
+        var count = side == "enemy" ? combat.EnemyUnits[type] : combat.PlayerUnits[type];
+        if (count <= 0)
+            yield break;
+
+        if (string.Equals(type, "Levy", StringComparison.OrdinalIgnoreCase))
+        {
+            var factionClass = side == "player" ? "levy-player" : $"levy-{EnemyFactionKey(combat)}";
+            for (var i = 0; i < count; i++)
+                yield return new(null, $"unit-levy {factionClass}", side == "player" ? "Player Levy" : $"{combat.EnemyName} Levy");
+            yield break;
+        }
+
+        if (side == "player")
+        {
+            var specialType = type switch
+            {
+                "Infantry" => "Mercenaries",
+                "Cavalry" => "Hedge Knights",
+                _ => null
+            };
+            var specialSurvivors = specialType is null ? 0 : PlayerSpecialSurvivors(type, specialType, combat);
+            var regularCount = Math.Max(0, count - specialSurvivors);
+            var regularPath = PlayerUnitTokenPath(type);
+
+            for (var i = 0; i < regularCount; i++)
+                yield return new(regularPath, UnitArtClass(type), $"Player {type}");
+
+            if (specialType is not null)
+            {
+                var specialPath = PlayerUnitTokenPath(specialType);
+                for (var i = 0; i < specialSurvivors; i++)
+                    yield return new(specialPath, UnitArtClass(specialType), specialType == "Mercenaries" ? "Mercenary Infantry" : "Hedge Knight Cavalry");
+            }
+            yield break;
+        }
+
+        var enemyPath = EnemyUnitTokenPath(combat, type);
+        if (enemyPath is not null)
+        {
+            for (var i = 0; i < count; i++)
+                yield return new(enemyPath, UnitArtClass(type), $"{combat.EnemyName} {type}");
+        }
+        else
+        {
+            for (var i = 0; i < count; i++)
+                yield return new(null, BattleUnitClass(type), $"{combat.EnemyName} {type}");
+        }
+    }
+
+    private int PlayerSpecialSurvivors(string combatType, string specialType, CombatState combat)
+    {
+        if (combat.IsTest)
+            return 0;
+
+        var initialSpecial = Session.Host
+            .FirstOrDefault(u => string.Equals(u.Type, specialType, StringComparison.OrdinalIgnoreCase))?.Count ?? 0;
+        if (initialSpecial <= 0)
+            return 0;
+
+        var initialTotal = combat.InitialPlayerUnits.TryGetValue(combatType, out var initial) ? initial : 0;
+        var currentTotal = combat.PlayerUnits.TryGetValue(combatType, out var current) ? current : 0;
+        var losses = Math.Max(0, initialTotal - currentTotal);
+        return Math.Max(0, initialSpecial - losses);
+    }
+
+    private static string? PlayerUnitTokenPath(string type) => type switch
+    {
+        "Archers" => "images/units/player-archer.png",
+        "Cavalry" => "images/units/player-cavalry.png",
+        "Infantry" => "images/units/player-infantry.png",
+        "Mercenaries" => "images/units/player-mercenary.png",
+        "Hedge Knights" => "images/units/player-hedge-knight.png",
+        _ => null
+    };
+
+    private static string UnitArtClass(string type) => type switch
+    {
+        "Archers" => "unit-art-archer",
+        "Cavalry" => "unit-art-cavalry",
+        "Infantry" => "unit-art-infantry",
+        "Mercenaries" => "unit-art-mercenary",
+        "Hedge Knights" => "unit-art-hedge",
+        _ => "unit-art-infantry"
+    };
+
+    private static string EnemyFactionKey(CombatState combat)
+    {
+        var label = $"{combat.EnemyName} {combat.SourceLabel}".ToLowerInvariant();
+        if (label.Contains("middelalderen")) return "middelalderen";
+        if (label.Contains("nightstone")) return "nightstone";
+        if (label.Contains("pale hands") || label.Contains("palehands")) return "palehands";
+        if (label.Contains("sun-touched") || label.Contains("sun touched") || label.Contains("suntouched")) return "suntouched";
+        if (label.Contains("quietus")) return "quietus";
+        return "generic";
+    }
+
+    private static string? EnemyUnitTokenPath(CombatState combat, string type)
+    {
+        var faction = EnemyFactionKey(combat);
+        if (faction == "generic")
+            return null;
+
+        var unit = type switch
+        {
+            "Archers" => "archer",
+            "Cavalry" => "cavalry",
+            "Infantry" => "infantry",
+            _ => null
+        };
+        return unit is null ? null : $"images/units/{faction}-{unit}.png";
+    }
+
+    private static string CombatInitiativeClass(string lane, CombatState combat)
+    {
+        var active = lane switch
+        {
+            "Priest" => combat.Step == CombatStep.Priest,
+            "Archers" => string.Equals(combat.CurrentUnitType, "Archers", StringComparison.OrdinalIgnoreCase)
+                || combat.Step == CombatStep.Archers,
+            "Cavalry" => string.Equals(combat.CurrentUnitType, "Cavalry", StringComparison.OrdinalIgnoreCase)
+                || combat.Step == CombatStep.Cavalry,
+            "Infantry" => string.Equals(combat.CurrentUnitType, "Infantry", StringComparison.OrdinalIgnoreCase)
+                || combat.Step == CombatStep.Infantry,
+            "Levy" => string.Equals(combat.CurrentUnitType, "Levy", StringComparison.OrdinalIgnoreCase)
+                || combat.Step == CombatStep.Levy,
+            _ => false
+        };
+        return active ? "is-active" : string.Empty;
+    }
+
+    private static string FinaleStepLabel(FinaleStep step) => step switch
+    {
+        FinaleStep.ResolveReady => "Host Resolve Check",
+        FinaleStep.ResolveChoose => "Choose Resolve Result",
+        FinaleStep.DeployHost => "Deploy Your Host",
+        FinaleStep.RevealMiddelalderen => "Middelalderen Setup",
+        FinaleStep.Combat => "Final Combat",
+        FinaleStep.Complete => "Finale Complete",
+        _ => "Finale"
+    };
+
+    private static int TacticNumber(string id)
+    {
+        var digits = new string(id.Where(char.IsDigit).ToArray());
+        return int.TryParse(digits, out var number) ? number : 0;
+    }
+
+    public void Dispose()
+    {
+        Session.Changed -= OnSessionChanged;
+    }
+}

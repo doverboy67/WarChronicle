@@ -1,0 +1,4 @@
+# Local War Chronicle playtest logs
+WarChronicle.Web/GameLogs/*.json
+.pages-publish/
+public/
