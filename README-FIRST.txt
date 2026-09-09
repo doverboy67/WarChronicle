@@ -1,3 +1,32 @@
+War Chronicle Browser Update 0516
+
+Update 0516 (v0.5.0.16):
+- Refreshed Camp, Explore, and Arrival card data from the revised primary workbook tabs in War Chronicle Master(5).xlsx. CardData and EventFlow were treated as derived/stale sources and reconciled where primary-card mechanics changed.
+- Commission Study now costs 1 Coin.
+- Drill the Host now costs 1 Leadership with no Coin premium.
+- Work preserves the established Baggage repair option and now also shows the Camp Steward choices from the primary Camp card.
+- Preserved Raise Local Levies at 1 Leadership + 1 Food because that cost is explicit in the primary card Effect text even though its legacy Cost cell still lists only 1 Food.
+- Rat Salad now works as written: lose 1 Food unless Camp Steward succeeds on the 7+ avoidance test; without Camp Steward, the Food loss is automatic.
+- Roaming Nomads now buys 1 Food for current Market Buy value -1 Coin.
+- The Timbermen's Guild now buys 1 Wood for current Market Buy value -1 Coin rather than a fixed 2 Coin.
+- Caravan Remains now grants 1 Leadership when the Host chooses not to loot.
+- Arrival card text was refreshed from all 20 revised primary Arrival cards. The Last Bell's Take the Relic success and The Candle Toll's Pocket the Candle Silver success now grant the added Leadership shown in the workbook.
+- Arrival Attack summaries reflect the universal +1 Leadership Combat-victory rule while the engine still awards that Leadership only once, separately from card-specific rewards.
+- Added generic discounted-Market-buy support to EventFlow so card effects can key off the live Market Buy value instead of a fixed Coin amount.
+- All Update 0515 rules remain, including +1 Leadership for every successful non-test Combat, Forage succeeding on 4-6, Explore-combat return-context handling, and GitHub Pages noindex/nofollow.
+- WarChronicle.Web and WarChronicle.Pages remain synchronized and can be promoted to GitHub from this same package.
+
+War Chronicle Browser Update 0515
+
+Update 0515 (v0.5.0.15):
+- Fixed Combat return context for Explore encounters. Disengaging from Combat triggered during Explore now completes that Explore encounter and proceeds to the Clearing reveal instead of incorrectly starting a second Explore.
+- Combat disengage messaging is now context-aware: Explore Combat points back to the Clearing, Arrival Combat indicates Forced Mobilization, and other contexts use neutral wording.
+- Every successful non-test Combat now awards +1 Leadership, including forced Combat. This is additive to any card-specific victory/Attack reward. The reward is recorded in both the Chronicle and detailed Battle log.
+- Vacant-Clearing Forage now succeeds on 4-6 instead of 5-6; the player-facing Forage prompt has been updated to match.
+- Added a noindex/nofollow robots meta directive to the GitHub Pages host so compliant search engines are asked not to index the playtest site. The site remains publicly accessible to anyone with the URL.
+- Both WarChronicle.Web (local InteractiveServer) and WarChronicle.Pages (GitHub Pages/WebAssembly) are included and synchronized for these gameplay changes.
+- The revised Camp/Explore/Arrival spreadsheet edits are not included in this build because no newer workbook was supplied with this update.
+
 War Chronicle Browser Update 0514 - GitHub Pages Trial
 
 Update 0514 (v0.5.0.14 Pages build):

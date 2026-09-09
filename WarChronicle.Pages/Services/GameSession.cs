@@ -2649,7 +2649,7 @@ public sealed partial class GameSession
                     "arrival:forage",
                     "Forage",
                     forageUnavailable is null
-                        ? "Advance 1 Time. On 5–6, gain 1 Resource matching the adjacent Terrain."
+                        ? "Advance 1 Time. On 4–6, gain 1 Resource matching the adjacent Terrain."
                         : $"Unavailable: {forageUnavailable}",
                     forageUnavailable is not null),
                 new("arrival:continue", "Continue", "Proceed to Camp without foraging.")
@@ -2715,7 +2715,7 @@ public sealed partial class GameSession
             var result = Random.Shared.Next(1, 7);
             _logger.LogInformation("Forage roll: {Result}.", result);
             AddSystemText($"Forage roll: {result}.");
-            if (result >= 5)
+            if (result >= 4)
             {
                 var resource = CurrentExploreTerrain switch
                 {
@@ -4249,7 +4249,7 @@ public sealed partial class GameSession
                     PresentCampStewardBuy(next);
                     return false;
                 }
-                MarketBuy(target, ToInt(value));
+                MarketBuy(target, ToInt(value), FlagInt(flags, "CoinModifier", 0));
                 break;
             case "MarketSell":
                 MarketSell(target, ToInt(value));
@@ -5538,13 +5538,13 @@ public sealed partial class GameSession
         AddNarrativeText($"Lose {missing} Morale from the shortfall.");
     }
 
-    private void MarketBuy(string resource, int quantity)
+    private void MarketBuy(string resource, int quantity, int coinModifier = 0)
     {
-        if (quantity <= 0 || !CanMarketBuy(resource, quantity))
+        if (quantity <= 0 || !CanMarketBuy(resource, quantity, coinModifier))
             return;
 
         var market = Market.First(m => string.Equals(m.Resource, resource, StringComparison.OrdinalIgnoreCase));
-        var cost = market.BuyPrice * quantity;
+        var cost = Math.Max(0, (market.BuyPrice * quantity) + coinModifier);
         AdjustResource("Coin", -cost);
         var gained = AddPhysicalResource(resource, quantity);
         AddNarrativeText($"Buy {gained} {resource} for {cost} Coin.");
@@ -5950,7 +5950,8 @@ public sealed partial class GameSession
         {
             var parts = input.Split(':');
             var qty = parts.Length > 2 && int.TryParse(parts[2], out var q) ? q : 1;
-            return parts.Length > 1 && CanMarketBuy(parts[1], qty);
+            var coinModifier = parts.Length > 3 && int.TryParse(parts[3], out var m) ? m : 0;
+            return parts.Length > 1 && CanMarketBuy(parts[1], qty, coinModifier);
         }
         if (input.StartsWith("CanPurchaseResource:", StringComparison.OrdinalIgnoreCase))
         {
@@ -6227,11 +6228,12 @@ public sealed partial class GameSession
             : slot.Contents;
     }
 
-    private bool CanMarketBuy(string resource, int quantity)
+    private bool CanMarketBuy(string resource, int quantity, int coinModifier = 0)
     {
         var market = Market.FirstOrDefault(m => string.Equals(m.Resource, resource, StringComparison.OrdinalIgnoreCase));
+        var cost = market is null ? int.MaxValue : Math.Max(0, (market.BuyPrice * quantity) + coinModifier);
         return market is not null
-            && ResourceValue("Coin") >= market.BuyPrice * quantity
+            && ResourceValue("Coin") >= cost
             && CanAddPhysicalResource(resource, quantity);
     }
 
@@ -6806,17 +6808,14 @@ public sealed partial class GameSession
 
     private void CompleteExploreEncounter()
     {
-        var disengaged = _combatDisengagedPending;
+        // Combat encountered during Explore is part of the Explore step.
+        // Disengaging ends that encounter, but does not start a second Explore.
+        // Resume the original Mobilization by revealing the Clearing normally.
         _combatDisengagedPending = false;
         ResetActiveFlowState();
         PendingExploreCard = null;
         _specialPrompt = null;
         _activeChronicleEntryIndex = null;
-        if (disengaged)
-        {
-            BeginForcedMobilization();
-            return;
-        }
         MobilizationStep = MobilizationStep.ArrivalReady;
         BeginArrival();
     }

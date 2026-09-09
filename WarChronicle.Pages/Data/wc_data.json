@@ -1,7 +1,7 @@
 {
   "schema_version": "0.3.0",
-  "generated_at_utc": "2026-09-06T22:40:45+00:00",
-  "source_workbook": "War_Chronicle_Master_Arrival_EventFlow.xlsx",
+  "generated_at_utc": "2026-09-09T23:38:46+00:00",
+  "source_workbook": "War Chronicle Master(5).xlsx",
   "cards": {
     "CAMP-001": {
       "id": "CAMP-001",
@@ -21,7 +21,7 @@
       "after_play": "Keep",
       "text": {
         "flavor": "While the road waits, the Host takes up the work at hand: hauling, mending, tending, building, and drilling for what comes next.",
-        "effect": "<b>Advance 2 Time and Choose 1:</b><br><ul><li><b>Gain 2 Coins</b></li><li><b>Gain 1 Coin and 1 Leadership</b></li><li><b>Repair 1 damaged Baggage Train space:</b> Spend 1 Wood.</li></ul>"
+        "effect": "<b>Advance 2 Time and Choose 1:</b><br><ul><li><b>Gain 2 Coins</b></li><li><b>Gain 1 Coin and 1 Leadership</b></li><li><b>Repair 1 damaged Baggage Train space:</b> Spend 1 Wood.</li></ul><br>If you have the <b><i>Camp Steward,</i></b> you may instead <b>Advance 2 Time and Choose 1:</b><br><ul><li><b>Gain 1 Resource</b> matching the adjacent Terrain</li><li><b>Buy 1 resource</b> from the Market for 1 Coin less than its current Buy value.</li></ul>"
       },
       "notes": null
     },
@@ -65,7 +65,7 @@
       "after_play": "RemoveOrDiscard",
       "text": {
         "flavor": "Stone and timber raise the walls, but belief and learning decide what kind of place stands within them.",
-        "effect": "<b>Advance 2 Time and Choose 1:</b><br><ul><li><b>Chapel:</b> <i>Cost: 1 Wood and 1 Coin.</i> Gain a Priest. A Priest may Proselytize before Combat, prevents 1 Winter Attrition loss, and improves the Finale Resolve Check.</li><li><b>Academy:</b> <i>Cost: 1 Stone and 1 Coin.</i> Whenever you gain Research, roll 1d6 for each Research gained; each 4–6 grants +1 additional Research.</li></ul><br>Place the matching token on your Player Board."
+        "effect": "<b>Advance 2 Time and Choose 1:</b><br><ul><li><b>Chapel:</b> <i>Cost: 1 Wood and 1 Coin. Gain Priest.</i></li><li><b>Academy: </b> <i>Cost: 1 Stone and 1 Coin</i></li></ul><br>Place the matching token on your Player Board."
       },
       "notes": null
     },
@@ -87,7 +87,7 @@
       "after_play": "RemoveOrDiscard",
       "text": {
         "flavor": "The frontier yields little to those who only pass through. It rewards the ones who leave something behind.",
-        "effect": "<b>Advance 2 Time and Choose 1:</b><br><ul><li><b>Market:</b> <i>Cost: 1 Wood and 1 Coin.</i> During Harvest, sell up to 2 Resources purged from the Baggage Train. Market Day may also be used at a Player Controlled Settlement.</li><li><b>Baggage Cart:</b> <i>Cost: 1 Wood.</i> Increase Baggage Train capacity by 2 slots.</li></ul><br>Place the matching token on your Player Board."
+        "effect": "<b>Advance 2 Time and Choose 1:</b><br><ul><li><b>Market:</b> <i>Cost: 1 Wood and 1 Coin.</i></li><li><b>Baggage Cart:</b> <i>Cost: 1 Wood</i></li></ul><br>Place the matching token on your Player Board."
       },
       "notes": null
     },
@@ -104,12 +104,12 @@
       "time": 2,
       "cost": {
         "type": "Fixed",
-        "value": "3C"
+        "value": "1C"
       },
       "after_play": "Discard",
       "text": {
         "flavor": "Silver spent on quiet study often returns in louder ways.",
-        "effect": "<center><b>Advance 2 Time, Spend 3 Coin and Gain 1 Research token.</b></center>"
+        "effect": "<center><b>Advance 2 Time, Spend 1 Coin and Gain 1 Research token.</b></center>"
       },
       "notes": null
     },
@@ -214,12 +214,12 @@
       "time": 2,
       "cost": {
         "type": "Fixed",
-        "value": "1C+1L"
+        "value": "1L"
       },
       "after_play": "Discard",
       "text": {
         "flavor": "A host that trains in earnest soon learns what kind of war it means to fight.",
-        "effect": "<b>Advance 2 Time, Spend 1 Coin and 1 Leadership.<br><br>Choose 1:</b><br><ul><li>You may immediately purchase either the top card of the Advancement deck or 1 Armor Development from the R&R Offer. It costs 1 less Research Token, to a minimum of 1. You must still pay all other printed costs.</li><li>Gain 1 Research. You may discard the top Tactics card for free and reveal the next one, though you may not purchase it during this phase.</li></ul>"
+        "effect": "<b>Advance 2 Time, Spend 1 Leadership.<br><br>Choose 1:</b><br><ul><li>You may immediately purchase either the top card of the Advancement deck or 1 Armor Development from the R&R Offer. It costs 1 less Research Token, to a minimum of 1. You must still pay all other printed costs.</li><li>Gain 1 Research. You may discard the top Tactics card for free and reveal the next one, though you may not purchase it during this phase.</li></ul>"
       },
       "notes": null
     },
@@ -241,7 +241,7 @@
       "after_play": "RemoveOrDiscard",
       "text": {
         "flavor": "A gift sent ahead may cool a grudge that steel would only sharpen.",
-        "effect": "<b>Advance 2 Time and Choose 1 Hostile tribe</b> and pay its Tribute below, then <b>Roll 2d6.</b> The normal Hostile -1 DRM does not apply to this roll. On <b>8+: gain 1 Rapport with that tribe</b>.<br><br><b>Tribute:</b><br><ul><lu><b>Sun-Touched:</b> 1 Stone</li><li><b>Nightstone Clan:</b> 1 Food</li><li><b>The Quietus:</b> 1 Wood</li><li><b>Pale Hands:</b> 1 of your highest-value resource. If multiple resources are tied for highest value, choose one of them.</li></ul>"
+        "effect": "<b>Advance 2 Time and Choose 1 Hostile tribe</b> and pay its Tribute below, then <b>Roll 2d6.</b> The normal Hostile -1 DRM does not apply to this roll. On <b>8+: gain 1 Rapport with that tribe</b>.<br><br><b>Tribute:</b><br><ul><li><b>Sun-Touched:</b> 1 Stone</li><li><b>Nightstone Clan:</b> 1 Food</li><li><b>The Quietus:</b> 1 Wood</li><li><b>Pale Hands:</b> 1 of your highest-value resource. If multiple resources are tied for highest value, choose one of them.</li></ul>"
       },
       "notes": null
     },
@@ -329,7 +329,7 @@
       "after_play": "Remove",
       "text": {
         "flavor": "The market square is loud with petty disputes, rigged contests, and one prize goat that has somehow become a matter of honor.",
-        "effect": "<center><b>Advance 1 Time and Roll 1d6:</b></center><b>1:</b> You misjudge the mood. <b>Lose 1 Leadership.</b><br><b>2:</b> No one is satisfied. No effect.<br><b>3: Gain 1 Coin.</b><br><b>4: Gain 1 Leadership.</b><br><b>5:</b> Gain 1 Morale and 1 Coin.</b><br><b>6:Gain 1 Leadership and 1 Morale.</b>"
+        "effect": "<center><b>Advance 1 Time and Roll 1d6:</b></center><b>1:</b> You misjudge the mood. <b>Lose 1 Leadership.</b><br><b>2:</b> No one is satisfied. No effect.<br><b>3: Gain 1 Coin.</b><br><b>4: Gain 1 Leadership.</b><br><b>5:</b> Gain 1 Morale and 1 Coin.</b><br><b>6:Gain 1 Leadership and 1 Morale.</b> "
       },
       "notes": null
     },
@@ -1517,7 +1517,7 @@
       "after_play": "Remove",
       "text": {
         "flavor": "The mystery ends in a sack of gnawed crusts, a nest under the cart boards, and enough droppings to make the cooks swear off breakfast.",
-        "effect": "If you have the <i>Camp Steward,</i> you may Test 7+.<br><ul><li><b>Pass:</b> No effect</li><li><b>Fail:</b> Lose 1 Food.</li></ul>"
+        "effect": "Lose 1 Food. If you have the <i>Camp Steward</i>, Test (7) to avoid Food loss."
       },
       "notes": null
     }
@@ -1612,7 +1612,7 @@
       "image": "Plains.png",
       "text": {
         "flavor": "Nomadic herders traverse the plains, offering to trade or seek refuge for the winter.",
-        "effect": "May immediately buy 1 Food at Market value. Then roll a D6.<br><br>On a result of 5–6, gain 1 Levy to your host, subject to Army limits."
+        "effect": "May immediately buy 1 Food at Market value -1. Then roll a D6.<br><br>On a result of 5–6, gain 1 Levy to your host, subject to Army limits."
       }
     },
     "EXPLORE-008": {
@@ -1705,7 +1705,7 @@
       "image": "Forest.png",
       "text": {
         "flavor": "You encounter a group of skilled woodworkers who offer their services in exchange for protection or a share of profits.",
-        "effect": "May immediately purchase 1 Wood for 2 Coins."
+        "effect": "May immediately purchase 1 Wood for Market Value -1 Coin."
       }
     },
     "EXPLORE-015": {
@@ -1785,7 +1785,7 @@
       "image": "pf.png",
       "text": {
         "flavor": "The remains of a caravan lie scattered. Clues suggest ambush or betrayal.",
-        "effect": "May attempt to loot. If you do, roll a D6.<br><br><ul><li><b>1:</b> Ambushed! Lose 1 Military Unit of your choice (if able).</li><li><b>2:</b> Mugged! Lose 2 Coin.</li><li><b>3:</b> Nothing worthwhile is found.</li><li><b>4:</b> Collect 1 Food.</li><li><b>5:</b> Collect 1 Wood.</li><li><b>6:</b> Collect 1 Stone.</li></ul>"
+        "effect": "May attempt to loot. If you do, roll a D6.<br><br><ul><li><b>1:</b> Ambushed! Lose 1 Military Unit of your choice (if able).</li><li><b>2:</b> Mugged! Lose 2 Coin.</li><li><b>3:</b> Nothing worthwhile is found.</li><li><b>4:</b> Collect 1 Food.</li><li><b>5:</b> Collect 1 Wood.</li><li><b>6:</b> Collect 1 Stone.</li></ul><br><br>If you choose not to loot, gain 1 Leadership."
       }
     },
     "EXPLORE-021": {
@@ -1964,7 +1964,7 @@
       "tribe": "Nightstone Clan",
       "tribute": "Tribute: 1R",
       "setup": "A stone crossing has been chained and audited. Nightstone wardens claim the road by right of maintenance and demand recognition before any host passes.",
-      "effect": "<hr><b><i>Choose 1:</i></b><br><b>Negotiate the Toll (8+)</b><br><ul><li><b>Pass:</b> Gain 1 Leadership, or gain 1 Rapport and lose 1 Coin.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Recognize the Claim (9+)</b><br><ul><li><b>Pass:</b> Gain 1 Stone and 1 Coin.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Force Passage (7+)</b><br><ul><li><b>Pass:</b> Gain 2 Coin.</li><li><b>Fail:</b> Lose 1 Rapport.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 2 Coin.</li><li><b>Disengage:</b> Lose 1 Leadership.</li></ul>",
+      "effect": "<hr><b><i>Choose 1:</i></b><br><b>Negotiate the Toll (8+)</b><br><ul><li><b>Pass:</b> Gain 1 Leadership, or gain 1 Rapport and lose 1 Coin.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Recognize the Claim (9+)</b><br><ul><li><b>Pass:</b> Gain 1 Stone and 1 Coin.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Force Passage (7+)</b><br><ul><li><b>Pass:</b> Gain 2 Coin.</li><li><b>Fail:</b> Lose 1 Rapport.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 2 Coin and 1 Leadership.</li><li><b>Disengage:</b> Lose 1 Leadership.</li></ul>",
       "host": "<b>Enemy Host</b><br><b>Y1:</b> 1C, 2I - <b>Y2:</b> 1C, 2I, 3L - <b>Y3:</b> 1A, 1C, 2I, 4L"
     },
     "ARRIVAL-005": {
@@ -1975,7 +1975,7 @@
       "tribe": "Nightstone Clan",
       "tribute": "Tribute: 1F",
       "setup": "A burial road has collapsed into a quarry trench. Nightstone masons and mourners alike demand the passage be made right before any host crosses further. They can be bargained with, worked with, exploited, or defied, but not ignored lightly.",
-      "effect": "<hr><b><i>Choose 1:</i></b><br><b>Join the Work — Pay 1 Wood: (8+)</b><br><ul><li><b>Pass:</b> Gain 1 Rapport and 1 Leadership.</li><li><b>Fail:</b> No additional effect.</li></ul><br><b>Hire the Masons (9+)</b><br><ul><li><b>Pass:</b> Gain 1 Stone and 1 Coin, or gain 1 Research.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Press Them Aside (7+)</b><br><ul><li><b>Pass:</b> Gain 2 Coin.</li><li><b>Fail:</b> Lose 1 Rapport.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 1 Stone.</li><li><b>Disengage:</b> Lose 1 Leadership.</li></ul>",
+      "effect": "<hr><b><i>Choose 1:</i></b><br><b>Join the Work — Pay 1 Wood: (8+)</b><br><ul><li><b>Pass:</b> Gain 1 Rapport and 1 Leadership.</li><li><b>Fail:</b> No additional effect.</li></ul><br><b>Hire the Masons (9+)</b><br><ul><li><b>Pass:</b> Gain 1 Stone and 1 Coin, or gain 1 Research.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Press Them Aside (7+)</b><br><ul><li><b>Pass:</b> Gain 2 Coin.</li><li><b>Fail:</b> Lose 1 Rapport.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 1 Stone and 1 Leadership.</li><li><b>Disengage:</b> Lose 1 Leadership.</li></ul>",
       "host": "<b>Enemy Host</b><br><b>Y1:</b> 1A, 2I, 2L - <b>Y2:</b> 1A, 1C, 2I, 2L - <b>Y3:</b> 1A, 1C, 2I, 4L"
     },
     "ARRIVAL-008": {
@@ -1986,7 +1986,7 @@
       "tribe": "Nightstone Clan",
       "tribute": "Tribute: 1W",
       "setup": "A tally-house has been split open by looters, and Nightstone clerks accuse every traveler of theft until someone pays for order to be restored.",
-      "effect": "<hr><b><i>Choose 1:</i></b><br><b>Audit the Losses (8+)</b><br><ul><li><b>Pass:</b> Gain 1 Leadership.</li><li><b>Fail:</b> Lose 1 Leadership.</li></ul><br><b>Settle the Claim (9+)</b><br><ul><li><b>Pass:</b> Gain 1 Research or 2 Coin.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Call Their Bluff (7+)</b><br><ul><li><b>Pass:</b> Gain 2 Coin.</li><li><b>Fail:</b> Lose 1 Rapport.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 2 Coin.</li><li><b>Disengage:</b> Lose 1 Leadership.</li></ul>",
+      "effect": "<hr><b><i>Choose 1:</i></b><br><b>Audit the Losses (8+)</b><br><ul><li><b>Pass:</b> Gain 1 Leadership.</li><li><b>Fail:</b> Lose 1 Leadership.</li></ul><br><b>Settle the Claim (9+)</b><br><ul><li><b>Pass:</b> Gain 1 Research or 2 Coin.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Call Their Bluff (7+)</b><br><ul><li><b>Pass:</b> Gain 2 Coin.</li><li><b>Fail:</b> Lose 1 Rapport.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 2 Coin and 1 Leadership.</li><li><b>Disengage:</b> Lose 1 Leadership.</li></ul>",
       "host": "<b>Enemy Host</b><br><b>Y1:</b> 2A, 1C, 1I - <b>Y2:</b> 2A, 1C, 1I, 2L - <b>Y3:</b> 2A, 1C, 2I, 3L"
     },
     "ARRIVAL-013": {
@@ -1997,7 +1997,7 @@
       "tribe": "Nightstone Clan",
       "tribute": "Tribute: 1F",
       "setup": "A timber weighbridge spans a black-water crossing, its planks marked with old iron measures. Nightstone wardens claim every wagon must be weighed before passage, and every shortage paid in coin, stone, or obedience.",
-      "effect": "<hr><b><i>Choose 1:</i></b><br><b>Submit to Measure (8+)</b><br><ul><li><b>Pass:</b> Gain 1 Leadership and 1 Coin.</li><li><b>Fail:</b> Lose 2 Coin.</li></ul><br><b>Hire the Weighmen (9+)</b><br><ul><li><b>Pass:</b> Gain 1 Stone and 1 Coin.</li><li><b>Fail:</b> Lose 1 Wood.</li></ul><br><b>Falsify the Weight (7+)</b><br><ul><li><b>Pass:</b> Gain 3 Coin.</li><li><b>Fail:</b> Lose 1 Coin and Damage 1 space in your Baggage Train.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 2 Coin or 1 Stone.</li><li><b>Disengage:</b> Lose 1 Leadership.</li></ul>",
+      "effect": "<hr><b><i>Choose 1:</i></b><br><b>Submit to Measure (8+)</b><br><ul><li><b>Pass:</b> Gain 1 Leadership and 1 Coin.</li><li><b>Fail:</b> Lose 2 Coin.</li></ul><br><b>Hire the Weighmen (9+)</b><br><ul><li><b>Pass:</b> Gain 1 Stone and 1 Coin.</li><li><b>Fail:</b> Lose 1 Wood.</li></ul><br><b>Falsify the Weight (7+)</b><br><ul><li><b>Pass:</b> Gain 3 Coin.</li><li><b>Fail:</b> Lose 1 Coin and Damage 1 space in your Baggage Train.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 2 Coin or 1 Stone. Gain 1 Leadership</li><li><b>Disengage:</b> Lose 1 Leadership.</li></ul>",
       "host": "<b>Enemy Host</b><br><b>Y1:</b> 2A, 1C, 2L - <b>Y2:</b> 2A, 1C, 1I, 2L - <b>Y3:</b> 1A, 1C, 2I, 4L"
     },
     "ARRIVAL-014": {
@@ -2008,7 +2008,7 @@
       "tribe": "Nightstone Clan",
       "tribute": "Tribute: 1F",
       "setup": "A waist-high stone beside the road is carved with debts owed by travelers, lords, and broken hosts. Nightstone collectors claim your march inherits an old obligation from the road itself.",
-      "effect": "<hr><b><i>Choose 1:</i></b><br><b>Challenge the Account (8+)</b><br><ul><li><b>Pass:</b> Gain 1 Leadership and 1 Rapport, but lose 1 Morale.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Settle the Debt (9+)</b><br><ul><li><b>Pass:</b> Gain 1 Research or 2 Coin.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Steal the Marked Silver (7+)</b><br><ul><li><b>Pass:</b> Gain 3 Coin.</li><li><b>Fail:</b> Lose 1 Rapport.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 2 Coin.</li><li><b>Disengage:</b> Lose 1 Leadership.</li></ul>",
+      "effect": "<hr><b><i>Choose 1:</i></b><br><b>Challenge the Account (8+)</b><br><ul><li><b>Pass:</b> Gain 1 Leadership and 1 Rapport, but lose 1 Morale.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Settle the Debt (9+)</b><br><ul><li><b>Pass:</b> Gain 1 Research or 2 Coin.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Steal the Marked Silver (7+)</b><br><ul><li><b>Pass:</b> Gain 3 Coin.</li><li><b>Fail:</b> Lose 1 Rapport.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 2 Coin and 1 Leadership.</li><li><b>Disengage:</b> Lose 1 Leadership.</li></ul>",
       "host": "<b>Enemy Host</b><br><b>Y1:</b> 1C, 2I - <b>Y2:</b> 1C, 2I, 3L - <b>Y3:</b> 1A, 1C, 2I, 4L"
     },
     "ARRIVAL-001": {
@@ -2019,7 +2019,7 @@
       "tribe": "Pale Hands",
       "tribute": "Tribute: 1F",
       "setup": "Ash-grey scribes bar the way before a ruined record-house, disputing whether your march is worthy of entry. The archive may yield guidance or preserved knowledge depending on how you handle them.",
-      "effect": "<hr><b><i>Choose 1:</i></b><br><b>Seek Guidance (8+)</b><br><ul><li><b>Pass:</b> Gain 1 Leadership, or gain 1 Rapport and lose 1 Coin.</li><li><b>Fail:</b> Lose 1 Leadership.</li></ul><br><b>Preserve the Record (9+)</b><br><ul><li><b>Pass:</b> Gain 1 Research and 1 Coin.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Break the Seal (7+)</b><br><ul><li><b>Pass:</b> Gain 1 Research.</li><li><b>Fail:</b> Lose 1 Rapport.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 1 Research.</li><li><b>Disengage:</b> Lose 1 Leadership.</li></ul>",
+      "effect": "<hr><b><i>Choose 1:</i></b><br><b>Seek Guidance (8+)</b><br><ul><li><b>Pass:</b> Gain 1 Leadership, or gain 1 Rapport and lose 1 Coin.</li><li><b>Fail:</b> Lose 1 Leadership.</li></ul><br><b>Preserve the Record (9+)</b><br><ul><li><b>Pass:</b> Gain 1 Research and 1 Coin.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Break the Seal (7+)</b><br><ul><li><b>Pass:</b> Gain 1 Research.</li><li><b>Fail:</b> Lose 1 Rapport.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 1 Research and 1 Leadership.</li><li><b>Disengage:</b> Lose 1 Leadership.</li></ul>",
       "host": "<b>Enemy Host</b><br><b>Y1:</b> 1A, 2I, 2L - <b>Y2:</b> 1A, 3I, 2L - <b>Y3:</b> 4I, 4L"
     },
     "ARRIVAL-006": {
@@ -2030,7 +2030,7 @@
       "tribe": "Pale Hands",
       "tribute": "Tribute: 2C",
       "setup": "Someone has blackened the route markers ahead and stripped the old way-signs of their script. A small Pale Hands escort claims they can still guide worthy travelers, but not for free, and not for the faithless.",
-      "effect": "<hr><b>If Allied:</b> Gain 1 Leadership.<br><br><b><i>Choose 1:</i></b><br><b>Restore the Marks (8+)</b><br><ul><li><b>Pass:</b> Gain 1 Research.</li><li><b>Fail:</b> Lose 1 Leadership.</li></ul><br><b>Hire a Guide — Pay 1 Coin: (9+)</b><br><ul><li><b>Pass:</b> Gain 1 Rapport and 1 Leadership.</li><li><b>Fail:</b> No additional effect.</li></ul><br><b>Take the Hidden Route (7+)</b><br><ul><li><b>Pass:</b> Gain 1 Food and 1 Coin.</li><li><b>Fail:</b> Lose 1 Morale.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 1 Research.</li><li><b>Disengage:</b> Lose 1 Morale.</li></ul>",
+      "effect": "<hr><b>If Allied:</b> Gain 1 Leadership.<br><br><b><i>Choose 1:</i></b><br><b>Restore the Marks (8+)</b><br><ul><li><b>Pass:</b> Gain 1 Research.</li><li><b>Fail:</b> Lose 1 Leadership.</li></ul><br><b>Hire a Guide — Pay 1 Coin: (9+)</b><br><ul><li><b>Pass:</b> Gain 1 Rapport and 1 Leadership.</li><li><b>Fail:</b> No additional effect.</li></ul><br><b>Take the Hidden Route (7+)</b><br><ul><li><b>Pass:</b> Gain 1 Food and 1 Coin.</li><li><b>Fail:</b> Lose 1 Morale.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 1 Research and 1 Leadership.</li><li><b>Disengage:</b> Lose 1 Morale.</li></ul>",
       "host": "<b>Enemy Host</b><br><b>Y1:</b> 3I, 1L - <b>Y2:</b> 1A, 3I, 2L - <b>Y3:</b> 1C, 3I, 3L"
     },
     "ARRIVAL-011": {
@@ -2041,7 +2041,7 @@
       "tribe": "Pale Hands",
       "tribute": "Tribute: 1S",
       "setup": "At a collapsed gatehouse, Pale Hands wardens still keep fragments of old authority. They say the road may be taken by force, but legitimacy must be earned.",
-      "effect": "<hr><b><i>Choose 1:</i></b><br><b>Present Credentials (8+)</b><br><ul><li><b>Pass:</b> Gain 1 Leadership.</li><li><b>Fail:</b> Lose 1 Leadership.</li></ul><br><b>Purchase a Writ (9+)</b><br><ul><li><b>Pass:</b> Gain 1 Research and 1 Leadership.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Read the Side Margins (7+)</b><br><ul><li><b>Pass:</b> Gain 1 Research.</li><li><b>Fail:</b> Lose 1 Morale.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 1 Research.</li><li><b>Disengage:</b> Lose 1 Leadership.</li></ul>",
+      "effect": "<hr><b><i>Choose 1:</i></b><br><b>Present Credentials (8+)</b><br><ul><li><b>Pass:</b> Gain 1 Leadership.</li><li><b>Fail:</b> Lose 1 Leadership.</li></ul><br><b>Purchase a Writ (9+)</b><br><ul><li><b>Pass:</b> Gain 1 Research and 1 Leadership.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Read the Side Margins (7+)</b><br><ul><li><b>Pass:</b> Gain 1 Research.</li><li><b>Fail:</b> Lose 1 Morale.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 1 Research and 1 Leadership.</li><li><b>Disengage:</b> Lose 1 Leadership.</li></ul>",
       "host": "<b>Enemy Host</b><br><b>Y1:</b> 2I, 4L - <b>Y2:</b> 3I, 4L - <b>Y3:</b> 1A, 4I, 3L"
     },
     "ARRIVAL-015": {
@@ -2052,7 +2052,7 @@
       "tribe": "Pale Hands",
       "tribute": "Tribute: 1W",
       "setup": "Pale Hands scribes sit beneath a canvas awning, sorting weather-stained tablets into long rows. They claim the road ahead has been catalogued before, but only the worthy may learn what was written.",
-      "effect": "<hr><b>If Allied:</b> Gain 1 Leadership.<br><br><b><i>Choose 1:</i></b><br><b>Read the Index (8+)</b><br><ul><li><b>Pass:</b> Gain 1 Research.</li><li><b>Fail:</b> Lose 1 Leadership.</li></ul><br><b>Preserve the Tablets (9+)</b><br><ul><li><b>Pass:</b> Gain 1 Research and 1 Rapport, but lose 1 Morale.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Take the Forbidden Entry (7+)</b><br><ul><li><b>Pass:</b> Gain 1 Research.</li><li><b>Fail:</b> Lose 1 Morale.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 1 Research.</li><li><b>Disengage:</b> Lose 1 Morale.</li></ul>",
+      "effect": "<hr><b>If Allied:</b> Gain 1 Leadership.<br><br><b><i>Choose 1:</i></b><br><b>Read the Index (8+)</b><br><ul><li><b>Pass:</b> Gain 1 Research.</li><li><b>Fail:</b> Lose 1 Leadership.</li></ul><br><b>Preserve the Tablets (9+)</b><br><ul><li><b>Pass:</b> Gain 1 Research and 1 Rapport, but lose 1 Morale.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Take the Forbidden Entry (7+)</b><br><ul><li><b>Pass:</b> Gain 1 Research.</li><li><b>Fail:</b> Lose 1 Morale.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 1 Research and 1 Leadership.</li><li><b>Disengage:</b> Lose 1 Morale.</li></ul>",
       "host": "<b>Enemy Host</b><br><b>Y1:</b> 3I, 2L - <b>Y2:</b> 1A, 3I, 3L - <b>Y3:</b> 1A, 3I, 5L"
     },
     "ARRIVAL-016": {
@@ -2063,7 +2063,7 @@
       "tribe": "Pale Hands",
       "tribute": "Tribute: 1F",
       "setup": "Strips of parchment hang from a dead tree, each bearing a name, accusation, or last confession. Pale Hands witnesses ask your host to hear the claims before passing beneath the branches.",
-      "effect": "<hr><b><i>Choose 1:</i></b><br><b>Hear the Claims (8+)</b><br><ul><li><b>Pass:</b> Gain 1 Leadership.</li><li><b>Fail:</b> Lose 1 Morale.</li></ul><br><b>Name the Guilty (9+)</b><br><ul><li><b>Pass:</b> Gain 1 Research and 1 Leadership.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Twist the Testimony (7+)</b><br><ul><li><b>Pass:</b> Gain 3 Coin.</li><li><b>Fail:</b> Lose 1 Rapport.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 1 Research.</li><li><b>Disengage:</b> Lose 1 Leadership.</li></ul>",
+      "effect": "<hr><b><i>Choose 1:</i></b><br><b>Hear the Claims (8+)</b><br><ul><li><b>Pass:</b> Gain 1 Leadership.</li><li><b>Fail:</b> Lose 1 Morale.</li></ul><br><b>Name the Guilty (9+)</b><br><ul><li><b>Pass:</b> Gain 1 Research and 1 Leadership.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Twist the Testimony (7+)</b><br><ul><li><b>Pass:</b> Gain 3 Coin.</li><li><b>Fail:</b> Lose 1 Rapport.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 1 Research and 1 Leadership.</li><li><b>Disengage:</b> Lose 1 Leadership.</li></ul>",
       "host": "<b>Enemy Host</b><br><b>Y1:</b> 2I, 4L - <b>Y2:</b> 3I, 4L - <b>Y3:</b> 1A, 4I, 3L"
     },
     "ARRIVAL-002": {
@@ -2074,7 +2074,7 @@
       "tribe": "Sun-Touched",
       "tribute": "Tribute: 1S",
       "setup": "A hungry settlement watches your column pass. Their wardens have stores hidden, but not enough for everyone through the season. What you take or give here will be remembered.",
-      "effect": "<hr><b><i>Choose 1:</i></b><br><b>Offer Relief (8+)</b><br><ul><li><b>Pass:</b> Gain 1 Food and 1 Leadership.</li><li><b>Fail:</b> Lose 1 Food.</li></ul><br><b>Share the Burden (9+)</b><br><ul><li><b>Pass:</b> Gain 1 Morale and 1 Food.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Take the Stores (7+)</b><br><ul><li><b>Pass:</b> Gain 2 Food.</li><li><b>Fail:</b> Lose 1 Rapport.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 2 Food.</li><li><b>Disengage:</b> Lose 1 Morale.</li></ul>",
+      "effect": "<hr><b><i>Choose 1:</i></b><br><b>Offer Relief (8+)</b><br><ul><li><b>Pass:</b> Gain 1 Food and 1 Leadership.</li><li><b>Fail:</b> Lose 1 Food.</li></ul><br><b>Share the Burden (9+)</b><br><ul><li><b>Pass:</b> Gain 1 Morale and 1 Food.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Take the Stores (7+)</b><br><ul><li><b>Pass:</b> Gain 2 Food.</li><li><b>Fail:</b> Lose 1 Rapport.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 2 Food and 1 Leadership.</li><li><b>Disengage:</b> Lose 1 Morale.</li></ul>",
       "host": "<b>Enemy Host</b><br><b>Y1:</b> 2A, 1I, 3L - <b>Y2:</b> 3A, 1I, 4L - <b>Y3:</b> 3A, 2I, 4L"
     },
     "ARRIVAL-007": {
@@ -2085,7 +2085,7 @@
       "tribe": "Sun-Touched",
       "tribute": "Tribute: 2C",
       "setup": "A cooking field lies half-burned beside the road. The Sun-Touched insist the stores are promised to their own, but smoke and hunger make everyone short-tempered.",
-      "effect": "<hr><b><i>Choose 1:</i></b><br><b>Share the Meal — Pay 1 Food: (8+)</b><br><ul><li><b>Pass:</b> Gain 1 Rapport and 1 Leadership.</li><li><b>Fail:</b> No additional effect.</li></ul><br><b>Claim the Bakes (9+)</b><br><ul><li><b>Pass:</b> Gain 2 Food and 1 Coin.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Buy Their Goodwill (7+)</b><br><ul><li><b>Pass:</b> Gain 1 Food and 1 Coin.</li><li><b>Fail:</b> Lose 1 Rapport.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 2 Food.</li><li><b>Disengage:</b> Lose 1 Morale.</li></ul>",
+      "effect": "<hr><b><i>Choose 1:</i></b><br><b>Share the Meal — Pay 1 Food: (8+)</b><br><ul><li><b>Pass:</b> Gain 1 Rapport and 1 Leadership.</li><li><b>Fail:</b> No additional effect.</li></ul><br><b>Claim the Bakes (9+)</b><br><ul><li><b>Pass:</b> Gain 2 Food and 1 Coin.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Buy Their Goodwill (7+)</b><br><ul><li><b>Pass:</b> Gain 1 Food and 1 Coin.</li><li><b>Fail:</b> Lose 1 Rapport.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 2 Food and 1 Leadership.</li><li><b>Disengage:</b> Lose 1 Morale.</li></ul>",
       "host": "<b>Enemy Host</b><br><b>Y1:</b> 1A, 2I, 2L - <b>Y2:</b> 2A, 2I, 3L - <b>Y3:</b> 3A, 2I, 4L"
     },
     "ARRIVAL-009": {
@@ -2096,7 +2096,7 @@
       "tribe": "Sun-Touched",
       "tribute": "Tribute: 1W",
       "setup": "A frost-bitten orchard still stands under guard. Its keepers claim the fruit is spoken for, but your host sees enough to fill wagons.",
-      "effect": "<hr><b><i>Choose 1:</i></b><br><b>Help the Harvest (8+)</b><br><ul><li><b>Pass:</b> Gain 1 Food and 1 Leadership.</li><li><b>Fail:</b> Lose 1 Morale.</li></ul><br><b>Buy the Cartloads (9+)</b><br><ul><li><b>Pass:</b> Gain 2 Food and 1 Coin.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Strip the Trees (7+)</b><br><ul><li><b>Pass:</b> Gain 1 Wood.</li><li><b>Fail:</b> Lose 1 Rapport.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 2 Food.</li><li><b>Disengage:</b> Lose 1 Morale.</li></ul>",
+      "effect": "<hr><b><i>Choose 1:</i></b><br><b>Help the Harvest (8+)</b><br><ul><li><b>Pass:</b> Gain 1 Food and 1 Leadership.</li><li><b>Fail:</b> Lose 1 Morale.</li></ul><br><b>Buy the Cartloads (9+)</b><br><ul><li><b>Pass:</b> Gain 2 Food and 1 Coin.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Strip the Trees (7+)</b><br><ul><li><b>Pass:</b> Gain 1 Wood.</li><li><b>Fail:</b> Lose 1 Rapport.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 2 Food and 1 Leadership.</li><li><b>Disengage:</b> Lose 1 Morale.</li></ul>",
       "host": "<b>Enemy Host</b><br><b>Y1:</b> 3A, 4L - <b>Y2:</b> 2A, 1C, 1I, 2L - <b>Y3:</b> 2A, 1C, 2I, 3L"
     },
     "ARRIVAL-017": {
@@ -2107,7 +2107,7 @@
       "tribe": "Sun-Touched",
       "tribute": "Tribute: 1S",
       "setup": "Sun-Touched elders guard sacks of seed grain beneath a painted awning. They say these stores are not food for today, but life for a season no one has yet survived.",
-      "effect": "<hr><b><i>Choose 1:</i></b><br><b>Honor the Tithe (8+)</b><br><ul><li><b>Pass:</b> Gain 1 Leadership, or gain 1 Rapport and lose 1 Food.</li><li><b>Fail:</b> Lose 1 Food.</li></ul><br><b>Help Divide the Stores (9+)</b><br><ul><li><b>Pass:</b> Gain 2 Food and 1 Leadership.</li><li><b>Fail:</b> Lose 1 Wood or 1 Stone.</li></ul><br><b>Take the Seed Grain (7+)</b><br><ul><li><b>Pass:</b> Gain 2 Food.</li><li><b>Fail:</b> Lose 1 Rapport.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 2 Food.</li><li><b>Disengage:</b> Lose 1 Morale.</li></ul>",
+      "effect": "<hr><b><i>Choose 1:</i></b><br><b>Honor the Tithe (8+)</b><br><ul><li><b>Pass:</b> Gain 1 Leadership, or gain 1 Rapport and lose 1 Food.</li><li><b>Fail:</b> Lose 1 Food.</li></ul><br><b>Help Divide the Stores (9+)</b><br><ul><li><b>Pass:</b> Gain 2 Food and 1 Leadership.</li><li><b>Fail:</b> Lose 1 Wood or 1 Stone.</li></ul><br><b>Take the Seed Grain (7+)</b><br><ul><li><b>Pass:</b> Gain 2 Food.</li><li><b>Fail:</b> Lose 1 Rapport.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 2 Food and 1 Leadership.</li><li><b>Disengage:</b> Lose 1 Morale.</li></ul>",
       "host": "<b>Enemy Host</b><br><b>Y1:</b> 2A, 2I, 1L - <b>Y2:</b> 3A, 2I, 2L - <b>Y3:</b> 3A, 2I, 4L"
     },
     "ARRIVAL-018": {
@@ -2118,7 +2118,7 @@
       "tribe": "Sun-Touched",
       "tribute": "Tribute: 1W",
       "setup": "Covered carts heavy with honey jars wait in the shade, watched by Sun-Touched keepers with smoke-pots and hooked knives. The honey is medicine, ration, and offering all at once.",
-      "effect": "<hr><b><i>Choose 1:</i></b><br><b>Share the Honey (8+)</b><br><ul><li><b>Pass:</b> Gain 1 Rapport and 1 Food, but lose 1 Coin.</li><li><b>Fail:</b> Lose 1 Food.</li></ul><br><b>Buy the Jars (9+)</b><br><ul><li><b>Pass:</b> Gain 1 Food and 1 Wood or 1 Stone.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Smoke the Keepers Out (7+)</b><br><ul><li><b>Pass:</b> Gain 2 Food.</li><li><b>Fail:</b> Damage 1 space in your Baggage Train.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 2 Food.</li><li><b>Disengage:</b> Lose 1 Morale.</li></ul>",
+      "effect": "<hr><b><i>Choose 1:</i></b><br><b>Share the Honey (8+)</b><br><ul><li><b>Pass:</b> Gain 1 Rapport and 1 Food, but lose 1 Coin.</li><li><b>Fail:</b> Lose 1 Food.</li></ul><br><b>Buy the Jars (9+)</b><br><ul><li><b>Pass:</b> Gain 1 Food and 1 Wood or 1 Stone.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Smoke the Keepers Out (7+)</b><br><ul><li><b>Pass:</b> Gain 2 Food.</li><li><b>Fail:</b> Damage 1 space in your Baggage Train.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 2 Food and 1 Leadership.</li><li><b>Disengage:</b> Lose 1 Morale.</li></ul>",
       "host": "<b>Enemy Host</b><br><b>Y1:</b> 3A, 4L - <b>Y2:</b> 2A, 1C, 1I, 2L - <b>Y3:</b> 2A, 1C, 2I, 3L"
     },
     "ARRIVAL-004": {
@@ -2129,7 +2129,7 @@
       "tribe": "The Quietus",
       "tribute": "Tribute: 2C",
       "setup": "A small sanctuary still stands where the road narrows. Its bell has not rung in years. The keepers ask why your march should disturb what remains consecrated.",
-      "effect": "<hr><b>If Allied:</b> Gain 1 Priest if you do not already have one; otherwise gain 1 Leadership.<br><br><b><i>Choose 1:</i></b><br><b>Religious Contact — Pay 1 Leadership: (8+)</b><br><ul><li><b>Pass:</b> Gain 1 Rapport and 1 Morale.</li><li><b>Fail:</b> No additional effect.</li></ul><br><b>Restore the Bell (10+)</b><br><ul><li><b>Pass:</b> Gain 1 Morale and 1 Research.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Take the Relic (7+)</b><br><ul><li><b>Pass:</b> Gain 1 Research.</li><li><b>Fail:</b> Lose 1 Rapport.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 1 Research.</li><li><b>Disengage:</b> Lose 1 Morale.</li></ul>",
+      "effect": "<hr><b>If Allied:</b> Gain 1 Priest if you do not already have one; otherwise gain 1 Leadership.<br><br><b><i>Choose 1:</i></b><br><b>Religious Contact — Pay 1 Leadership: (8+)</b><br><ul><li><b>Pass:</b> Gain 1 Rapport and 1 Morale.</li><li><b>Fail:</b> No additional effect.</li></ul><br><b>Restore the Bell (10+)</b><br><ul><li><b>Pass:</b> Gain 1 Morale and 1 Research.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Take the Relic (7+)</b><br><ul><li><b>Pass:</b> Gain 1 Research and 1 Leadership.</li><li><b>Fail:</b> Lose 1 Rapport.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 1 Research and 1 Leadership.</li><li><b>Disengage:</b> Lose 1 Morale.</li></ul>",
       "host": "<b>Enemy Host</b><br><b>Y1:</b> 1P, 1I, 3L - <b>Y2:</b> 1P, 2I, 3L - <b>Y3:</b> 1P, 1A, 2I, 5L"
     },
     "ARRIVAL-010": {
@@ -2140,7 +2140,7 @@
       "tribe": "The Quietus",
       "tribute": "Tribute: 3C",
       "setup": "A reliquary wagon sits abandoned but watched. Quietus keepers say its contents must not be touched by the unordained, yet they do not hide that the road ahead has dangers only the devout survive well.",
-      "effect": "<hr><b><i>Choose 1:</i></b><br><b>Ask for Blessing (8+)</b><br><ul><li><b>Pass:</b> Gain 1 Leadership.</li><li><b>Fail:</b> Lose 1 Morale.</li></ul><br><b>Receive Instruction (9+)</b><br><ul><li><b>Pass:</b> Gain 1 Research and 1 Food.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Open the Casket (7+)</b><br><ul><li><b>Pass:</b> Gain 1 Research.</li><li><b>Fail:</b> Lose 1 Rapport.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 1 Research.</li><li><b>Disengage:</b> Lose 1 Morale.</li></ul>",
+      "effect": "<hr><b><i>Choose 1:</i></b><br><b>Ask for Blessing (8+)</b><br><ul><li><b>Pass:</b> Gain 1 Leadership.</li><li><b>Fail:</b> Lose 1 Morale.</li></ul><br><b>Receive Instruction (9+)</b><br><ul><li><b>Pass:</b> Gain 1 Research and 1 Food.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Open the Casket (7+)</b><br><ul><li><b>Pass:</b> Gain 1 Research.</li><li><b>Fail:</b> Lose 1 Rapport.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 1 Research and 1 Leadership.</li><li><b>Disengage:</b> Lose 1 Morale.</li></ul>",
       "host": "<b>Enemy Host</b><br><b>Y1:</b> 1I, 5L - <b>Y2:</b> 1P, 1I, 6L - <b>Y3:</b> 1P, 2I, 6L"
     },
     "ARRIVAL-012": {
@@ -2151,7 +2151,7 @@
       "tribe": "The Quietus",
       "tribute": "Tribute: 1F",
       "setup": "A low stone shrine stands in the clearing, its alcoves warm with emberlight and lined with the dead of forgotten marches. Quietus keepers bar the inner path and ask whether your host comes to honor the fallen, seek counsel, or take what was never meant for living hands.",
-      "effect": "<hr><b>If Allied:</b> If you do not already have a Priest, gain 1 Priest. Otherwise gain 1 Leadership.<br><br><b>Move On:</b> You may leave this place undisturbed. If you do, no encounter option is chosen.<br><br><b><i>Choose 1:</i></b><br><b>Keep the Vigil (8+)</b><br><ul><li><b>Pass:</b> Gain 1 Morale, or gain 1 Rapport and lose 1 Leadership.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Ask the Ashkeepers (9+)</b><br><ul><li><b>Pass:</b> Gain 1 Research and 1 Leadership.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Break the Seals (7+)</b><br><ul><li><b>Pass:</b> Gain 1 Research.</li><li><b>Fail:</b> Lose 1 Rapport.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 1 Research.</li><li><b>Disengage:</b> Lose 1 Morale.</li></ul>",
+      "effect": "<hr><b>If Allied:</b> If you do not already have a Priest, gain 1 Priest. Otherwise gain 1 Leadership.<br><br><b>Move On:</b> You may leave this place undisturbed. If you do, no encounter option is chosen.<br><br><b><i>Choose 1:</i></b><br><b>Keep the Vigil (8+)</b><br><ul><li><b>Pass:</b> Gain 1 Morale, or gain 1 Rapport and lose 1 Leadership.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Ask the Ashkeepers (9+)</b><br><ul><li><b>Pass:</b> Gain 1 Research and 1 Leadership.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Break the Seals (7+)</b><br><ul><li><b>Pass:</b> Gain 1 Research.</li><li><b>Fail:</b> Lose 1 Rapport.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 1 Research and 1 Leadership.</li><li><b>Disengage:</b> Lose 1 Morale.</li></ul>",
       "host": "<b>Enemy Host</b><br><b>Y1:</b> 2I, 4L - <b>Y2:</b> 1A, 2I, 5L - <b>Y3:</b> 1A, 3I, 6L"
     },
     "ARRIVAL-019": {
@@ -2162,7 +2162,7 @@
       "tribe": "The Quietus",
       "tribute": "Tribute: 3C",
       "setup": "A row of unlit candles blocks the road, each set before a stone bearing no name. Quietus keepers ask your host to pay witness before passing, for some roads are owed to the dead before they are granted to the living.",
-      "effect": "<hr><b>If Allied:</b> If you do not already have a Priest, gain 1 Priest. Otherwise gain 1 Leadership.<br><br><b><i>Choose 1:</i></b><br><b>Pay Witness (8+)</b><br><ul><li><b>Pass:</b> Gain 1 Rapport and 1 Leadership, but lose 1 Morale.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Ask the Keepers (9+)</b><br><ul><li><b>Pass:</b> Gain 1 Research or 1 Leadership.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Pocket the Candle Silver (7+)</b><br><ul><li><b>Pass:</b> Gain 3 Coin.</li><li><b>Fail:</b> Lose 1 Rapport.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 1 Research.</li><li><b>Disengage:</b> Lose 1 Morale.</li></ul>",
+      "effect": "<hr><b>If Allied:</b> If you do not already have a Priest, gain 1 Priest. Otherwise gain 1 Leadership.<br><br><b><i>Choose 1:</i></b><br><b>Pay Witness (8+)</b><br><ul><li><b>Pass:</b> Gain 1 Rapport and 1 Leadership, but lose 1 Morale.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Ask the Keepers (9+)</b><br><ul><li><b>Pass:</b> Gain 1 Research or 1 Leadership.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Pocket the Candle Silver (7+)</b><br><ul><li><b>Pass:</b> Gain 3 Coin and 1 Leadership.</li><li><b>Fail:</b> Lose 1 Rapport.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 1 Research and 1 Leadership.</li><li><b>Disengage:</b> Lose 1 Morale.</li></ul>",
       "host": "<b>Enemy Host</b><br><b>Y1:</b> 1P, 1A, 1I, 2L - <b>Y2:</b> 1P, 1A, 1I, 5L - <b>Y3:</b> 1P, 1A, 2I, 6L"
     },
     "ARRIVAL-020": {
@@ -2173,7 +2173,7 @@
       "tribe": "The Quietus",
       "tribute": "Tribute: 1R",
       "setup": "A stone well stands under black cloth, its bucket sealed with wax and bone. Quietus wardens say the water below is reserved for rites of passage, and that desperate mouths should not drink without blessing.",
-      "effect": "<hr><b><i>Choose 1:</i></b><br><b>Receive the Blessing (8+)</b><br><ul><li><b>Pass:</b> Gain 1 Leadership.</li><li><b>Fail:</b> Lose 1 Morale.</li></ul><br><b>Draw the Consecrated Water (9+)</b><br><ul><li><b>Pass:</b> Gain 1 Research and 1 Food.</li><li><b>Fail:</b> Lose 1 Food.</li></ul><br><b>Break the Wax (7+)</b><br><ul><li><b>Pass:</b> Gain 1 Research.</li><li><b>Fail:</b> Lose 1 Rapport.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 1 Research.</li><li><b>Disengage:</b> Lose 1 Morale.</li></ul>",
+      "effect": "<hr><b><i>Choose 1:</i></b><br><b>Receive the Blessing (8+)</b><br><ul><li><b>Pass:</b> Gain 1 Leadership.</li><li><b>Fail:</b> Lose 1 Morale.</li></ul><br><b>Draw the Consecrated Water (9+)</b><br><ul><li><b>Pass:</b> Gain 1 Research and 1 Food.</li><li><b>Fail:</b> Lose 1 Food.</li></ul><br><b>Break the Wax (7+)</b><br><ul><li><b>Pass:</b> Gain 1 Research.</li><li><b>Fail:</b> Lose 1 Rapport.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 1 Research and 1 Leadership.</li><li><b>Disengage:</b> Lose 1 Morale.</li></ul>",
       "host": "<b>Enemy Host</b><br><b>Y1:</b> 1P, 1A, 1I, 2L - <b>Y2:</b> 1P, 1A, 1I, 5L - <b>Y3:</b> 1P, 1A, 2I, 6L"
     }
   },
@@ -8626,40 +8626,20 @@
               "input": "Player.Tokens",
               "operator": "HAS",
               "value": "CampSteward",
-              "next": "N10"
+              "next": "N11"
             },
             {
               "label": "No",
               "input": "Player.Tokens",
               "operator": "NOT_HAS",
               "value": "CampSteward",
-              "next": "N99"
-            }
-          ]
-        },
-        "N10": {
-          "type": "Choice",
-          "prompt": "Test 7+?",
-          "branches": [
-            {
-              "label": "Yes",
-              "input": null,
-              "operator": null,
-              "value": null,
-              "next": "N11"
-            },
-            {
-              "label": "No",
-              "input": null,
-              "operator": null,
-              "value": null,
-              "next": "N99"
+              "next": "N20"
             }
           ]
         },
         "N11": {
           "type": "Test",
-          "prompt": "Test 7+",
+          "prompt": "Camp Steward: Test 7+ to avoid losing 1 Food",
           "branches": [
             {
               "label": "Pass",
@@ -9008,11 +8988,11 @@
       "nodes": {
         "N01": {
           "type": "Choice",
-          "prompt": "Buy 1 Food at Market value?",
+          "prompt": "Buy 1 Food at Market value -1 Coin?",
           "branches": [
             {
               "label": "Buy 1 Food",
-              "input": "CanMarketBuy:Food:1",
+              "input": "CanMarketBuy:Food:1:-1",
               "operator": "EQ",
               "value": true,
               "next": "N10"
@@ -9036,8 +9016,8 @@
           "next": "N20",
           "flags": [
             {
-              "name": "AtMarketValue",
-              "value": true
+              "name": "CoinModifier",
+              "value": -1
             },
             {
               "name": "SubjectToBaggageCapacity",
@@ -9528,11 +9508,11 @@
       "nodes": {
         "N01": {
           "type": "Choice",
-          "prompt": "Purchase 1 Wood for 2 Coin?",
+          "prompt": "Purchase 1 Wood for Market value -1 Coin?",
           "branches": [
             {
               "label": "Purchase Wood",
-              "input": "CanPurchaseResource:Wood:1:2",
+              "input": "CanMarketBuy:Wood:1:-1",
               "operator": "EQ",
               "value": true,
               "next": "N10"
@@ -9549,15 +9529,15 @@
         "N10": {
           "type": "Action",
           "action": {
-            "type": "PurchaseResource",
+            "type": "MarketBuy",
             "target": "Wood",
             "value": 1
           },
           "next": "N99",
           "flags": [
             {
-              "name": "CoinCost",
-              "value": 2
+              "name": "CoinModifier",
+              "value": -1
             },
             {
               "name": "SubjectToBaggageCapacity",
@@ -9971,7 +9951,7 @@
               "input": null,
               "operator": null,
               "value": null,
-              "next": "N99"
+              "next": "N70"
             }
           ]
         },
@@ -10159,6 +10139,16 @@
         },
         "N99": {
           "type": "End"
+        },
+        "N70": {
+          "type": "Action",
+          "action": {
+            "type": "Gain",
+            "target": "Leadership",
+            "value": 1
+          },
+          "next": "N99",
+          "player_text": "The Host leaves the dead undisturbed and keeps its discipline."
         }
       }
     },
@@ -11680,7 +11670,7 @@
               "operator": null,
               "value": null,
               "next": "ATK_HOSTILE",
-              "notes": "Win: Gain 1 Research. Disengage: Lose 1 Leadership."
+              "notes": "Win: Gain 1 Research and 1 Leadership. Disengage: Lose 1 Leadership."
             }
           ]
         },
@@ -12024,7 +12014,7 @@
               "operator": null,
               "value": null,
               "next": "ATK_HOSTILE",
-              "notes": "Win: Gain 2 Food. Disengage: Lose 1 Morale."
+              "notes": "Win: Gain 2 Food and 1 Leadership. Disengage: Lose 1 Morale."
             }
           ]
         },
@@ -12409,7 +12399,7 @@
               "operator": null,
               "value": null,
               "next": "ATK_HOSTILE",
-              "notes": "Win: Gain 2 Coin. Disengage: Lose 1 Leadership."
+              "notes": "Win: Gain 2 Coin and 1 Leadership. Disengage: Lose 1 Leadership."
             }
           ]
         },
@@ -12578,7 +12568,7 @@
             "target": "Research",
             "value": 1
           },
-          "next": "N99"
+          "next": "O3_PASS_A2"
         },
         "O3_FAIL_A1": {
           "type": "Action",
@@ -12740,7 +12730,7 @@
               "operator": null,
               "value": null,
               "next": "O3_TEST",
-              "notes": "Pass: Gain 1 Research. Fail: Lose 1 Rapport."
+              "notes": "Pass: Gain 1 Research and 1 Leadership. Fail: Lose 1 Rapport."
             },
             {
               "label": "Attack",
@@ -12748,7 +12738,7 @@
               "operator": null,
               "value": null,
               "next": "ATK_HOSTILE",
-              "notes": "Win: Gain 1 Research. Disengage: Lose 1 Morale."
+              "notes": "Win: Gain 1 Research and 1 Leadership. Disengage: Lose 1 Morale."
             }
           ]
         },
@@ -12813,6 +12803,15 @@
         },
         "N99": {
           "type": "End"
+        },
+        "O3_PASS_A2": {
+          "type": "Action",
+          "action": {
+            "type": "Gain",
+            "target": "Leadership",
+            "value": 1
+          },
+          "next": "N99"
         }
       }
     },
@@ -13181,7 +13180,7 @@
               "operator": null,
               "value": null,
               "next": "ATK_HOSTILE",
-              "notes": "Win: Gain 1 Stone. Disengage: Lose 1 Leadership."
+              "notes": "Win: Gain 1 Stone and 1 Leadership. Disengage: Lose 1 Leadership."
             }
           ]
         },
@@ -13520,7 +13519,7 @@
               "operator": null,
               "value": null,
               "next": "ATK_HOSTILE",
-              "notes": "Win: Gain 1 Research. Disengage: Lose 1 Morale."
+              "notes": "Win: Gain 1 Research and 1 Leadership. Disengage: Lose 1 Morale."
             }
           ]
         },
@@ -13898,7 +13897,7 @@
               "operator": null,
               "value": null,
               "next": "ATK_HOSTILE",
-              "notes": "Win: Gain 2 Food. Disengage: Lose 1 Morale."
+              "notes": "Win: Gain 2 Food and 1 Leadership. Disengage: Lose 1 Morale."
             }
           ]
         },
@@ -14259,7 +14258,7 @@
               "operator": null,
               "value": null,
               "next": "ATK_HOSTILE",
-              "notes": "Win: Gain 2 Coin. Disengage: Lose 1 Leadership."
+              "notes": "Win: Gain 2 Coin and 1 Leadership. Disengage: Lose 1 Leadership."
             }
           ]
         },
@@ -14597,7 +14596,7 @@
               "operator": null,
               "value": null,
               "next": "ATK_HOSTILE",
-              "notes": "Win: Gain 2 Food. Disengage: Lose 1 Morale."
+              "notes": "Win: Gain 2 Food and 1 Leadership. Disengage: Lose 1 Morale."
             }
           ]
         },
@@ -14926,7 +14925,7 @@
               "operator": null,
               "value": null,
               "next": "ATK_HOSTILE",
-              "notes": "Win: Gain 1 Research. Disengage: Lose 1 Morale."
+              "notes": "Win: Gain 1 Research and 1 Leadership. Disengage: Lose 1 Morale."
             }
           ]
         },
@@ -15267,7 +15266,7 @@
               "operator": null,
               "value": null,
               "next": "ATK_HOSTILE",
-              "notes": "Win: Gain 1 Research. Disengage: Lose 1 Leadership."
+              "notes": "Win: Gain 1 Research and 1 Leadership. Disengage: Lose 1 Leadership."
             }
           ]
         },
@@ -15654,7 +15653,7 @@
               "operator": null,
               "value": null,
               "next": "ATK_HOSTILE",
-              "notes": "Win: Gain 1 Research. Disengage: Lose 1 Morale."
+              "notes": "Win: Gain 1 Research and 1 Leadership. Disengage: Lose 1 Morale."
             }
           ]
         },
@@ -16130,7 +16129,7 @@
               "operator": null,
               "value": null,
               "next": "ATK_HOSTILE",
-              "notes": "Win: Gain 2 Coin or 1 Stone. Disengage: Lose 1 Leadership."
+              "notes": "Win: Gain 2 Coin or 1 Stone. Gain 1 Leadership Disengage: Lose 1 Leadership."
             }
           ]
         },
@@ -16509,7 +16508,7 @@
               "operator": null,
               "value": null,
               "next": "ATK_HOSTILE",
-              "notes": "Win: Gain 2 Coin. Disengage: Lose 1 Leadership."
+              "notes": "Win: Gain 2 Coin and 1 Leadership. Disengage: Lose 1 Leadership."
             }
           ]
         },
@@ -16853,7 +16852,7 @@
               "operator": null,
               "value": null,
               "next": "ATK_HOSTILE",
-              "notes": "Win: Gain 1 Research. Disengage: Lose 1 Morale."
+              "notes": "Win: Gain 1 Research and 1 Leadership. Disengage: Lose 1 Morale."
             }
           ]
         },
@@ -17218,7 +17217,7 @@
               "operator": null,
               "value": null,
               "next": "ATK_HOSTILE",
-              "notes": "Win: Gain 1 Research. Disengage: Lose 1 Leadership."
+              "notes": "Win: Gain 1 Research and 1 Leadership. Disengage: Lose 1 Leadership."
             }
           ]
         },
@@ -17632,7 +17631,7 @@
               "operator": null,
               "value": null,
               "next": "ATK_HOSTILE",
-              "notes": "Win: Gain 2 Food. Disengage: Lose 1 Morale."
+              "notes": "Win: Gain 2 Food and 1 Leadership. Disengage: Lose 1 Morale."
             }
           ]
         },
@@ -18042,7 +18041,7 @@
               "operator": null,
               "value": null,
               "next": "ATK_HOSTILE",
-              "notes": "Win: Gain 2 Food. Disengage: Lose 1 Morale."
+              "notes": "Win: Gain 2 Food and 1 Leadership. Disengage: Lose 1 Morale."
             }
           ]
         },
@@ -18245,7 +18244,7 @@
             "target": "Coin",
             "value": 3
           },
-          "next": "N99"
+          "next": "O3_PASS_A2"
         },
         "O3_FAIL_A1": {
           "type": "Action",
@@ -18407,7 +18406,7 @@
               "operator": null,
               "value": null,
               "next": "O3_TEST",
-              "notes": "Pass: Gain 3 Coin. Fail: Lose 1 Rapport."
+              "notes": "Pass: Gain 3 Coin and 1 Leadership. Fail: Lose 1 Rapport."
             },
             {
               "label": "Attack",
@@ -18415,7 +18414,7 @@
               "operator": null,
               "value": null,
               "next": "ATK_HOSTILE",
-              "notes": "Win: Gain 1 Research. Disengage: Lose 1 Morale."
+              "notes": "Win: Gain 1 Research and 1 Leadership. Disengage: Lose 1 Morale."
             }
           ]
         },
@@ -18480,6 +18479,15 @@
         },
         "N99": {
           "type": "End"
+        },
+        "O3_PASS_A2": {
+          "type": "Action",
+          "action": {
+            "type": "Gain",
+            "target": "Leadership",
+            "value": 1
+          },
+          "next": "N99"
         }
       }
     },
@@ -18803,7 +18811,7 @@
               "operator": null,
               "value": null,
               "next": "ATK_HOSTILE",
-              "notes": "Win: Gain 1 Research. Disengage: Lose 1 Morale."
+              "notes": "Win: Gain 1 Research and 1 Leadership. Disengage: Lose 1 Morale."
             }
           ]
         },

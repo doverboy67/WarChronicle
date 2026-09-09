@@ -943,10 +943,15 @@ public sealed partial class GameSession
         combat.Choices.Add(new("round:continue", "Continue to the next round"));
         if (!combat.NoDisengage && combat.MayDisengage)
         {
+            var disengageHint = _combatResumeMode == CombatResumeMode.ArrivalForced || _activeFlowContext == FlowContext.Arrival
+                ? "Forced Mobilization follows"
+                : _activeFlowContext == FlowContext.Explore
+                    ? "Resume Mobilization and proceed to the Clearing"
+                    : "Leave the battle after this round";
             combat.Choices.Add(new(
                 combat.FeignedWithdrawalReady ? "round:feigned" : "round:disengage",
                 combat.FeignedWithdrawalReady ? "Disengage with Feigned Withdrawal" : "Disengage",
-                combat.FeignedWithdrawalReady ? "No Disengage penalty and no Cavalry pursuit" : "Forced Mobilization follows"));
+                combat.FeignedWithdrawalReady ? "No Disengage penalty and no Cavalry pursuit" : disengageHint));
         }
     }
 
@@ -1282,7 +1287,7 @@ public sealed partial class GameSession
         {
             "Won" => "The enemy force is broken. The Host wins the Combat.",
             "Lost" => "The Host is destroyed. The Combat is lost.",
-            "Disengaged" => "The Host breaks contact and is forced onward.",
+            "Disengaged" => "The Host breaks contact and disengages from the Combat.",
             _ => "Combat ends."
         }));
     }
@@ -1330,11 +1335,23 @@ public sealed partial class GameSession
         var outcome = combat.Outcome ?? "Lost";
         var isTest = combat.IsTest;
         var isFinale = combat.IsFinale || _combatResumeMode == CombatResumeMode.Finale;
+        var earnedVictoryLeadership = !isTest && string.Equals(outcome, "Won", StringComparison.OrdinalIgnoreCase);
+
+        // Every successful Combat awards 1 Leadership, whether the battle was
+        // chosen by the player or forced by a card/rule. Card-specific rewards
+        // remain separate and are resolved by their normal EventFlow.
+        if (earnedVictoryLeadership)
+        {
+            combat.PlayerLeadership += 1;
+            combat.Log.Add(new("Combat victory reward: gain 1 Leadership."));
+        }
 
         if (!isTest)
         {
             ArchiveCompletedBattle(combat, outcome);
             CommitCombatStateToCampaign(combat);
+            if (earnedVictoryLeadership)
+                AddNarrativeText("Combat victory reward: gain 1 Leadership.");
         }
 
         Combat = null;
