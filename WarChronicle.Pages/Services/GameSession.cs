@@ -3434,6 +3434,64 @@ public sealed partial class GameSession
         // other concealed downstream information deliberately stay hidden.
         return (sourceId, label) switch
         {
+            ("CAMP-001", "Gain 2 Coin") =>
+                "Gain 2 Coin.",
+            ("CAMP-001", "Gain 1 Coin and 1 Leadership") =>
+                "Gain 1 Coin and 1 Leadership.",
+            ("CAMP-001", "Gain adjacent Terrain Resource") =>
+                $"Gain 1 {AdjacentTerrainResource()} matching the adjacent Terrain. Subject to Baggage Train capacity.",
+            ("CAMP-001", "Buy 1 Resource at Market -1 Coin") =>
+                "Buy 1 Resource for 1 Coin less than its current Market Buy value. Subject to Baggage Train capacity.",
+            ("CAMP-001", "Repair 1 damaged Baggage Train space — Spend 1 Wood") =>
+                "Spend 1 Wood. Repair 1 damaged Baggage Train space.",
+
+            ("CAMP-002", "Market") =>
+                "Buy and/or sell up to 2 Resources at current Market values. Purchases are subject to Baggage Train capacity.",
+            ("CAMP-002", "Rest") =>
+                "Gain 1 Morale.",
+
+            ("CAMP-003", "Chapel") =>
+                "Spend 1 Wood + 1 Coin. Gain a Priest. Priest: optional 5–6 Proselytization before Combat, prevent 1 Winter Attrition loss, and improve the Finale Resolve Check.",
+            ("CAMP-003", "Academy") =>
+                "Spend 1 Stone + 1 Coin. Whenever you gain Research, roll 1d6 for each Research gained; each 4–6 grants +1 additional Research.",
+
+            ("CAMP-004", "Market") =>
+                "Spend 1 Wood + 1 Coin. During Harvest, you may sell up to 2 Resources purged from the Baggage Train. Market Day may also be used at a Controlled Settlement.",
+            ("CAMP-004", "Baggage Cart") =>
+                "Spend 1 Wood. Increase Baggage Train capacity by 2 spaces.",
+
+            ("CAMP-007", "Provision") =>
+                "Spend 2 Coin to gain 1 Food, Wood, or Stone. You may spend 1 additional Coin to gain 1 additional Food, Wood, or Stone.",
+            ("CAMP-007", "Rest") =>
+                "Gain 1 Morale.",
+            ("CAMP-007", "Buy 1 additional Resource") =>
+                "Spend 1 additional Coin. Gain 1 additional Food, Wood, or Stone.",
+            ("CAMP-007", "Done") =>
+                "Finish Supply Convoy without buying another Resource.",
+
+            ("CAMP-009", "Raise Levies") =>
+                "Spend 1 Food. Add 2 Levy to your Host.",
+            ("CAMP-009", "Rest") =>
+                "Gain 1 Morale.",
+
+            ("CAMP-010", "Purchase Advancement/Armor") =>
+                "Purchase an Advancement or Armor Development for 1 less Research, to a minimum Research cost of 1. Pay all other printed costs. After Drill resolves, regain 1 Leadership.",
+            ("CAMP-010", "Gain Research") =>
+                "Gain 1 Research. You may then discard the top Tactics card for free. After Drill resolves, regain 1 Leadership.",
+            ("CAMP-010", "Top Advancement card") =>
+                "Purchase the top Advancement card for 1 less Research, to a minimum Research cost of 1. Pay all other printed costs.",
+            ("CAMP-010", "Armor Development from R&R Offer") =>
+                "Purchase an Armor Development from the R&R offer for 1 less Research, to a minimum Research cost of 1. Pay all other printed costs.",
+            ("CAMP-010", "Yes") =>
+                "Discard the top Tactics card for free, then reveal the next card.",
+            ("CAMP-010", "No") =>
+                "Keep the current top Tactics card.",
+
+            ("CAMP-012", "Train Scouts") =>
+                "Spend 1 Research. Gain Scouting: when Exploring, draw 2 Terrain cards and choose 1.",
+            ("CAMP-012", "Appoint Camp Steward") =>
+                "Spend 2 Coin. Gain Camp Steward: during Work, you may instead gain 1 Resource matching the adjacent Terrain or buy 1 Resource for 1 Coin less than its Market Buy value.",
+
             ("SCENE-020", "Send in a Fighter") =>
                 "Choose 1 Military Unit, then roll 1d6. 1: lose that Unit; 2–3: lose 1 Morale; 4–5: gain 2 Coin; 6: gain 3 Coin and 1 Morale.",
             ("SCENE-020", "Refuse the Challenge") =>
@@ -3606,14 +3664,25 @@ public sealed partial class GameSession
         {
             var max = Math.Min(3, ResourceValue("Coin"));
             for (var i = 0; i <= max; i++)
-                options.Add(new($"select:{i}", i == 0 ? "Recruit none" : $"Recruit {i}", i == 0 ? null : $"{i} Coin"));
+            {
+                var detail = i == 0
+                    ? "Recruit no Mercenaries."
+                    : $"Spend {i} Coin. Add {i} Mercenar{(i == 1 ? "y" : "ies")} to your Host.";
+                options.Add(new($"select:{i}", i == 0 ? "Recruit none" : $"Recruit {i}", detail));
+            }
             return options;
         }
 
         if (string.Equals(input, "HostileTribes", StringComparison.OrdinalIgnoreCase))
         {
             foreach (var tribe in Tribes.Where(t => t.Rapport == "Hostile"))
-                options.Add(new($"select:{tribe.Name}", tribe.Name));
+            {
+                var detail = _activeFlowContext == FlowContext.Camp
+                    && string.Equals(PendingCampCard?.Id, "CAMP-011", StringComparison.OrdinalIgnoreCase)
+                        ? "Test 6+ with no Hostile DRM. Leadership may not be spent. Pass: gain 1 Rapport and 1 Morale."
+                        : null;
+                options.Add(new($"select:{tribe.Name}", tribe.Name, detail));
+            }
             return options;
         }
 
@@ -3621,7 +3690,17 @@ public sealed partial class GameSession
         {
             var allowed = input[(input.IndexOf(':') + 1)..].Split('|', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
             foreach (var tribe in Tribes.Where(t => allowed.Contains(t.Rapport, StringComparer.OrdinalIgnoreCase)))
-                options.Add(new($"select:{tribe.Name}", tribe.Name, tribe.Rapport));
+            {
+                var detail = tribe.Rapport;
+                if (_activeFlowContext == FlowContext.Camp
+                    && string.Equals(PendingCampCard?.Id, "CAMP-013", StringComparison.OrdinalIgnoreCase))
+                {
+                    detail = string.Equals(tribe.Rapport, "Friendly", StringComparison.OrdinalIgnoreCase)
+                        ? "Friendly • +1 DRM. Test 6+; Leadership may not be spent. Pass: gain 2 Coin and 2 Leadership."
+                        : "Neutral • +0 DRM. Test 6+; Leadership may not be spent. Pass: gain 2 Coin, 1 Leadership, and 1 Rapport.";
+                }
+                options.Add(new($"select:{tribe.Name}", tribe.Name, detail));
+            }
             return options;
         }
 
@@ -3717,10 +3796,11 @@ public sealed partial class GameSession
 
         if (string.Equals(input, "SupplyConvoyResources", StringComparison.OrdinalIgnoreCase))
         {
+            var coinCost = string.Equals(_activeNodeId, "N20", StringComparison.OrdinalIgnoreCase) ? 1 : 2;
             foreach (var resource in new[] { "Food", "Wood", "Stone" })
             {
                 if (CanAddPhysicalResource(resource, 1))
-                    options.Add(new($"select:{resource}", resource));
+                    options.Add(new($"select:{resource}", resource, $"Spend {coinCost} Coin. Gain 1 {resource}."));
             }
             return options;
         }
@@ -3756,7 +3836,13 @@ public sealed partial class GameSession
         if (string.Equals(input, "DamagedBaggageSlots", StringComparison.OrdinalIgnoreCase))
         {
             foreach (var slot in Baggage.Where(b => b.Damaged))
-                options.Add(new($"select:{slot.Position}", $"Space {slot.Position}", "Damaged"));
+            {
+                var detail = _activeFlowContext == FlowContext.Camp
+                    && string.Equals(PendingCampCard?.Id, "CAMP-001", StringComparison.OrdinalIgnoreCase)
+                        ? "Spend 1 Wood. Repair this damaged Baggage Train space."
+                        : "Damaged";
+                options.Add(new($"select:{slot.Position}", $"Space {slot.Position}", detail));
+            }
             return options;
         }
 
@@ -4081,6 +4167,19 @@ public sealed partial class GameSession
         var prompt = GetString(node, "prompt") ?? "Test";
         var drm = TestDrm(node);
         var detail = drm == 0 ? null : $"Rapport DRM: {(drm > 0 ? "+" : string.Empty)}{drm}";
+
+        if (_activeFlowContext == FlowContext.Camp
+            && string.Equals(PendingCampCard?.Id, "CAMP-011", StringComparison.OrdinalIgnoreCase))
+        {
+            detail = "Leadership may not be spent. Pass: gain 1 Rapport and 1 Morale.";
+        }
+        else if (_activeFlowContext == FlowContext.Camp
+            && string.Equals(PendingCampCard?.Id, "CAMP-013", StringComparison.OrdinalIgnoreCase))
+        {
+            var drmText = drm >= 0 ? $"+{drm}" : drm.ToString();
+            detail = $"Rapport DRM: {drmText}. Leadership may not be spent. Pass: gain 2 Coin and 1 Leadership; if Friendly, gain 1 additional Leadership, otherwise gain 1 Rapport.";
+        }
+
         var options = new List<FlowPromptOption>
         {
             new("test:normal", "Roll 2d6", detail)

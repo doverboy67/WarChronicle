@@ -1,4 +1,13 @@
-War Chronicle Browser Update 0522
+War Chronicle Browser Update 0523
+
+Update 0523 (v0.5.0.23):
+- Header now reads "War Chronicle • © 2026 - Bill Hunter • v0.5.0.23" with no "build" label.
+- Reverted Rapport to the older compact row layout. Each encountered relationship now shows its actual state with the applicable DRM beside it: Hostile -1, Neutral +0, Friendly +1, Allied +2.
+- Added height-aware State-panel compaction for shorter desktop/iPad landscape viewports so the Resources card does not clip the Leadership row; the State panel can scroll vertically as a safety fallback instead of hiding content.
+- Kept the narrower-width Resource compaction as a secondary width safeguard.
+- Expanded Camp decision buttons across the board so option-specific costs and immediate effects are visible before selection. This includes Work, Market Day/Rest, construction choices, Hire Mercenaries counts, Supply Convoy, Raise Local Levies/Rest, Drill the Host, Field Staff, Send Terms Ahead, and Host a Common Table.
+- Camp diplomacy test buttons now repeat the relevant no-Leadership rule and immediate success payoff.
+- Bumped CSS and Pages data cache tokens to 0523.
 
 Update 0522 (v0.5.0.22):
 - Fixed the GitHub Pages data package. WarChronicle.Pages/wwwroot/Data/wc_data.json had remained on the older Camp-card data even though the source Pages/Data/wc_data.json and local Web data were updated.

@@ -60,7 +60,7 @@
     <section class="state-panel">
         <header class="state-header">
             <div>
-                <div class="eyebrow top-build-line">War Chronicle <span aria-hidden="true">•</span> © 2026 - Bill Hunter <span aria-hidden="true">•</span> build <span class="app-version" @onclick="HandleVersionTap">@AppVersion</span></div>
+                <div class="eyebrow top-build-line">War Chronicle <span aria-hidden="true">•</span> © 2026 - Bill Hunter <span aria-hidden="true">•</span> <span class="app-version" @onclick="HandleVersionTap">@AppVersion</span></div>
                 <h1>The Host</h1>
             </div>
             <div class="dev-test-tools">
@@ -330,32 +330,19 @@
 
             <article class="state-card rapport-card">
                 <h2>Rapport</h2>
-                <div class="rapport-track-list">
-                    @foreach (var tribe in Session.Tribes.OrderBy(RapportTribeOrder))
-                    {
-                        <div class="rapport-track-row" title="@RapportTooltip(tribe)">
-                            <div class="rapport-tribe-label @TribeCssClass(tribe.Name)">
-                                <strong>@DisplayRapportTribeName(tribe.Name)</strong>
-                                @if (string.Equals(tribe.Rapport, "Unmet", StringComparison.OrdinalIgnoreCase))
-                                {
-                                    <small>Unmet</small>
-                                }
-                            </div>
-                            <div class="rapport-track" aria-label="@($"{tribe.Name}: {tribe.Rapport}")">
-                                @foreach (var state in RapportStates)
-                                {
-                                    <div class="rapport-space @(string.Equals(tribe.Rapport, state.Name, StringComparison.OrdinalIgnoreCase) ? "is-current" : string.Empty)">
-                                        <span>@state.Name</span>
-                                        @if (!string.IsNullOrWhiteSpace(state.Drm))
-                                        {
-                                            <small>@state.Drm</small>
-                                        }
-                                    </div>
-                                }
-                            </div>
-                        </div>
-                    }
-                </div>
+                @foreach (var tribe in Session.Tribes.OrderBy(RapportTribeOrder))
+                {
+                    <div class="rapport-row" title="@RapportTooltip(tribe)">
+                        <span>@DisplayRapportTribeName(tribe.Name)</span>
+                        <strong class="rapport @(tribe.Rapport.ToLowerInvariant())">
+                            @tribe.Rapport
+                            @if (!string.Equals(tribe.Rapport, "Unmet", StringComparison.OrdinalIgnoreCase))
+                            {
+                                <span class="rapport-drm">• @RapportDrmLabel(tribe.Rapport)</span>
+                            }
+                        </strong>
+                    </div>
+                }
             </article>
         </div>
 
@@ -1476,7 +1463,7 @@
 }
 
 @code {
-    private const string AppVersion = "v0.5.0.22";
+    private const string AppVersion = "v0.5.0.23";
 
     // Presentation coordinates only, expressed as fixed pixel offsets from
     // the center of the play-area panel. This keeps the physical relationship
@@ -1831,14 +1818,6 @@
             : rules;
     }
 
-    private static readonly (string Name, string Drm)[] RapportStates =
-    [
-        ("Hostile", "-1"),
-        ("Neutral", ""),
-        ("Friendly", "+1"),
-        ("Allied", "+2")
-    ];
-
     private static int RapportTribeOrder(TribeState tribe) => NormalizeRapportTribe(tribe.Name) switch
     {
         "suntouched" => 0,
@@ -1880,6 +1859,15 @@
             string.Equals(card.Title, entry.Heading, StringComparison.OrdinalIgnoreCase));
         return arrival is null ? null : arrival.Tribe;
     }
+
+    private static string RapportDrmLabel(string rapport) => rapport switch
+    {
+        "Hostile" => "-1 DRM",
+        "Neutral" => "+0 DRM",
+        "Friendly" => "+1 DRM",
+        "Allied" => "+2 DRM",
+        _ => string.Empty
+    };
 
     private static string RapportTooltip(TribeState tribe) => tribe.Rapport switch
     {

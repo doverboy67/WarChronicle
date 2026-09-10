@@ -2270,7 +2270,7 @@ img.depleted-token {
 }
 
 
-/* Update 0521: build/copyright line and compact iPad landscape resource panel */
+/* Update 0521: copyright/version line and compact narrow-width resource panel */
 .top-build-line {
     letter-spacing: .09em;
     white-space: nowrap;
@@ -2355,5 +2355,96 @@ img.depleted-token {
     .top-build-line {
         font-size: .58rem;
         letter-spacing: .045em;
+    }
+}
+
+/* Update 0523: compact Rapport rows and height-aware State panel.
+   Short browser viewports must not clip the Leadership row. */
+.rapport {
+    display: inline-flex;
+    align-items: baseline;
+    justify-content: flex-end;
+    gap: 5px;
+    white-space: nowrap;
+}
+.rapport-drm {
+    color: var(--muted);
+    font-size: .62rem;
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+@media (min-width: 821px) and (max-height: 860px) {
+    .state-panel {
+        grid-template-rows: auto auto minmax(285px, 1fr) minmax(155px, 27vh);
+        gap: 8px;
+        padding: 10px 12px;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .state-card {
+        padding-top: 6px;
+        padding-bottom: 6px;
+    }
+
+    .state-card h2 {
+        margin-bottom: 3px;
+    }
+
+    .resource-title-grid {
+        margin-bottom: 1px;
+    }
+
+    .resource-table-row {
+        min-height: 19px;
+        padding: 0;
+    }
+
+    .resource-count-display {
+        min-height: 20px;
+    }
+
+    .resource-count-icon-slot {
+        width: 20px;
+        height: 20px;
+    }
+
+    .resource-count-icon,
+    .state-token {
+        width: 19px;
+        height: 19px;
+    }
+
+    .leadership-gem {
+        width: 10px;
+        height: 10px;
+    }
+
+    .baggage-slot {
+        min-height: 40px;
+    }
+}
+
+@media (min-width: 821px) and (max-height: 720px) {
+    .state-panel {
+        grid-template-rows: auto auto minmax(270px, auto) minmax(135px, 24vh);
+        gap: 6px;
+        padding: 8px 10px;
+    }
+
+    .calendar-strip {
+        padding-top: 5px;
+        padding-bottom: 3px;
+    }
+
+    .state-card {
+        padding-top: 5px;
+        padding-bottom: 5px;
+    }
+
+    .resource-table-row {
+        min-height: 18px;
     }
 }
