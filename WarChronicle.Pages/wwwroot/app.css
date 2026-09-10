@@ -2268,3 +2268,92 @@ img.depleted-token {
     font-size: .94rem;
     font-style: italic;
 }
+
+
+/* Update 0521: build/copyright line and compact iPad landscape resource panel */
+.top-build-line {
+    letter-spacing: .09em;
+    white-space: nowrap;
+}
+
+@media (min-width: 821px) and (max-width: 1050px) {
+    .resources-card {
+        padding: 7px 5px;
+    }
+
+    .resources-card .resource-title-grid,
+    .resources-card .resource-table-row {
+        grid-template-columns: minmax(44px, 1fr) 56px 42px;
+        column-gap: 3px;
+    }
+
+    .resources-card .resource-title-grid {
+        margin-bottom: 1px;
+    }
+
+    .resources-card .state-card h2,
+    .resources-card h2 {
+        font-size: .76rem;
+        margin-bottom: 3px;
+    }
+
+    .resources-card .resource-title-grid > span {
+        font-size: .48rem;
+        letter-spacing: .035em;
+    }
+
+    .resources-card .market-column-head small {
+        font-size: .39rem;
+        letter-spacing: .015em;
+    }
+
+    .resources-card .resource-table {
+        font-size: .72rem;
+    }
+
+    .resources-card .resource-table-row {
+        min-height: 20px;
+        padding: 0;
+    }
+
+    .resources-card .resource-have {
+        font-size: .78rem;
+    }
+
+    .resources-card .resource-count-display {
+        grid-template-columns: 20px 27px;
+        column-gap: 2px;
+        min-height: 20px;
+        padding-right: 0;
+    }
+
+    .resources-card .resource-count-icon-slot {
+        width: 20px;
+        height: 20px;
+    }
+
+    .resources-card .resource-count-icon,
+    .resources-card .state-token {
+        width: 19px;
+        height: 19px;
+    }
+
+    .resources-card .resource-count-multiplier {
+        min-width: 27px;
+        font-size: .7rem;
+    }
+
+    .resources-card .market-value {
+        font-size: .62rem;
+    }
+
+    .resources-card .leadership-gem {
+        width: 10px;
+        height: 10px;
+    }
+
+    .top-build-line {
+        font-size: .58rem;
+        letter-spacing: .045em;
+    }
+}

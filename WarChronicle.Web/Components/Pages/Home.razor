@@ -60,7 +60,7 @@
     <section class="state-panel">
         <header class="state-header">
             <div>
-                <div class="eyebrow">War Chronicle <span class="app-version" @onclick="HandleVersionTap">@AppVersion</span></div>
+                <div class="eyebrow top-build-line">War Chronicle <span aria-hidden="true">•</span> © 2026 - Bill Hunter <span aria-hidden="true">•</span> build <span class="app-version" @onclick="HandleVersionTap">@AppVersion</span></div>
                 <h1>The Host</h1>
             </div>
             <div class="dev-test-tools">
@@ -1476,7 +1476,7 @@
 }
 
 @code {
-    private const string AppVersion = "v0.5.0.20";
+    private const string AppVersion = "v0.5.0.21";
 
     // Presentation coordinates only, expressed as fixed pixel offsets from
     // the center of the play-area panel. This keeps the physical relationship

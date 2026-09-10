@@ -1,6 +1,9 @@
-War Chronicle Browser Update 0520
+War Chronicle Browser Update 0521
 
-Update 0520 (v0.5.0.20):
+Update 0521 (v0.5.0.21):
+
+- Added the top header line: War Chronicle • © 2026 - Bill Hunter • build v0.5.0.21.
+- Added a compact Resources layout for iPad/medium-width landscape viewports so Leadership and Market Buy/Sell remain fully visible.
 - Compile hotfix for Update 0519. Renamed the two Rapport-specific local variables inside ApplyLose so they no longer shadow the method's later amount variable and trigger CS0136.
 - No gameplay, card-data, or balance changes from 0519.
 - WarChronicle.Web and WarChronicle.Pages contain the same fix.
