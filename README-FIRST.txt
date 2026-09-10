@@ -1,12 +1,10 @@
-War Chronicle Browser Update 0521
+War Chronicle Browser Update 0522
 
-Update 0521 (v0.5.0.21):
-
-- Added the top header line: War Chronicle • © 2026 - Bill Hunter • build v0.5.0.21.
-- Added a compact Resources layout for iPad/medium-width landscape viewports so Leadership and Market Buy/Sell remain fully visible.
-- Compile hotfix for Update 0519. Renamed the two Rapport-specific local variables inside ApplyLose so they no longer shadow the method's later amount variable and trigger CS0136.
-- No gameplay, card-data, or balance changes from 0519.
-- WarChronicle.Web and WarChronicle.Pages contain the same fix.
+Update 0522 (v0.5.0.22):
+- Fixed the GitHub Pages data package. WarChronicle.Pages/wwwroot/Data/wc_data.json had remained on the older Camp-card data even though the source Pages/Data/wc_data.json and local Web data were updated.
+- Synced the GitHub Pages static data to the authoritative current data, so the hosted build now receives the revised Camp cards including Supply Convoy, Raise Local Levies, Respite, Market Day, Drill the Host, Send Terms Ahead, and Host a Common Table.
+- Added a cache-busting query to the Pages data request (Data/wc_data.json?v=0522) so browsers do not keep using the stale JSON after deployment.
+- No new game-design changes in this patch; this corrects what the hosted Pages build actually serves.
 
 Update 0519 (v0.5.0.19):
 - Re-audited the authoritative camp-cards tab in War Chronicle Master(8).xlsx and refreshed the browser Camp card data from that primary source. The revised Camp HTML for the changed cards passes a strict tag-balance check.
