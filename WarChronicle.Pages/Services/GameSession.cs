@@ -95,6 +95,8 @@ public sealed partial class GameSession
     private string? _pendingMultiSelectNextNode;
     private string? _pendingCombatNextNode;
     private string? _pendingTestNarrativeLabel;
+    private string? _pendingOutcomeText;
+    private string? _pendingBrowserFlavor;
     private string? _specialPrompt;
     private int? _activeChronicleEntryIndex;
     private int? _activeChronicleDecisionIndex;
@@ -392,8 +394,6 @@ public sealed partial class GameSession
             return false;
         if (card.Id == "CAMP-013" && !Tribes.Any(t => t.Rapport is "Neutral" or "Friendly"))
             return false;
-        if (card.Id == "CAMP-009" && (AvailableForceCount("Levy") <= 0 || HostCount("Levy") >= 6))
-            return false;
         if (card.Id == "CAMP-012" && HasScouting && HasToken("CampSteward"))
             return false;
         if (card.Id == "CAMP-003" && !((!HasBuilding("Chapel") && CanPayCostBundle("1W+1C")) || (!HasBuilding("Academy") && CanPayCostBundle("1S+1C"))))
@@ -415,10 +415,6 @@ public sealed partial class GameSession
             return "No Hostile tribe is available.";
         if (card.Id == "CAMP-013" && !Tribes.Any(t => t.Rapport is "Neutral" or "Friendly"))
             return "No Neutral or Friendly tribe is available.";
-        if (card.Id == "CAMP-009" && AvailableForceCount("Levy") <= 0)
-            return "No Levy remain in Available Forces.";
-        if (card.Id == "CAMP-009" && HostCount("Levy") >= 6)
-            return "The Host is already at the 6-Levy limit.";
         if (card.Id == "CAMP-012" && HasScouting && HasToken("CampSteward"))
             return "Both Field Staff roles are already in place.";
         if (card.Id == "CAMP-003" && !((!HasBuilding("Chapel") && CanPayCostBundle("1W+1C")) || (!HasBuilding("Academy") && CanPayCostBundle("1S+1C"))))
@@ -607,8 +603,60 @@ public sealed partial class GameSession
             return;
         }
 
+        if (!afterPlayOverridden
+            && string.Equals(card.AfterPlay, "RemoveOrDiscard", StringComparison.OrdinalIgnoreCase))
+        {
+            PresentCampAfterPlayDispositionPrompt(card);
+            return;
+        }
+
+        FinalizeCampCard(card, afterPlayOverridden);
+    }
+
+    private void PresentCampAfterPlayDispositionPrompt(CampCardState card)
+    {
+        _specialPrompt = "CampAfterPlayDisposition";
+        FlowPrompt = new(
+            FlowPromptKind.Choice,
+            card.Title,
+            "Choose what to do with this card after play.",
+            [
+                new("camp-disposition:discard", "Discard", "Return this card to the Camp discard pile."),
+                new("camp-disposition:remove", "Remove from game", "This card will not return this game.")
+            ]);
+    }
+
+    private void ResolveCampAfterPlayDispositionPrompt(string optionId)
+    {
+        var card = PendingCampCard;
+        if (card is null)
+            return;
+
+        if (string.Equals(optionId, "camp-disposition:discard", StringComparison.OrdinalIgnoreCase))
+        {
+            _campDiscard.Add(card);
+            AddNarrativeText($"{card.Title} is discarded.");
+        }
+        else if (string.Equals(optionId, "camp-disposition:remove", StringComparison.OrdinalIgnoreCase))
+        {
+            _removedCampCards.Add(card);
+            AddNarrativeText($"{card.Title} is removed from the game.");
+        }
+        else
+        {
+            return;
+        }
+
+        _specialPrompt = null;
+        FlowPrompt = null;
+        FinalizeCampCard(card, afterPlayAlreadyHandled: true);
+        Changed?.Invoke();
+    }
+
+    private void FinalizeCampCard(CampCardState card, bool afterPlayAlreadyHandled)
+    {
         CampHand.RemoveAll(c => c.Id == card.Id);
-        if (!afterPlayOverridden)
+        if (!afterPlayAlreadyHandled)
             ApplyCampAfterPlay(card);
         PendingCampCard = null;
         _activeChronicleEntryIndex = null;
@@ -662,10 +710,10 @@ public sealed partial class GameSession
         }
         if (string.Equals(disposition, "RemoveOrDiscard", StringComparison.OrdinalIgnoreCase))
         {
-            if (_campCardResolvedSuccessfully)
-                _removedCampCards.Add(card);
-            else
-                _campDiscard.Add(card);
+            // Normal Camp resolution must present the explicit player choice
+            // before this method is reached. Keep this branch side-effect free
+            // so Remove-or-Discard can never be silently decided by success/failure.
+            _logger.LogWarning("RemoveOrDiscard reached ApplyCampAfterPlay without a player disposition for {Card}.", card.Title);
             return;
         }
         if (string.Equals(disposition, "Special", StringComparison.OrdinalIgnoreCase))
@@ -2010,6 +2058,14 @@ public sealed partial class GameSession
     public void BeginExplore()
         => BeginExploreInternal(false);
 
+    public void ProceedToArrival()
+    {
+        if (Phase != GamePhase.Mobilization || MobilizationStep != MobilizationStep.ArrivalReady)
+            return;
+
+        BeginArrival();
+    }
+
     private void BeginExploreInternal(bool forced)
     {
         if (Phase != GamePhase.Mobilization)
@@ -2141,6 +2197,12 @@ public sealed partial class GameSession
             return;
         }
 
+        if (_specialPrompt == "CampAfterPlayDisposition")
+        {
+            ResolveCampAfterPlayDispositionPrompt(optionId);
+            return;
+        }
+
         if (_specialPrompt == "NoArrivalFlow" && optionId == "no-arrival-flow:continue")
         {
             _specialPrompt = null;
@@ -2256,6 +2318,8 @@ public sealed partial class GameSession
         _activeFlow = null;
         _activeNodeId = null;
         _activeFlowContext = FlowContext.None;
+        _pendingOutcomeText = null;
+        _pendingBrowserFlavor = null;
         _specialPrompt = null;
         _currentArrivalTribe = null;
         _arrivalCombatResolved = false;
@@ -2442,19 +2506,7 @@ public sealed partial class GameSession
         CurrentExploreTerrain = terrain;
         Chronicle.Add(new(
             CalendarPhaseStamp("Explore"),
-            terrain switch
-            {
-                TerrainType.Plains when firstMarch => "The Host leaves the Starting Clearing and advances into open country.",
-                TerrainType.Forest when firstMarch => "The Host leaves the Starting Clearing and enters the forest road.",
-                TerrainType.Mountain when firstMarch => "The Host leaves the Starting Clearing and climbs toward the high country.",
-                TerrainType.Plains when forced => "The Host is forced onward into open country.",
-                TerrainType.Forest when forced => "The Host is forced onward beneath the forest canopy.",
-                TerrainType.Mountain when forced => "The Host is forced onward into the high country.",
-                TerrainType.Plains => "The Host advances into open country.",
-                TerrainType.Forest => "The Host enters the forest road.",
-                TerrainType.Mountain => "The Host climbs toward the high country.",
-                _ => "The Host pushes farther along the road."
-            },
+            ExploreTravelNarrative(terrain, firstMarch, forced),
             ChronicleTone.Result,
             terrain.ToString()));
 
@@ -2469,8 +2521,9 @@ public sealed partial class GameSession
         if (_exploreDeck.Count == 0)
         {
             _logger.LogWarning("Explore deck is empty.");
+            AddUneventfulExploreNarrative();
             MobilizationStep = MobilizationStep.ArrivalReady;
-            BeginArrival();
+            Changed?.Invoke();
             return;
         }
 
@@ -2487,11 +2540,12 @@ public sealed partial class GameSession
                 ActiveTokens.Remove("HighOverlookClearRoad");
 
             PendingExploreCard = null;
+            AddUneventfulExploreNarrative();
             MobilizationStep = MobilizationStep.ArrivalReady;
             _logger.LogInformation(
                 "Explore card {CardId} ({Title}) did not match {Terrain}; discarded without effect.",
                 card.Id, card.Title, CurrentExploreTerrain);
-            BeginArrival();
+            Changed?.Invoke();
             return;
         }
 
@@ -2609,7 +2663,7 @@ public sealed partial class GameSession
 
         Chronicle.Add(new(
             CalendarPhaseStamp("Arrival"),
-            $"The Host reaches a settlement held by the {_currentArrivalTribe}.",
+            ArrivalSettlementNarrative(_currentArrivalTribe),
             ChronicleTone.Narrative,
             "Arrival"));
         _activeChronicleEntryIndex = Chronicle.Count - 1;
@@ -2794,12 +2848,7 @@ public sealed partial class GameSession
         _logger.LogInformation("First Contact with {Tribe}: {D1}+{D2}={Total}, starting {Rapport}.", _currentArrivalTribe, d1, d2, total, rapport);
         AddSystemText($"First Contact roll: {d1} + {d2} = {total}.");
 
-        AddNarrativeText(rapport switch
-        {
-            "Hostile" => $"First contact goes badly. The {_currentArrivalTribe} receive the Host with open hostility.",
-            "Friendly" => $"First contact goes unusually well. The {_currentArrivalTribe} receive the Host with unexpected warmth.",
-            _ => $"The {_currentArrivalTribe} receive the Host warily, but without open hostility."
-        });
+        AddNarrativeText(FirstContactNarrative(_currentArrivalTribe, rapport));
     }
 
     private void BeginTributeProcedure()
@@ -2818,12 +2867,12 @@ public sealed partial class GameSession
         }
 
         var tribeName = CanonicalTribeName(_currentArrivalTribe);
-        AddNarrativeText($"The {tribeName} demand {amount} {resource} in tribute.");
+        AddNarrativeText(TributeDemandNarrative(tribeName, amount, resource));
 
         if (CanPayExactTribute(resource, amount))
         {
             PayExactTribute(resource, amount);
-            AddNarrativeText($"The Host pays {amount} {resource} in tribute.");
+            AddNarrativeText(TributePaidNarrative(tribeName, amount, resource));
             AfterTributePaid();
             return;
         }
@@ -3158,6 +3207,7 @@ public sealed partial class GameSession
             switch (type)
             {
                 case "End":
+                    FlushPendingOutcomeNarrative();
                     CompleteActiveFlow();
                     return;
 
@@ -3175,15 +3225,18 @@ public sealed partial class GameSession
                     break;
 
                 case "Choice":
+                    FlushPendingOutcomeNarrative();
                     PresentChoiceNode(node.Value);
                     return;
 
                 case "Select":
+                    FlushPendingOutcomeNarrative();
                     if (!PresentSelectNode(node.Value))
                         return;
                     break;
 
                 case "Test":
+                    FlushPendingOutcomeNarrative();
                     PresentTestNode(node.Value);
                     return;
 
@@ -3579,6 +3632,19 @@ public sealed partial class GameSession
             return options;
         }
 
+        if (string.Equals(input, "HostInfantryClassUnits", StringComparison.OrdinalIgnoreCase))
+        {
+            var infantry = HostCount("Infantry");
+            if (infantry > 0)
+                options.Add(new("select:Infantry", "Infantry", $"{infantry} in Host"));
+
+            var mercenaries = HostCount("Mercenaries");
+            if (mercenaries > 0)
+                options.Add(new("select:Mercenaries", mercenaries == 1 ? "Mercenary" : "Mercenaries", $"{mercenaries} Infantry-class Mercenaries in Host"));
+
+            return options;
+        }
+
         if (input.StartsWith("AvailableTokens:", StringComparison.OrdinalIgnoreCase))
         {
             var names = input[(input.IndexOf(':') + 1)..].Split('|', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
@@ -3646,6 +3712,16 @@ public sealed partial class GameSession
         {
             foreach (var market in Market.Where(m => CanMarketBuy(m.Resource, 1)))
                 options.Add(new($"select:{market.Resource}", market.Resource, $"{market.BuyPrice} Coin"));
+            return options;
+        }
+
+        if (string.Equals(input, "SupplyConvoyResources", StringComparison.OrdinalIgnoreCase))
+        {
+            foreach (var resource in new[] { "Food", "Wood", "Stone" })
+            {
+                if (CanAddPhysicalResource(resource, 1))
+                    options.Add(new($"select:{resource}", resource));
+            }
             return options;
         }
 
@@ -3866,12 +3942,50 @@ public sealed partial class GameSession
     {
         if (PendingCampCard is null)
             return;
+
         var n = ToInt(result);
+
+        // Preserve the printed card outcome, then let the browser add a little
+        // atmosphere after the mechanical actions have resolved.
+        if (PendingCampCard.Id == "SCENE-014")
+        {
+            var canonical = n switch
+            {
+                1 => "Your host shakes their head in disapproval.",
+                2 => "Leave the tavern with your reputation intact.",
+                _ => null
+            };
+
+            var flavor = n switch
+            {
+                1 => PickNarrative(
+                    "The evening turns sour. By the time the Host files out, even the mugs seem to be judging you.",
+                    "Whatever seemed funny an hour ago no longer survives the walk back to camp. The Host leaves the tavern under a cloud.",
+                    "A few bad throws become a very long night. No one volunteers to recount the details on the march tomorrow."),
+                2 => PickNarrative(
+                    "The night ends without profit, scandal, or anyone needing to be carried back to camp. That counts as a respectable result.",
+                    "The dice are put away before fortune finds a reason to become cruel. The Host departs with dignity mostly intact."),
+                3 => PickNarrative(
+                    "A modest run of luck leaves a little silver on your side of the table.",
+                    "For once, the dice pay for the drinks rather than the other way around."),
+                4 => PickNarrative(
+                    "The table begins to lean your way, and confidence returns with the coin.",
+                    "A cheer goes up as the Host finally finds a streak worth remembering."),
+                5 => PickNarrative(
+                    "Now the room is watching. The purse grows heavier and the Host starts believing the night has chosen a favorite.",
+                    "The dice keep landing kindly, which is exactly when sensible people consider leaving."),
+                6 => PickNarrative(
+                    "The table erupts. For a few glorious minutes the Host owns the room, the dice, and most of the loose coin in it.",
+                    "Fortune arrives loudly and with witnesses. Even the barkeep seems impressed."),
+                _ => null
+            };
+
+            QueueOutcomeNarrative(canonical, flavor);
+            return;
+        }
+
         var text = PendingCampCard.Id switch
         {
-            "SCENE-014" when n == 1 => "The evening turns sour, and the Host leaves the tavern under a cloud.",
-            "SCENE-014" when n == 2 => "You leave the tavern with your reputation intact.",
-            "SCENE-014" when n >= 3 => "Fortune favors you at the tables.",
             "SCENE-015" when n == 1 => "You misjudge the mood of the fair.",
             "SCENE-015" when n == 2 => "No one is satisfied, but the dispute ends without further consequence.",
             "SCENE-015" when n >= 3 => "Your judgment wins some measure of approval.",
@@ -3972,7 +4086,7 @@ public sealed partial class GameSession
             new("test:normal", "Roll 2d6", detail)
         };
 
-        if (Leadership > 0)
+        if (Leadership > 0 && !NodeHasFlag(node, "NoLeadership"))
             options.Add(new("test:leadership", "Spend 1 Leadership", "Roll 3d6 and keep the best 2"));
 
         FlowPrompt = new(
@@ -3988,7 +4102,9 @@ public sealed partial class GameSession
         if (node is null)
             return;
 
-        var useLeadership = optionId == "test:leadership" && Leadership > 0;
+        var useLeadership = optionId == "test:leadership"
+            && Leadership > 0
+            && !NodeHasFlag(node.Value, "NoLeadership");
         var primary1 = Random.Shared.Next(1, 7);
         var primary2 = Random.Shared.Next(1, 7);
         var dice = new List<int> { primary1, primary2 };
@@ -4048,7 +4164,13 @@ public sealed partial class GameSession
                 var failed = branchLabel.Contains("Fail", StringComparison.OrdinalIgnoreCase);
                 var authoredPlayerText = GetString(matchedBranch.Value, "player_text");
                 var authoredOutcome = AuthoredTestOutcomeNarrative(passed, failed, criticalSuccess, criticalFailure);
-                if (!string.IsNullOrWhiteSpace(authoredPlayerText))
+                var pendingTestLabel = _pendingTestNarrativeLabel;
+                if (_activeFlowContext == FlowContext.Arrival && !string.IsNullOrWhiteSpace(authoredPlayerText))
+                {
+                    AddTestOutcomeNarrative(passed, failed, criticalSuccess, criticalFailure);
+                    QueueOutcomeNarrative(null, ArrivalTestFlavor(PendingArrivalCard?.Id, pendingTestLabel, passed || criticalSuccess, authoredPlayerText));
+                }
+                else if (!string.IsNullOrWhiteSpace(authoredPlayerText))
                     AddPlayerText(matchedBranch.Value);
                 else if (!string.IsNullOrWhiteSpace(authoredOutcome))
                     AddNarrativeText(authoredOutcome);
@@ -4239,9 +4361,9 @@ public sealed partial class GameSession
                 break;
             case "Spend":
                 if (string.Equals(target, "Resources", StringComparison.OrdinalIgnoreCase))
-                    ApplyResourceBundle(Convert.ToString(value) ?? string.Empty, gain: false);
+                    ApplyResourceBundle(Convert.ToString(value) ?? string.Empty, gain: false, flags);
                 else
-                    ApplySpend(target, ToInt(value));
+                    ApplySpend(target, ToInt(value), flags);
                 break;
             case "MarketBuy":
                 if (_activeFlowContext == FlowContext.Camp && string.Equals(target, "Resource", StringComparison.OrdinalIgnoreCase))
@@ -4270,7 +4392,7 @@ public sealed partial class GameSession
                 PurchaseResource(target, ToInt(value), flags);
                 break;
             case "AdjustRapport":
-                AdjustRapport(target, ToInt(value));
+                AdjustRapport(target, ToInt(value), flags);
                 break;
             case "SetRapport":
                 SetRapport(target, Convert.ToString(value) ?? string.Empty);
@@ -4420,7 +4542,7 @@ public sealed partial class GameSession
         AddNarrativeText($"Reveal {top.Name} as the next Advancement.{suffix}");
     }
 
-    private void ApplyResourceBundle(string bundle, bool gain)
+    private void ApplyResourceBundle(string bundle, bool gain, IReadOnlyList<JsonElement>? flags = null)
     {
         foreach (Match match in Regex.Matches(bundle, @"(\d+)([CFWSR])", RegexOptions.IgnoreCase))
         {
@@ -4429,7 +4551,7 @@ public sealed partial class GameSession
             if (gain)
                 ApplyGain(target, amount);
             else
-                ApplySpend(target, amount);
+                ApplySpend(target, amount, flags);
         }
     }
 
@@ -5426,6 +5548,22 @@ public sealed partial class GameSession
         if (string.IsNullOrWhiteSpace(target))
             return;
 
+        if (string.Equals(target, "SelectedInfantryClass", StringComparison.OrdinalIgnoreCase))
+        {
+            var selectedType = _flowVars.TryGetValue("AssignedInfantryClass", out var selected)
+                ? Convert.ToString(selected)
+                : null;
+            if (!string.IsNullOrWhiteSpace(selectedType))
+            {
+                var lost = LoseHostUnit(selectedType!, 1);
+                if (lost > 0)
+                    AddNarrativeText(selectedType!.Equals("Mercenaries", StringComparison.OrdinalIgnoreCase)
+                        ? "The assigned Mercenary dies in the excavation."
+                        : "The assigned Infantry dies in the excavation.");
+            }
+            return;
+        }
+
         if (string.Equals(target, "SelectedUnits", StringComparison.OrdinalIgnoreCase))
         {
             if (_flowVars.TryGetValue("SelectedUnits", out var selected) && selected is Dictionary<string, int> dict)
@@ -5433,6 +5571,22 @@ public sealed partial class GameSession
                 foreach (var pair in dict)
                     LoseHostUnit(pair.Key, pair.Value);
             }
+            return;
+        }
+
+        if (target.StartsWith("Rapport:", StringComparison.OrdinalIgnoreCase))
+        {
+            var rapportAmount = ToInt(value);
+            if (rapportAmount > 0)
+                AdjustRapport(target[8..], -rapportAmount, flags);
+            return;
+        }
+
+        if (string.Equals(target, "Rapport", StringComparison.OrdinalIgnoreCase))
+        {
+            var rapportAmount = ToInt(value);
+            if (rapportAmount > 0)
+                AdjustRapport("CurrentTribe", -rapportAmount, flags);
             return;
         }
 
@@ -5459,8 +5613,9 @@ public sealed partial class GameSession
         if (amount <= 0)
             return;
 
-        var applyShortfall = HasFlag(flags, "ApplyGlobalShortfall");
         var ifAble = HasFlag(flags, "IfAble") || HasFlag(flags, "NoShortfall");
+        var applyShortfall = !ifAble
+            && (HasFlag(flags, "ApplyGlobalShortfall") || UsesGlobalShortfallByDefault(target));
 
         if (IsUnitType(target))
         {
@@ -5510,25 +5665,59 @@ public sealed partial class GameSession
             _logger.LogInformation("Could not lose full {Amount} {Target}; lost {Actual}.", amount, target, actual);
     }
 
-    private void ApplySpend(string target, int amount)
+    private void ApplySpend(string target, int amount, IReadOnlyList<JsonElement>? flags = null)
     {
         if (string.IsNullOrWhiteSpace(target) || amount <= 0)
             return;
 
+        var safeFlags = flags ?? Array.Empty<JsonElement>();
+        var ifAble = HasFlag(safeFlags, "IfAble") || HasFlag(safeFlags, "NoShortfall");
+        var applyShortfall = !ifAble
+            && (HasFlag(safeFlags, "ApplyGlobalShortfall") || UsesGlobalShortfallByDefault(target));
+
+        if (target.StartsWith("Rapport:", StringComparison.OrdinalIgnoreCase))
+        {
+            AdjustRapport(target[8..], -amount, safeFlags);
+            return;
+        }
+
+        if (string.Equals(target, "Rapport", StringComparison.OrdinalIgnoreCase))
+        {
+            AdjustRapport("CurrentTribe", -amount, safeFlags);
+            return;
+        }
+
         if (IsPhysicalResource(target))
         {
-            RemovePhysicalResource(target, amount);
+            var spent = RemovePhysicalResource(target, amount);
+            if (applyShortfall && spent < amount)
+                ApplyShortfall(amount - spent);
             return;
         }
 
         if (string.Equals(target, "Leadership", StringComparison.OrdinalIgnoreCase))
         {
-            Leadership = Math.Max(0, Leadership - amount);
+            var spent = Math.Min(Leadership, amount);
+            Leadership -= spent;
+            if (applyShortfall && spent < amount)
+                ApplyShortfall(amount - spent);
             return;
         }
 
-        AdjustResource(target, -Math.Min(ResourceValue(target), amount));
+        var available = ResourceValue(target);
+        var actual = Math.Min(available, amount);
+        AdjustResource(target, -actual);
+        if (applyShortfall && actual < amount)
+            ApplyShortfall(amount - actual);
     }
+
+    private static bool UsesGlobalShortfallByDefault(string target)
+        => IsPhysicalResource(target)
+            || string.Equals(target, "Coin", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(target, "Leadership", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(target, "Research", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(target, "Rapport", StringComparison.OrdinalIgnoreCase)
+            || target.StartsWith("Rapport:", StringComparison.OrdinalIgnoreCase);
 
     private void ApplyShortfall(int missing)
     {
@@ -5679,20 +5868,31 @@ public sealed partial class GameSession
         }
     }
 
-    private void AdjustRapport(string target, int delta)
+    private void AdjustRapport(string target, int delta, IReadOnlyList<JsonElement>? flags = null)
     {
         if (delta == 0)
             return;
 
+        var safeFlags = flags ?? Array.Empty<JsonElement>();
+        var noShortfall = HasFlag(safeFlags, "IfAble") || HasFlag(safeFlags, "NoShortfall");
+
         if (string.Equals(target, "AllTribes", StringComparison.OrdinalIgnoreCase))
         {
+            var missingRapport = 0;
             for (var i = 0; i < Tribes.Count; i++)
             {
                 if (string.Equals(Tribes[i].Rapport, "Unmet", StringComparison.OrdinalIgnoreCase))
                     continue;
-                Tribes[i] = Tribes[i] with { Rapport = ShiftRapport(Tribes[i].Rapport, delta) };
+
+                var oldRapport = Tribes[i].Rapport;
+                var updatedRapport = ShiftRapport(oldRapport, delta);
+                Tribes[i] = Tribes[i] with { Rapport = updatedRapport };
+                if (delta < 0 && !noShortfall)
+                    missingRapport += MissingRapportLoss(oldRapport, updatedRapport, -delta);
             }
             AddNarrativeText(delta < 0 ? "Rapport worsens with every encountered tribe." : "Rapport improves with every encountered tribe.");
+            if (missingRapport > 0)
+                ApplyShortfall(missingRapport);
             SyncPlayAreaHostilityFromRapport();
             RemoveQuietusPriestIfNeeded();
             return;
@@ -5719,8 +5919,30 @@ public sealed partial class GameSession
                 AddAlliedBenefitNarrative(Tribes[index].Name);
         }
 
+        if (delta < 0 && !noShortfall)
+        {
+            var missingRapport = MissingRapportLoss(old, updated, -delta);
+            if (missingRapport > 0)
+                ApplyShortfall(missingRapport);
+        }
+
         SyncPlayAreaHostilityFromRapport();
         RemoveQuietusPriestIfNeeded();
+    }
+
+    private static int MissingRapportLoss(string before, string after, int requestedLoss)
+    {
+        if (requestedLoss <= 0)
+            return 0;
+
+        var states = new[] { "Hostile", "Neutral", "Friendly", "Allied" };
+        var beforeIndex = Array.FindIndex(states, state => string.Equals(state, before, StringComparison.OrdinalIgnoreCase));
+        var afterIndex = Array.FindIndex(states, state => string.Equals(state, after, StringComparison.OrdinalIgnoreCase));
+        if (beforeIndex < 0 || afterIndex < 0)
+            return 0;
+
+        var actualLoss = Math.Max(0, beforeIndex - afterIndex);
+        return Math.Max(0, requestedLoss - actualLoss);
     }
 
     private void SetRapport(string target, string value)
@@ -5889,6 +6111,9 @@ public sealed partial class GameSession
             ("CAMP-004", "Market") => !HasBuilding("Market") && CanPayCostBundle("1W+1C"),
             ("CAMP-004", "Baggage Cart") => !HasBuilding("Baggage Cart") && CanPayCostBundle("1W"),
             ("CAMP-012", "Train Scouts") => !HasScouting && ResourceValue("Research") >= 1,
+            ("CAMP-007", "Provision") => ResourceValue("Coin") >= 2 && new[] { "Food", "Wood", "Stone" }.Any(r => CanAddPhysicalResource(r, 1)),
+            ("CAMP-007", "Buy 1 additional Resource") => ResourceValue("Coin") >= 1 && new[] { "Food", "Wood", "Stone" }.Any(r => CanAddPhysicalResource(r, 1)),
+            ("CAMP-009", "Raise Levies") => ResourceValue("Food") >= 1 && AvailableForceCount("Levy") > 0 && HostCount("Levy") < 6,
             ("CAMP-012", "Appoint Camp Steward") => !HasToken("CampSteward") && ResourceValue("Coin") >= 2,
             ("SCENE-020", "Send in a Fighter") => Host.Any(u => u.Count > 0 && u.Type is "Archers" or "Cavalry" or "Infantry"),
             _ => true
@@ -5938,6 +6163,8 @@ public sealed partial class GameSession
             return TotalHostUnits();
         if (string.Equals(input, "Host.Infantry", StringComparison.OrdinalIgnoreCase))
             return HostCount("Infantry");
+        if (string.Equals(input, "Host.InfantryClass", StringComparison.OrdinalIgnoreCase))
+            return HostCount("Infantry") + HostCount("Mercenaries");
         if (string.Equals(input, "Player.Advancements", StringComparison.OrdinalIgnoreCase))
             return AcquiredAdvancements.Select(a => a.Id).ToArray();
         if (string.Equals(input, "Combat.Outcome", StringComparison.OrdinalIgnoreCase))
@@ -6160,6 +6387,206 @@ public sealed partial class GameSession
         return target;
     }
 
+    private static string PickNarrative(params string[] lines)
+    {
+        var usable = lines.Where(line => !string.IsNullOrWhiteSpace(line)).ToArray();
+        return usable.Length == 0 ? string.Empty : usable[Random.Shared.Next(usable.Length)];
+    }
+
+    private string ExploreTravelNarrative(TerrainType terrain, bool firstMarch, bool forced)
+    {
+        if (firstMarch)
+        {
+            return terrain switch
+            {
+                TerrainType.Plains => PickNarrative(
+                    "The Host leaves the Starting Clearing and advances into open country.",
+                    "The Starting Clearing falls behind as the Host steps out beneath a wide, open sky."),
+                TerrainType.Forest => PickNarrative(
+                    "The Host leaves the Starting Clearing and enters the forest road.",
+                    "The last familiar ground disappears behind the Host as the road narrows beneath the trees."),
+                TerrainType.Mountain => PickNarrative(
+                    "The Host leaves the Starting Clearing and climbs toward the high country.",
+                    "The march begins in earnest, the Host trading familiar ground for a road that climbs into stone."),
+                _ => "The Host leaves the Starting Clearing and takes to the road."
+            };
+        }
+
+        if (forced)
+        {
+            return terrain switch
+            {
+                TerrainType.Plains => PickNarrative("The Host is forced onward into open country.", "With no time to settle, the Host is driven back onto the road and out across the plains."),
+                TerrainType.Forest => PickNarrative("The Host is forced onward beneath the forest canopy.", "Denied a pause, the Host presses into the trees while the last settlement vanishes behind the branches."),
+                TerrainType.Mountain => PickNarrative("The Host is forced onward into the high country.", "There is no welcome behind you, only the climb ahead. The Host pushes into the high country."),
+                _ => "The Host is forced farther along the road."
+            };
+        }
+
+        return terrain switch
+        {
+            TerrainType.Plains => PickNarrative(
+                "The Host advances into open country.",
+                "The road spills onto broad plains where every distant movement looks important for a moment.",
+                "Open country stretches ahead, generous with distance and stingy with shelter."),
+            TerrainType.Forest => PickNarrative(
+                "The Host enters the forest road.",
+                "The trees close around the column, swallowing the road a few dozen paces at a time.",
+                "The march turns green and dim as the Host follows the road beneath the canopy."),
+            TerrainType.Mountain => PickNarrative(
+                "The Host climbs toward the high country.",
+                "The road tilts upward, and conversation thins as the climb begins to demand everyone's breath.",
+                "Stone replaces soil beneath the march as the Host works its way into the high country."),
+            _ => "The Host pushes farther along the road."
+        };
+    }
+
+    private void AddUneventfulExploreNarrative()
+    {
+        var text = CurrentExploreTerrain switch
+        {
+            TerrainType.Plains => PickNarrative(
+                "The miles pass quietly. Nothing on the open road demands the Host's attention.",
+                "The plains offer distance, wind, and very little else. For once, the march is uneventful.",
+                "No riders appear on the horizon and no trouble finds the road. The Host keeps moving."),
+            TerrainType.Forest => PickNarrative(
+                "The woods remain only woods. No ambush, omen, or opportunity interrupts the march.",
+                "Branches scrape carts and birds complain overhead, but nothing of consequence troubles the Host.",
+                "The forest keeps its secrets today. The Host passes beneath the trees without incident."),
+            TerrainType.Mountain => PickNarrative(
+                "The climb is hard enough without adding drama. The high road offers no encounter beyond stone, wind, and tired legs.",
+                "Nothing waits around the next bend except another bend. The Host crosses the heights without incident.",
+                "The mountains make the march difficult, but not eventful. That is a distinction the Host is happy to accept."),
+            _ => PickNarrative(
+                "The road is quiet. The Host travels without incident.",
+                "Nothing of consequence interrupts the march.")
+        };
+
+        Chronicle.Add(new(
+            CalendarPhaseStamp("Explore"),
+            text,
+            ChronicleTone.Narrative,
+            "Uneventful Travel"));
+    }
+
+    private string ArrivalSettlementNarrative(string tribe)
+    {
+        var name = string.IsNullOrWhiteSpace(tribe) ? "tribe" : tribe;
+        return NormalizeTribeName(name) switch
+        {
+            "suntouched" => PickNarrative(
+                $"The Host reaches a settlement held by the {name}.",
+                $"Sun-marked banners and watchful faces announce {name} ground before the Host reaches the first buildings."),
+            "nightstone" => PickNarrative(
+                $"The Host reaches a settlement held by the {name}.",
+                $"Dark stonework and guarded approaches leave little doubt whose settlement lies ahead: the {name}."),
+            "palehands" => PickNarrative(
+                $"The Host reaches a settlement held by the {name}.",
+                $"Pale faces watch from the settlement as the Host approaches. The {name} have seen you coming."),
+            "quietus" => PickNarrative(
+                $"The Host reaches a settlement held by the {name}.",
+                $"The road enters a settlement of the {name}, where the Host is noticed long before anyone chooses to acknowledge it."),
+            _ => $"The Host reaches a settlement held by the {name}."
+        };
+    }
+
+    private string FirstContactNarrative(string tribe, string rapport)
+    {
+        var name = string.IsNullOrWhiteSpace(tribe) ? "tribe" : tribe;
+        return rapport switch
+        {
+            "Hostile" => PickNarrative(
+                $"First contact goes badly. The {name} receive the Host with open hostility.",
+                $"Whatever goodwill might have existed dies quickly. The {name} make it plain that the Host is not welcome.",
+                $"The first words do not become second words. The {name} meet the Host with unmistakable hostility."),
+            "Friendly" => PickNarrative(
+                $"First contact goes unusually well. The {name} receive the Host with unexpected warmth.",
+                $"Suspicion gives way faster than expected. The {name} greet the Host with genuine warmth.",
+                $"The first exchange finds common ground. The {name} seem pleased, perhaps even relieved, to receive the Host."),
+            _ => PickNarrative(
+                $"The {name} receive the Host warily, but without open hostility.",
+                $"The {name} keep their distance and their judgment to themselves. For now, the meeting remains civil.",
+                $"Neither welcome nor threat greets the Host. The {name} watch carefully and wait to see what you will do.")
+        };
+    }
+
+    private static string TributeDemandNarrative(string tribe, int amount, string resource)
+        => PickNarrative(
+            $"The {tribe} demand {amount} {resource} in tribute.",
+            $"Passage has a price. The {tribe} require {amount} {resource} before the Host proceeds.",
+            $"The terms are simple, if not generous: {amount} {resource} for the {tribe}.");
+
+    private static string TributePaidNarrative(string tribe, int amount, string resource)
+        => PickNarrative(
+            $"The Host pays {amount} {resource} in tribute.",
+            $"The Host surrenders {amount} {resource}, and the {tribe} accept the tribute.",
+            $"{amount} {resource} changes hands. Whatever the {tribe} think of the Host, the tribute is paid.");
+
+    private string ArrivalTestFlavor(string? sourceId, string? testLabel, bool passed, string authoredPlayerText)
+    {
+        if (string.Equals(sourceId, "ARRIVAL-018", StringComparison.OrdinalIgnoreCase)
+            && !string.IsNullOrWhiteSpace(testLabel)
+            && testLabel.Contains("Buy the Jars", StringComparison.OrdinalIgnoreCase))
+        {
+            return passed
+                ? PickNarrative(
+                    "The keepers exchange a few doubtful looks, then start wrapping jars for the road. Apparently your bargaining was better than it sounded.",
+                    "The price is settled without bloodshed or broken pottery, which is more than can be said for some negotiations on this road.")
+                : PickNarrative(
+                    "One of your people picks up a jar while arguing the price, fumbles it, and sends honey and pottery across the ground. The keepers charge you a Coin anyway.",
+                    "The bargaining collapses at almost the same moment a jar does. The Sun-Touched are unmoved by explanations and insist on a Coin for the damage.",
+                    "A demonstration of the jars becomes a demonstration of gravity. The honey is lost, the keeper is furious, and the Host is still charged a Coin.");
+        }
+
+        var tribe = string.IsNullOrWhiteSpace(_currentArrivalTribe) ? "The locals" : $"The {_currentArrivalTribe}";
+        if (passed)
+        {
+            return NormalizeTribeName(_currentArrivalTribe ?? string.Empty) switch
+            {
+                "suntouched" => PickNarrative(authoredPlayerText, $"{tribe} weigh your words, then give a small nod. The arrangement will stand.", $"{tribe} accept the proposal after a long look over the Host and its baggage."),
+                "nightstone" => PickNarrative(authoredPlayerText, $"{tribe} offer little ceremony, but the answer is yes. Terms are accepted."),
+                "palehands" => PickNarrative(authoredPlayerText, $"{tribe} confer in low voices before signaling agreement. Nothing about it feels casual."),
+                "quietus" => PickNarrative(authoredPlayerText, $"{tribe} answer with the smallest possible sign of assent. It is enough."),
+                _ => PickNarrative(authoredPlayerText, "The proposal is accepted, and the tension eases by a degree.")
+            };
+        }
+
+        return NormalizeTribeName(_currentArrivalTribe ?? string.Empty) switch
+        {
+            "suntouched" => PickNarrative(authoredPlayerText, $"{tribe} are not persuaded. The answer comes back firm and immediate.", $"{tribe} let you finish speaking before refusing every part of the proposal."),
+            "nightstone" => PickNarrative(authoredPlayerText, $"{tribe} reject the terms with the finality of a door being barred."),
+            "palehands" => PickNarrative(authoredPlayerText, $"{tribe} refuse without raising their voices. Somehow that makes the refusal feel sharper."),
+            "quietus" => PickNarrative(authoredPlayerText, $"{tribe} offer no argument and little explanation. The answer is simply no."),
+            _ => PickNarrative(authoredPlayerText, "The proposal fails to move them. Whatever happens next will require another answer.")
+        };
+    }
+
+    private void QueueOutcomeNarrative(string? canonicalText, string? browserFlavor)
+    {
+        _pendingOutcomeText = string.IsNullOrWhiteSpace(canonicalText) ? null : canonicalText.Trim();
+        _pendingBrowserFlavor = string.IsNullOrWhiteSpace(browserFlavor) ? null : browserFlavor.Trim();
+    }
+
+    private void FlushPendingOutcomeNarrative()
+    {
+        var canonical = _pendingOutcomeText;
+        var flavor = _pendingBrowserFlavor;
+        _pendingOutcomeText = null;
+        _pendingBrowserFlavor = null;
+
+        if (!string.IsNullOrWhiteSpace(canonical))
+            AddNarrativeText(canonical);
+        if (!string.IsNullOrWhiteSpace(flavor))
+            AddBrowserFlavorText(flavor);
+    }
+
+    private void AddBrowserFlavorText(string text)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+            return;
+        Chronicle.Add(new(CalendarPhaseStamp("Chronicle"), text.Trim(), ChronicleTone.Narrative));
+    }
+
     private void AddNarrativeText(string text)
     {
         if (string.IsNullOrWhiteSpace(text))
@@ -6358,7 +6785,7 @@ public sealed partial class GameSession
         var prevented = 0;
         if (applyPainkiller
             && HasToken("Painkiller")
-            && type is "Archers" or "Cavalry" or "Infantry" or "Levy")
+            && type is "Archers" or "Cavalry" or "Infantry" or "Levy" or "Mercenaries" or "Hedge Knights")
         {
             var rolls = new List<int>();
             for (var i = 0; i < attempted; i++)
@@ -6464,6 +6891,7 @@ public sealed partial class GameSession
         || name.Equals("Cavalry", StringComparison.OrdinalIgnoreCase)
         || name.Equals("Infantry", StringComparison.OrdinalIgnoreCase)
         || name.Equals("Levy", StringComparison.OrdinalIgnoreCase)
+        || name.Equals("Mercenaries", StringComparison.OrdinalIgnoreCase)
         || name.Equals("Hedge Knights", StringComparison.OrdinalIgnoreCase);
 
     private TerrainType DrawTerrain()
@@ -6804,20 +7232,23 @@ public sealed partial class GameSession
         _pendingSelectNextNode = null;
         _pendingCombatNextNode = null;
         _pendingTestNarrativeLabel = null;
+        _pendingOutcomeText = null;
+        _pendingBrowserFlavor = null;
     }
 
     private void CompleteExploreEncounter()
     {
         // Combat encountered during Explore is part of the Explore step.
         // Disengaging ends that encounter, but does not start a second Explore.
-        // Resume the original Mobilization by revealing the Clearing normally.
+        // Resume the original Mobilization at the Arrival gate. The player explicitly
+        // proceeds so the Explore result has time to be read before the Clearing is revealed.
         _combatDisengagedPending = false;
         ResetActiveFlowState();
         PendingExploreCard = null;
         _specialPrompt = null;
         _activeChronicleEntryIndex = null;
         MobilizationStep = MobilizationStep.ArrivalReady;
-        BeginArrival();
+        Changed?.Invoke();
     }
 
     private static IReadOnlyList<JsonElement> GetFlags(JsonElement element)

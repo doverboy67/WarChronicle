@@ -202,12 +202,21 @@
                     <h2>Advancements</h2>
                 </div>
 
-                <div class="progression-section">
+                <div class="progression-section advancement-offer-section">
                     <h3>On Offer</h3>
-                    <div class="chip-list">
+                    <div class="advancement-offer-list">
                         @foreach (var offer in Session.AdvancementOffer)
                         {
-                            <span class="state-chip" title="@offer.Effect">@offer.Name@(string.IsNullOrWhiteSpace(offer.Cost) ? "" : $" ({offer.Cost})")</span>
+                            <article class="advancement-mini-card" title="@offer.Effect">
+                                <div class="advancement-mini-card-heading">
+                                    <strong>@offer.Name</strong>
+                                    @if (!string.IsNullOrWhiteSpace(offer.Cost))
+                                    {
+                                        <span>@offer.Cost</span>
+                                    }
+                                </div>
+                                <p>@offer.Effect</p>
+                            </article>
                         }
                     </div>
                 </div>
@@ -320,13 +329,32 @@
 
             <article class="state-card rapport-card">
                 <h2>Rapport</h2>
-                @foreach (var tribe in Session.Tribes)
-                {
-                    <div class="rapport-row" title="@RapportTooltip(tribe)">
-                        <span>@tribe.Name</span>
-                        <strong class="rapport @(tribe.Rapport.ToLowerInvariant())">@tribe.Rapport</strong>
-                    </div>
-                }
+                <div class="rapport-track-list">
+                    @foreach (var tribe in Session.Tribes.OrderBy(RapportTribeOrder))
+                    {
+                        <div class="rapport-track-row" title="@RapportTooltip(tribe)">
+                            <div class="rapport-tribe-label @TribeCssClass(tribe.Name)">
+                                <strong>@DisplayRapportTribeName(tribe.Name)</strong>
+                                @if (string.Equals(tribe.Rapport, "Unmet", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    <small>Unmet</small>
+                                }
+                            </div>
+                            <div class="rapport-track" aria-label="@($"{tribe.Name}: {tribe.Rapport}")">
+                                @foreach (var state in RapportStates)
+                                {
+                                    <div class="rapport-space @(string.Equals(tribe.Rapport, state.Name, StringComparison.OrdinalIgnoreCase) ? "is-current" : string.Empty)">
+                                        <span>@state.Name</span>
+                                        @if (!string.IsNullOrWhiteSpace(state.Drm))
+                                        {
+                                            <small>@state.Drm</small>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
             </article>
         </div>
 
@@ -410,7 +438,9 @@
                     ? "scene-event"
                     : entry.Calendar.Contains("• Echo", StringComparison.OrdinalIgnoreCase)
                         ? "echo-event"
-                        : string.Empty;
+                        : entry.Calendar.Contains("• Chronicle", StringComparison.OrdinalIgnoreCase)
+                            ? "browser-flavor"
+                            : string.Empty;
                 var chronicleIconPath = ChronicleIconPath(entry);
                 <article class="chronicle-entry @(entry.Tone.ToString().ToLowerInvariant()) @(entry.Choices is not null ? "chronicle-decision" : string.Empty) @(string.IsNullOrWhiteSpace(entry.Heading) ? "follow-on" : string.Empty) @chronicleTypeClass">
                     <div class="chronicle-stamp">
@@ -424,6 +454,13 @@
                                 <img class="chronicle-title-icon" src="@chronicleIconPath" alt="" />
                             }
                             <span>@entry.Heading</span>
+                            @{
+                                var arrivalTribeMeta = ArrivalTribeMeta(entry);
+                            }
+                            @if (!string.IsNullOrWhiteSpace(arrivalTribeMeta))
+                            {
+                                <span class="chronicle-title-meta">• @arrivalTribeMeta</span>
+                            }
                             @if (chronicleIconPath is not null)
                             {
                                 <img class="chronicle-title-icon chronicle-title-icon-trailing" src="@chronicleIconPath" alt="" />
@@ -912,7 +949,7 @@
                 <article class="decision-block">
                     <div class="decision-kicker">Mobilization Phase</div>
                     <h3>Explore Step</h3>
-                    <p>The Host is ready to leave the Starting Clearing.</p>
+                    <p>@(Session.PlayArea.Count <= 1 ? "The Host is ready to leave the Starting Clearing." : "The Host is ready to continue the march.")</p>
                     <div class="decision-options">
                         <button @onclick="Session.BeginExplore">
                             <strong>Explore</strong>
@@ -940,7 +977,17 @@
             }
             else if (Session.MobilizationStep == MobilizationStep.ArrivalReady)
             {
-                <div class="awaiting-event"><strong>Arrival Step</strong></div>
+                <article class="decision-block arrival-gate-block">
+                    <div class="decision-kicker">Mobilization Phase</div>
+                    <h3>Arrival Step</h3>
+                    <p>The Explore Step is complete. When you are ready, reveal what waits at the end of the road.</p>
+                    <div class="decision-options">
+                        <button @onclick="Session.ProceedToArrival">
+                            <strong>Proceed to Arrival</strong>
+                            <span>Reveal the next Clearing.</span>
+                        </button>
+                    </div>
+                </article>
             }
             else if (Session.MobilizationStep == MobilizationStep.ArrivalEncounter)
             {
@@ -1428,7 +1475,7 @@
 }
 
 @code {
-    private const string AppVersion = "v0.5.0.16";
+    private const string AppVersion = "v0.5.0.20";
 
     // Presentation coordinates only, expressed as fixed pixel offsets from
     // the center of the play-area panel. This keeps the physical relationship
@@ -1785,6 +1832,56 @@
             && Session.PriestSource.Contains("Quietus", StringComparison.OrdinalIgnoreCase)
             ? rules + " This Priest accompanies the Host only while the Quietus remain Allied; if a Chapel is built later, replace the Quietus Priest with the Host's own Priest."
             : rules;
+    }
+
+    private static readonly (string Name, string Drm)[] RapportStates =
+    [
+        ("Hostile", "-1"),
+        ("Neutral", ""),
+        ("Friendly", "+1"),
+        ("Allied", "+2")
+    ];
+
+    private static int RapportTribeOrder(TribeState tribe) => NormalizeRapportTribe(tribe.Name) switch
+    {
+        "suntouched" => 0,
+        "nightstone" => 1,
+        "palehands" => 2,
+        "quietus" => 3,
+        _ => 9
+    };
+
+    private static string NormalizeRapportTribe(string name)
+        => name.Replace("The ", string.Empty, StringComparison.OrdinalIgnoreCase)
+            .Replace(" Clan", string.Empty, StringComparison.OrdinalIgnoreCase)
+            .Replace("-", string.Empty, StringComparison.OrdinalIgnoreCase)
+            .Replace(" ", string.Empty, StringComparison.OrdinalIgnoreCase)
+            .ToLowerInvariant();
+
+    private static string TribeCssClass(string name) => NormalizeRapportTribe(name) switch
+    {
+        "suntouched" => "tribe-suntouched",
+        "nightstone" => "tribe-nightstone",
+        "palehands" => "tribe-palehands",
+        "quietus" => "tribe-quietus",
+        _ => string.Empty
+    };
+
+    private static string DisplayRapportTribeName(string name) => NormalizeRapportTribe(name) switch
+    {
+        "nightstone" => "Nightstone Clan",
+        "quietus" => "The Quietus",
+        _ => name
+    };
+
+    private string? ArrivalTribeMeta(ChronicleEntry entry)
+    {
+        if (string.IsNullOrWhiteSpace(entry.Heading))
+            return null;
+
+        var arrival = Catalog.GetArrivalCards().FirstOrDefault(card =>
+            string.Equals(card.Title, entry.Heading, StringComparison.OrdinalIgnoreCase));
+        return arrival is null ? null : arrival.Tribe;
     }
 
     private static string RapportTooltip(TribeState tribe) => tribe.Rapport switch

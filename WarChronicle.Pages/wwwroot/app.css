@@ -793,6 +793,144 @@ h1, h2, h3, p { margin-top: 0; }
 
 .simple-error { padding: 50px; }
 
+
+/* v0.5.0.17: card-like Advancement offer */
+.advancement-offer-list {
+    display: grid;
+    gap: 6px;
+}
+.advancement-mini-card {
+    padding: 7px 8px;
+    background: #fffefa;
+    border: 1px solid #cfc5b3;
+    border-radius: 5px;
+    box-shadow: 0 1px 2px rgba(61, 48, 29, .08);
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+.advancement-mini-card-heading {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+.advancement-mini-card-heading strong {
+    color: #3d362c;
+    font-size: .72rem;
+    line-height: 1.15;
+}
+.advancement-mini-card-heading span {
+    flex: 0 0 auto;
+    color: #7b705e;
+    font-size: .56rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+.advancement-mini-card p {
+    margin: 0;
+    color: #655d50;
+    font-size: .62rem;
+    line-height: 1.32;
+}
+
+/* v0.5.0.17: tabletop-inspired Rapport track */
+.rapport-card { overflow: visible; }
+.rapport-track-list {
+    display: grid;
+    gap: 6px;
+}
+.rapport-track-row {
+    display: grid;
+    grid-template-columns: 78px minmax(0, 1fr);
+    gap: 5px;
+    align-items: stretch;
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+.rapport-tribe-label {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+    padding-right: 2px;
+}
+.rapport-tribe-label strong {
+    font-size: .6rem;
+    line-height: 1.05;
+}
+.rapport-tribe-label small {
+    margin-top: 2px;
+    color: #948876;
+    font-size: .48rem;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+}
+.rapport-tribe-label.tribe-suntouched strong { color: #2b63ad; }
+.rapport-tribe-label.tribe-nightstone strong { color: #5d5b58; }
+.rapport-tribe-label.tribe-palehands strong { color: #9b2523; }
+.rapport-tribe-label.tribe-quietus strong { color: #618528; }
+.rapport-track {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    border: 1px solid #9e9380;
+    background: #eee8dc;
+}
+.rapport-space {
+    position: relative;
+    min-width: 0;
+    min-height: 29px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 1px;
+    color: #7f7565;
+    background: rgba(247, 243, 234, .66);
+    text-align: center;
+}
+.rapport-space + .rapport-space { border-left: 1px solid #b9ae9a; }
+.rapport-space span {
+    font-size: .46rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .035em;
+    white-space: nowrap;
+}
+.rapport-space small {
+    margin-top: 1px;
+    font-size: .48rem;
+    font-weight: 700;
+}
+.rapport-space.is-current {
+    color: #2f2a23;
+    background: #fffdf7;
+    box-shadow: inset 0 0 0 2px #5f5648;
+}
+.rapport-space.is-current::after {
+    content: "";
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+/* Arrival tribe metadata is context, not part of the card title. */
+.chronicle-title-meta {
+    margin-left: 7px;
+    color: #8a806f;
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: .62rem;
+    font-weight: 500;
+    text-transform: none;
+    letter-spacing: .035em;
+    white-space: nowrap;
+}
+
+.arrival-gate-block { margin-top: 30px; }
+
 @media (max-width: 1050px) {
     .game-screen { grid-template-columns: 58% 42%; }
     .state-panel { min-width: 430px; padding: 12px; }
@@ -2113,4 +2251,20 @@ img.depleted-token {
 .game-log-actions .secondary-action {
     width: auto;
     margin: 0;
+}
+
+/* Keep expanded Advancement text accessible in the compact State column. */
+.progression-card { overflow: auto; }
+
+
+/* Browser-only narration is deliberately lighter than canonical result text. */
+.chronicle-entry.browser-flavor {
+    margin-top: -12px;
+    border-left-color: #cfc5b3;
+}
+.chronicle-entry.browser-flavor .chronicle-stamp { display: none; }
+.chronicle-entry.browser-flavor p {
+    color: #6f6658;
+    font-size: .94rem;
+    font-style: italic;
 }

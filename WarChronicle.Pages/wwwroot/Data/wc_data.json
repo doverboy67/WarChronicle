@@ -1187,7 +1187,7 @@
       "after_play": "Special",
       "text": {
         "flavor": "Men who once looked away now speak more easily of what must be done. The road has taught them a lesson, and they have learned it too well.",
-        "effect": "If the <i>Reign in Blood</i> token is active, <b>Lose 1 Morale, then Test 8+.</b><ul><li><b>Pass:</b> Remove the <i>Reign in Blood</i> token. Remove this Echo from the game. Gain 1 Morale.</li><li><b>Fail:</b> Discard this Echo. The <i>Reign in Blood</i> token remains active.</li></ul>"
+        "effect": "If the <i>Reign in Blood</i> token is active, <b>Lose 1 Morale, then Test 8+.</b><ul><li><b>Pass:</b> Remove the <i>Reign in Blood</i> token. Remove this Echo from the game. Gain 1 Morale.</li><li><b>Fail:</b> Discard this Echo. The <i>Reign in Blood</i> token remains active.</li></ul><br><br>If the <i>Reign in Blood</i> token is not active, <b>Remove this Echo from the game.</b>"
       },
       "notes": null
     },
@@ -7070,7 +7070,7 @@
         "id": "ECHO-R-02"
       },
       "trigger": "OnResolve",
-      "start_node": "N10",
+      "start_node": "N01",
       "nodes": {
         "N10": {
           "type": "Action",
@@ -7083,7 +7083,7 @@
         },
         "N11": {
           "type": "Test",
-          "prompt": "Test 8+",
+          "prompt": "Test 8+. Pass: remove Reign in Blood and this Echo, then regain 1 Morale. Fail: discard this Echo; Reign in Blood remains active.",
           "branches": [
             {
               "label": "Pass",
@@ -7155,6 +7155,41 @@
         },
         "N99": {
           "type": "End"
+        },
+        "N01": {
+          "type": "Check",
+          "prompt": "Is Reign in Blood active?",
+          "branches": [
+            {
+              "label": "Yes",
+              "input": "Player.Tokens",
+              "operator": "HAS",
+              "value": "ReignInBlood",
+              "next": "N10"
+            },
+            {
+              "label": "No",
+              "input": "Player.Tokens",
+              "operator": "NOT_HAS",
+              "value": "ReignInBlood",
+              "next": "N90"
+            }
+          ]
+        },
+        "N90": {
+          "type": "Action",
+          "action": {
+            "type": "Remove",
+            "target": "Card",
+            "value": "Self"
+          },
+          "next": "N99",
+          "flags": [
+            {
+              "name": "OverrideAfterPlay",
+              "value": true
+            }
+          ]
         }
       }
     },
@@ -10787,10 +10822,10 @@
           "branches": [
             {
               "label": "Dig",
-              "input": "Host.Infantry",
+              "input": "Host.InfantryClass",
               "operator": "GTE",
               "value": 1,
-              "next": "N10"
+              "next": "N05"
             },
             {
               "label": "Leave the dead alone",
@@ -10871,13 +10906,26 @@
           "type": "Action",
           "action": {
             "type": "Lose",
-            "target": "Infantry",
+            "target": "SelectedInfantryClass",
             "value": 1
           },
           "next": "N99"
         },
         "N99": {
           "type": "End"
+        },
+        "N05": {
+          "type": "Select",
+          "prompt": "Assign 1 Infantry-class unit to dig for ancient weapons",
+          "branches": [
+            {
+              "label": "AssignedInfantryClass",
+              "input": "HostInfantryClassUnits",
+              "operator": null,
+              "value": null,
+              "next": "N10"
+            }
+          ]
         }
       }
     },

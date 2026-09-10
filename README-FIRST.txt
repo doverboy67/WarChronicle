@@ -1,4 +1,49 @@
-War Chronicle Browser Update 0516
+War Chronicle Browser Update 0520
+
+Update 0520 (v0.5.0.20):
+- Compile hotfix for Update 0519. Renamed the two Rapport-specific local variables inside ApplyLose so they no longer shadow the method's later amount variable and trigger CS0136.
+- No gameplay, card-data, or balance changes from 0519.
+- WarChronicle.Web and WarChronicle.Pages contain the same fix.
+
+Update 0519 (v0.5.0.19):
+- Re-audited the authoritative camp-cards tab in War Chronicle Master(8).xlsx and refreshed the browser Camp card data from that primary source. The revised Camp HTML for the changed cards passes a strict tag-balance check.
+- Work now formally includes Baggage repair as a normal Work choice: advance 2 Time, spend 1 Wood, and repair 1 damaged Baggage space. No normal Work reward is gained when repairing.
+- Market Day keeps its Market action and now adds Rest: gain 1 Morale. The card still costs 1 Time and retains its Barbarian Settlement / Market-building location rules.
+- Hire Mercenaries may now be used at any Settlement. Its recruitment rules and 1 Coin per Mercenary cost are unchanged.
+- Hire Wagoners is replaced by Supply Convoy at a Controlled Settlement. Provision spends 2 Coin for 1 Food, Wood, or Stone, with an optional additional 1 Coin for a second Food, Wood, or Stone; the two Resources may match. Rest gains 1 Morale.
+- Respite no longer costs Food. It spends 1 Leadership, then gains 2 Leadership and 1 Morale.
+- Raise Local Levies no longer costs Leadership. The Raise Levies option spends 1 Food to add 2 Levy; Rest instead gains 1 Morale without paying the Food cost.
+- Drill the Host still requires 1 Leadership to begin, but gains 1 Leadership after resolving the chosen Drill effect, making the activation Leadership a soft gate rather than a net cost.
+- Send Terms Ahead no longer requires Tribute. Choose a Hostile tribe and test 6+; ignore the Hostile Rapport DRM and Leadership may not be spent on the test. Success gains 1 Rapport with that tribe and 1 Morale; failure has no effect.
+- Host a Common Table now tests 6+ with the selected tribe's Rapport DRM, and Leadership may not be spent on the test. Failure has no effect. On success gain 2 Coin and 1 Leadership; a Neutral tribe also gains 1 Rapport, while a Friendly tribe grants 1 additional Leadership instead.
+- Fixed Remove or Discard after play. Sacred Foundations, Frontier Works, Hire Mercenaries, Send Terms Ahead, Field Staff, and Host a Common Table now explicitly ask the player to Discard or Remove from game after resolution. The browser no longer auto-decides based on success or failure.
+- Expanded Finale victory narration. The canonical victory result appears first, followed by a browser-only epilogue that responds to surviving Host strength, Morale, tribal relationships, and remaining stores before closing with “The Host has survived.”
+- Preserved the global Shortfall engine, universal Combat-victory Leadership, Forage 4-6, Baggage rules, narrative layering, GitHub Pages hosting, logging, and all prior 0518 behavior not superseded above.
+- WarChronicle.Web and WarChronicle.Pages remain synchronized.
+
+War Chronicle Browser Update 0518
+
+Update 0518 (v0.5.0.18):
+- Fixed the Global Shortfall Rule at the engine level. Required losses/payments of Food, Wood, Stone, Coin, Leadership, Research, and Rapport now apply 1 Morale loss for each missing unit by default unless a flow explicitly says IfAble / NoShortfall.
+- A Joke Grows Teeth now resolves correctly when the Host has 0 Leadership: Lose 0 Leadership, then lose 1 Morale from the missing Leadership.
+- The fix is global rather than card-specific, so bare EventFlow Lose/Spend actions no longer need an ApplyGlobalShortfall flag for the core shortfall currencies/resources. Existing explicit ApplyGlobalShortfall flags remain valid, and explicit NoShortfall exceptions still override the default.
+- Rapport losses now also honor Global Shortfall at the Hostile floor, including multi-tribe Rapport losses. Unit losses remain outside the default Shortfall rule unless a specific flow explicitly requests it.
+- Preserved all Update 0517 UI/narrative work, including the Proceed to Arrival click, card-style Advancement offers, tabletop-inspired Rapport display, contextual browser narration, Arrival tribe suffixes, Cursed Battlefield Mercenary eligibility, No Remörse clarification, and the Starting Clearing status fix.
+- WarChronicle.Web and WarChronicle.Pages remain synchronized.
+
+Update 0517 (v0.5.0.17):
+- Added an explicit Proceed to Arrival gate after every Explore step. Explore results no longer auto-scroll directly into Arrival; matched Explore cards, Explore-combat returns, and uneventful/mismatched Explore draws all pause before the Clearing is revealed.
+- Uneventful travel now receives a short contextual Chronicle entry instead of silently advancing. Browser-only travel/arrival/first-contact/tribute narration now draws from small phrase pools so repeat plays are less repetitive.
+- Began the richer web-only narrative layer while preserving printed card text as authoritative. A Night at the Alehouse now keeps its printed outcome text, then adds lighter browser-only flavor after the mechanical result. Arrival test flavor is likewise presented as supplemental narration rather than a replacement for the result.
+- Added contextual Arrival narration, including card/outcome-specific flavor for Buy the Jars, with generic tribe-aware fallbacks for other Arrival tests.
+- Arrival card headings now append a subtle tribe-name suffix without changing the underlying card title.
+- Redesigned the State-panel Advancement offer as white card-like panels with title, cost, and effect text visible without hovering.
+- Redesigned Rapport as a compact tabletop-inspired four-row track with Hostile / Neutral / Friendly / Allied spaces and visible -1 / +1 / +2 DRMs.
+- Fixed the stale “The Host is ready to leave the Starting Clearing” message so it only appears before the first march. Later Explore steps use a continuing-march message.
+- Fixed Cursed Battlefield so Infantry-class Mercenaries are eligible to be assigned. If both regular Infantry and Mercenaries are present, the player chooses which Infantry-class unit is assigned before rolling.
+- Clarified No Remörse in the live test prompt: Pass removes Reign in Blood and the Echo and restores 1 Morale; Fail discards the Echo while Reign in Blood remains. If Reign in Blood is already gone, the Echo is simply removed.
+- Preserved all Update 0516 card-data corrections, Baggage repair, universal Combat-victory Leadership, Forage 4-6, GitHub Pages noindex/nofollow, logging, and local/Pages dual-host structure.
+- WarChronicle.Web and WarChronicle.Pages remain synchronized for the gameplay/UI changes in this build.
 
 Update 0516 (v0.5.0.16):
 - Refreshed Camp, Explore, and Arrival card data from the revised primary workbook tabs in War Chronicle Master(5).xlsx. CardData and EventFlow were treated as derived/stale sources and reconciled where primary-card mechanics changed.

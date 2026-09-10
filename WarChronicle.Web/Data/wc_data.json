@@ -1,7 +1,7 @@
 {
   "schema_version": "0.3.0",
-  "generated_at_utc": "2026-09-09T23:38:46+00:00",
-  "source_workbook": "War Chronicle Master(5).xlsx",
+  "generated_at_utc": "2026-09-10T20:30:00+00:00",
+  "source_workbook": "War Chronicle Master(8).xlsx",
   "cards": {
     "CAMP-001": {
       "id": "CAMP-001",
@@ -21,7 +21,7 @@
       "after_play": "Keep",
       "text": {
         "flavor": "While the road waits, the Host takes up the work at hand: hauling, mending, tending, building, and drilling for what comes next.",
-        "effect": "<b>Advance 2 Time and Choose 1:</b><br><ul><li><b>Gain 2 Coins</b></li><li><b>Gain 1 Coin and 1 Leadership</b></li><li><b>Repair 1 damaged Baggage Train space:</b> Spend 1 Wood.</li></ul><br>If you have the <b><i>Camp Steward,</i></b> you may instead <b>Advance 2 Time and Choose 1:</b><br><ul><li><b>Gain 1 Resource</b> matching the adjacent Terrain</li><li><b>Buy 1 resource</b> from the Market for 1 Coin less than its current Buy value.</li></ul>"
+        "effect": "<b>Advance 2 Time and Choose 1:</b><br><ul><li><b>Gain 2 Coins.</b></li><li><b>Gain 1 Coin and 1 Leadership.</b></li><li><b>Repair Baggage:</b> If your Baggage Train has a damaged space, spend 1 Wood to repair 1 damaged Baggage space.</li></ul><br>If you have the <b><i>Camp Steward</i></b>, you may instead choose 1:<br><ul><li><b>Gain 1 Resource</b> matching the adjacent Terrain.</li><li><b>Buy 1 Resource</b> from the Market for 1 Coin less than its current Buy value.</li></ul>"
       },
       "notes": null
     },
@@ -43,9 +43,9 @@
       "after_play": "Discard",
       "text": {
         "flavor": "The market rarely favors the impatient, but it often rewards the watchful.",
-        "effect": "If you have constructed a Market, you may also perform this at any Controlled Settlement.<br><br><b>Advance 1 Time. Buy and/or Sell</b> up to 2 Resources at Market value. Subject to Baggage Train capacity."
+        "effect": "If you have constructed a Market, you may also perform this at any Controlled Settlement.<br><br><b>Advance 1 Time and Choose 1:</b><br><br><b>Market:</b> Buy and/or Sell up to 2 Resources at Market value. <i>Subject to Baggage Train capacity.</i><br><br><i>- or -</i><br><b>Rest:</b> Gain 1 Morale."
       },
-      "notes": "Keyword normalized to Civic from the card icon; legacy Keyword_text says Field."
+      "notes": null
     },
     "CAMP-003": {
       "id": "CAMP-003",
@@ -122,7 +122,7 @@
       "echo_num": null,
       "title": "Hire Mercenaries",
       "keyword": "Field",
-      "location": "Barbarian",
+      "location": "Any",
       "time": 2,
       "cost": {
         "type": "Variable",
@@ -131,7 +131,7 @@
       "after_play": "RemoveOrDiscard",
       "text": {
         "flavor": "There are always swords for hire where fear is near and silver is honest.",
-        "effect": "<b>Advance 2 Time Recruit up to 3 Mercenaries</b> (Infantry class) <b>for 1 Coin each.</b><br><br><b>Mercenaries:</b><br><ul><li>May exceed Host MU limits</li><li>Use white Mercenary tokens.</li><li>Disband from your Host in the Winter season.</li></il>"
+        "effect": "<b>Advance 2 Time Recruit up to 3 Mercenaries</b> (Infantry class) <b>for 1 Coin each.</b><br><br><b>Mercenaries:</b><br><ul><li>May exceed Host MU limits</li><li>Use white Mercenary tokens.</li><li>Disband from your Host in the Winter season.</li></ul>"
       },
       "notes": null
     },
@@ -142,18 +142,18 @@
       "card_num": 7,
       "echo_pool": null,
       "echo_num": null,
-      "title": "Hire Wagoners",
+      "title": "Supply Convoy",
       "keyword": "Field",
-      "location": "Barbarian",
+      "location": "Controlled",
       "time": 2,
       "cost": {
-        "type": "Fixed",
-        "value": "3C"
+        "type": "Variable",
+        "value": null
       },
       "after_play": "Discard",
       "text": {
         "flavor": "Coin opens storehouses that pride or haste would leave closed.",
-        "effect": "<b>Advance 2 Time, Spend 3 Coins and Choose one:</b><br><center><ul><li>Gain 1 Food and 1 Wood.</li><li>Gain 1 Food and 1 Stone.</li><li>Gain 1 Wood and 1 Stone.</li></ul><br><i>Subject to Baggage Train capacity.</i></center>"
+        "effect": "<b>Advance 2 Time and Choose 1:</b><br><br><b>Provision:</b> Spend 2 Coin to gain 1 Food, Wood, or Stone. You may spend 1 additional Coin to gain 1 additional Food, Wood, or Stone.<br><i>Subject to Baggage Train capacity.</i><br><br><i>- or -</i><br><b>Rest:</b> Gain 1 Morale."
       },
       "notes": null
     },
@@ -170,12 +170,12 @@
       "time": 2,
       "cost": {
         "type": "Fixed",
-        "value": "1L+1F"
+        "value": "1L"
       },
       "after_play": "Discard",
       "text": {
         "flavor": "The march pauses long enough for weariness to loosen its grip.",
-        "effect": "<center><b>Advance 2 Time, Spend 1 Leadership and 1 Food.<br><br>Gain 2 Leadership and 1 Morale.</b></center>"
+        "effect": "<center><b>Advance 2 Time, Spend 1 Leadership.<br><br>Gain 2 Leadership and 1 Morale.</b></center>"
       },
       "notes": null
     },
@@ -191,15 +191,15 @@
       "location": "Any",
       "time": 2,
       "cost": {
-        "type": "Fixed",
-        "value": "1L+1F"
+        "type": "Variable",
+        "value": "1F"
       },
       "after_play": "Discard",
       "text": {
         "flavor": "Not every man who joins the host seeks glory. Some answer because the road has reached their door.",
-        "effect": "<center><b>Advance 2 Time, Spend 1 Leadership and 1 Food.<br><br>Add 2 Levy</b> into your Host.</center>"
+        "effect": "<b>Advance 2 Time and Choose 1:</b><br><br><b>Raise Levies:</b> Spend 1 Food. Add 2 Levy to your Host.<br><br><i>- or -</i><br><b>Rest:</b> Gain 1 Morale."
       },
-      "notes": "Cost normalized from Effect text: 1 Leadership + 1 Food; legacy Cost field lists only 1F."
+      "notes": null
     },
     "CAMP-010": {
       "id": "CAMP-010",
@@ -219,7 +219,7 @@
       "after_play": "Discard",
       "text": {
         "flavor": "A host that trains in earnest soon learns what kind of war it means to fight.",
-        "effect": "<b>Advance 2 Time, Spend 1 Leadership.<br><br>Choose 1:</b><br><ul><li>You may immediately purchase either the top card of the Advancement deck or 1 Armor Development from the R&R Offer. It costs 1 less Research Token, to a minimum of 1. You must still pay all other printed costs.</li><li>Gain 1 Research. You may discard the top Tactics card for free and reveal the next one, though you may not purchase it during this phase.</li></ul>"
+        "effect": "<b>Advance 2 Time, Spend 1 Leadership.<br><br>Choose 1:</b><br><ul><li>You may immediately purchase either the top card of the Advancement deck or 1 Armor Development from the R&R Offer. It costs 1 less Research Token, to a minimum of 1. You must still pay all other printed costs.</li><li>Gain 1 Research. You may discard the top Tactics card for free and reveal the next one, though you may not purchase it during this phase.</li></ul><br><br><b>After making your choice, gain 1 Leadership</b>"
       },
       "notes": null
     },
@@ -235,13 +235,13 @@
       "location": "Any",
       "time": 2,
       "cost": {
-        "type": "Variable",
+        "type": "None",
         "value": null
       },
       "after_play": "RemoveOrDiscard",
       "text": {
         "flavor": "A gift sent ahead may cool a grudge that steel would only sharpen.",
-        "effect": "<b>Advance 2 Time and Choose 1 Hostile tribe</b> and pay its Tribute below, then <b>Roll 2d6.</b> The normal Hostile -1 DRM does not apply to this roll. On <b>8+: gain 1 Rapport with that tribe</b>.<br><br><b>Tribute:</b><br><ul><li><b>Sun-Touched:</b> 1 Stone</li><li><b>Nightstone Clan:</b> 1 Food</li><li><b>The Quietus:</b> 1 Wood</li><li><b>Pale Hands:</b> 1 of your highest-value resource. If multiple resources are tied for highest value, choose one of them.</li></ul>"
+        "effect": "<b>Advance 2 Time. Choose 1 Hostile tribe</b> and make a 6+ test. Do not apply the Hostile Rapport DRM, and Leadership may not be spent on this test.<br><br><b>Pass:</b> Gain 1 Rapport with that tribe and 1 Morale.<br><br><b>Fail:</b> No effect."
       },
       "notes": null
     },
@@ -285,7 +285,7 @@
       "after_play": "RemoveOrDiscard",
       "text": {
         "flavor": "Bread shared in peace can carry a promise farther than a threat ever will.",
-        "effect": "<b>Advance 2 Time, Spend 1 Food.<br><br>Choose a Neutral or Friendly tribe</b> and test 8+, appling any Rapport DRM.<br><ul><li><b>Pass: Gain 2 Coins and  1 Rapport</b> with that tribe. If the chosen tribe is already Friendly, <b>gain 1 Morale</b> instead.</li><li><b>Fail: Gain 1 Coin.</b></li></ul>"
+        "effect": "<b>Advance 2 Time, Spend 1 Food.<br><br>Choose a Neutral or Friendly tribe</b> and test 6+, applying any Rapport DRM. Leadership may not be spent on this test.<br><br><ul><li><b>Pass:</b> Gain 2 Coins and 1 Leadership, then:<ul><li>If the tribe is Neutral, gain 1 Rapport with that tribe.</li><li>If the tribe is Friendly, gain 1 additional Leadership instead.</li></ul></li><li><b>Fail:</b> No effect.</li></ul>"
       },
       "notes": null
     },
@@ -1187,7 +1187,7 @@
       "after_play": "Special",
       "text": {
         "flavor": "Men who once looked away now speak more easily of what must be done. The road has taught them a lesson, and they have learned it too well.",
-        "effect": "If the <i>Reign in Blood</i> token is active, <b>Lose 1 Morale, then Test 8+.</b><ul><li><b>Pass:</b> Remove the <i>Reign in Blood</i> token. Remove this Echo from the game. Gain 1 Morale.</li><li><b>Fail:</b> Discard this Echo. The <i>Reign in Blood</i> token remains active.</li></ul>"
+        "effect": "If the <i>Reign in Blood</i> token is active, <b>Lose 1 Morale, then Test 8+.</b><ul><li><b>Pass:</b> Remove the <i>Reign in Blood</i> token. Remove this Echo from the game. Gain 1 Morale.</li><li><b>Fail:</b> Discard this Echo. The <i>Reign in Blood</i> token remains active.</li></ul><br><br>If the <i>Reign in Blood</i> token is not active, <b>Remove this Echo from the game.</b>"
       },
       "notes": null
     },
@@ -2676,6 +2676,26 @@
       "start_node": "N01",
       "nodes": {
         "N01": {
+          "type": "Choice",
+          "prompt": "Choose Market Day result",
+          "branches": [
+            {
+              "label": "Market",
+              "input": null,
+              "operator": null,
+              "value": null,
+              "next": "N10"
+            },
+            {
+              "label": "Rest",
+              "input": null,
+              "operator": null,
+              "value": null,
+              "next": "N20"
+            }
+          ]
+        },
+        "N10": {
           "type": "Action",
           "action": {
             "type": "MarketTrade",
@@ -2693,6 +2713,15 @@
               "value": true
             }
           ]
+        },
+        "N20": {
+          "type": "Action",
+          "action": {
+            "type": "Gain",
+            "target": "Morale",
+            "value": 1
+          },
+          "next": "N99"
         },
         "N99": {
           "type": "End"
@@ -2983,75 +3012,108 @@
       "nodes": {
         "N01": {
           "type": "Choice",
-          "prompt": "Choose Resources",
+          "prompt": "Choose Supply Convoy result",
           "branches": [
             {
-              "label": "1 Food + 1 Wood",
+              "label": "Provision",
               "input": null,
               "operator": null,
               "value": null,
               "next": "N10"
             },
             {
-              "label": "1 Food + 1 Stone",
+              "label": "Rest",
+              "input": null,
+              "operator": null,
+              "value": null,
+              "next": "N90"
+            }
+          ]
+        },
+        "N10": {
+          "type": "Select",
+          "prompt": "Choose 1 Resource to provision for 2 Coin",
+          "branches": [
+            {
+              "label": "SelectedResource",
+              "input": "SupplyConvoyResources",
+              "operator": null,
+              "value": null,
+              "next": "N11"
+            }
+          ]
+        },
+        "N11": {
+          "type": "Action",
+          "action": {
+            "type": "PurchaseResource",
+            "target": "SelectedResource",
+            "value": 1
+          },
+          "next": "N12",
+          "flags": [
+            {
+              "name": "CoinCost",
+              "value": 2
+            }
+          ]
+        },
+        "N12": {
+          "type": "Choice",
+          "prompt": "Add a second Resource to the convoy?",
+          "branches": [
+            {
+              "label": "Buy 1 additional Resource",
               "input": null,
               "operator": null,
               "value": null,
               "next": "N20"
             },
             {
-              "label": "1 Wood + 1 Stone",
+              "label": "Done",
               "input": null,
               "operator": null,
               "value": null,
-              "next": "N30"
-            }
-          ]
-        },
-        "N10": {
-          "type": "Action",
-          "action": {
-            "type": "Gain",
-            "target": "Resources",
-            "value": "1F+1W"
-          },
-          "next": "N99",
-          "flags": [
-            {
-              "name": "SubjectToBaggageCapacity",
-              "value": true
+              "next": "N99"
             }
           ]
         },
         "N20": {
-          "type": "Action",
-          "action": {
-            "type": "Gain",
-            "target": "Resources",
-            "value": "1F+1S"
-          },
-          "next": "N99",
-          "flags": [
+          "type": "Select",
+          "prompt": "Choose 1 additional Resource for 1 Coin",
+          "branches": [
             {
-              "name": "SubjectToBaggageCapacity",
-              "value": true
+              "label": "SelectedResource2",
+              "input": "SupplyConvoyResources",
+              "operator": null,
+              "value": null,
+              "next": "N21"
             }
           ]
         },
-        "N30": {
+        "N21": {
           "type": "Action",
           "action": {
-            "type": "Gain",
-            "target": "Resources",
-            "value": "1W+1S"
+            "type": "PurchaseResource",
+            "target": "SelectedResource2",
+            "value": 1
           },
           "next": "N99",
           "flags": [
             {
-              "name": "SubjectToBaggageCapacity",
-              "value": true
+              "name": "CoinCost",
+              "value": 1
             }
           ]
+        },
+        "N90": {
+          "type": "Action",
+          "action": {
+            "type": "Gain",
+            "target": "Morale",
+            "value": 1
+          },
+          "next": "N99"
         },
         "N99": {
           "type": "End"
@@ -3098,11 +3160,49 @@
       "start_node": "N01",
       "nodes": {
         "N01": {
+          "type": "Choice",
+          "prompt": "Choose Raise Local Levies result",
+          "branches": [
+            {
+              "label": "Raise Levies",
+              "input": null,
+              "operator": null,
+              "value": null,
+              "next": "N10"
+            },
+            {
+              "label": "Rest",
+              "input": null,
+              "operator": null,
+              "value": null,
+              "next": "N20"
+            }
+          ]
+        },
+        "N10": {
+          "type": "Action",
+          "action": {
+            "type": "Spend",
+            "target": "Food",
+            "value": 1
+          },
+          "next": "N11"
+        },
+        "N11": {
           "type": "Action",
           "action": {
             "type": "Recruit",
             "target": "Levy",
             "value": 2
+          },
+          "next": "N99"
+        },
+        "N20": {
+          "type": "Action",
+          "action": {
+            "type": "Gain",
+            "target": "Morale",
+            "value": 1
           },
           "next": "N99"
         },
@@ -3166,7 +3266,7 @@
             "target": "TopAdvancementCard",
             "value": 1
           },
-          "next": "N99",
+          "next": "N90",
           "flags": [
             {
               "name": "ResearchCostDiscount",
@@ -3189,7 +3289,7 @@
             "target": "ArmorDevelopmentFromRROffer",
             "value": 1
           },
-          "next": "N99",
+          "next": "N90",
           "flags": [
             {
               "name": "ResearchCostDiscount",
@@ -3230,7 +3330,7 @@
               "input": null,
               "operator": null,
               "value": null,
-              "next": "N99"
+              "next": "N90"
             }
           ]
         },
@@ -3250,7 +3350,7 @@
             "target": "DeckTop:Tactics",
             "value": 1
           },
-          "next": "N99",
+          "next": "N90",
           "flags": [
             {
               "name": "CannotPurchaseRevealedTacticThisPhase",
@@ -3260,6 +3360,15 @@
         },
         "N99": {
           "type": "End"
+        },
+        "N90": {
+          "type": "Action",
+          "action": {
+            "type": "Gain",
+            "target": "Leadership",
+            "value": 1
+          },
+          "next": "N99"
         }
       }
     },
@@ -3285,45 +3394,22 @@
           ]
         },
         "N02": {
-          "type": "Action",
-          "action": {
-            "type": "PayTribute",
-            "target": "SelectedTribe",
-            "value": "SendTermsAheadTribute"
-          },
-          "next": "N03",
-          "flags": [
-            {
-              "name": "Sun-Touched",
-              "value": "1S"
-            },
-            {
-              "name": "NightstoneClan",
-              "value": "1F"
-            },
-            {
-              "name": "Quietus",
-              "value": "1W"
-            },
-            {
-              "name": "PaleHands",
-              "value": "HighestValueResource1"
-            }
-          ]
-        },
-        "N03": {
           "type": "Test",
-          "prompt": "Test 8+",
+          "prompt": "Test 6+",
           "branches": [
             {
               "label": "Pass",
               "input": "RapportTest",
               "operator": "GTE",
-              "value": 8,
-              "next": "N04",
+              "value": 6,
+              "next": "N03",
               "flags": [
                 {
                   "name": "IgnoreHostileRapportDRM",
+                  "value": true
+                },
+                {
+                  "name": "NoLeadership",
                   "value": true
                 }
               ]
@@ -3332,22 +3418,35 @@
               "label": "Fail",
               "input": "RapportTest",
               "operator": "LT",
-              "value": 8,
+              "value": 6,
               "next": "N99",
               "flags": [
                 {
                   "name": "IgnoreHostileRapportDRM",
+                  "value": true
+                },
+                {
+                  "name": "NoLeadership",
                   "value": true
                 }
               ]
             }
           ]
         },
-        "N04": {
+        "N03": {
           "type": "Action",
           "action": {
             "type": "Gain",
             "target": "Rapport:SelectedTribe",
+            "value": 1
+          },
+          "next": "N04"
+        },
+        "N04": {
+          "type": "Action",
+          "action": {
+            "type": "Gain",
+            "target": "Morale",
             "value": 1
           },
           "next": "N99"
@@ -3461,17 +3560,21 @@
         },
         "N02": {
           "type": "Test",
-          "prompt": "Test 8+",
+          "prompt": "Test 6+",
           "branches": [
             {
               "label": "Pass",
               "input": "RapportTest",
               "operator": "GTE",
-              "value": 8,
+              "value": 6,
               "next": "N03",
               "flags": [
                 {
                   "name": "ApplyRapportDRM",
+                  "value": true
+                },
+                {
+                  "name": "NoLeadership",
                   "value": true
                 }
               ]
@@ -3480,11 +3583,15 @@
               "label": "Fail",
               "input": "RapportTest",
               "operator": "LT",
-              "value": 8,
-              "next": "N20",
+              "value": 6,
+              "next": "N99",
               "flags": [
                 {
                   "name": "ApplyRapportDRM",
+                  "value": true
+                },
+                {
+                  "name": "NoLeadership",
                   "value": true
                 }
               ]
@@ -3501,48 +3608,48 @@
           "next": "N04"
         },
         "N04": {
+          "type": "Action",
+          "action": {
+            "type": "Gain",
+            "target": "Leadership",
+            "value": 1
+          },
+          "next": "N05"
+        },
+        "N05": {
           "type": "Check",
-          "prompt": "Was selected tribe already Friendly?",
+          "prompt": "Was the selected tribe already Friendly?",
           "branches": [
             {
               "label": "Yes",
               "input": "SelectedTribe.Rapport",
               "operator": "EQ",
               "value": "Friendly",
-              "next": "N05"
+              "next": "N06"
             },
             {
               "label": "No",
               "input": "SelectedTribe.Rapport",
               "operator": "NE",
               "value": "Friendly",
-              "next": "N06"
+              "next": "N07"
             }
           ]
-        },
-        "N05": {
-          "type": "Action",
-          "action": {
-            "type": "Gain",
-            "target": "Morale",
-            "value": 1
-          },
-          "next": "N99"
         },
         "N06": {
           "type": "Action",
           "action": {
             "type": "Gain",
-            "target": "Rapport:SelectedTribe",
+            "target": "Leadership",
             "value": 1
           },
           "next": "N99"
         },
-        "N20": {
+        "N07": {
           "type": "Action",
           "action": {
             "type": "Gain",
-            "target": "Coin",
+            "target": "Rapport:SelectedTribe",
             "value": 1
           },
           "next": "N99"
@@ -7070,7 +7177,7 @@
         "id": "ECHO-R-02"
       },
       "trigger": "OnResolve",
-      "start_node": "N10",
+      "start_node": "N01",
       "nodes": {
         "N10": {
           "type": "Action",
@@ -7083,7 +7190,7 @@
         },
         "N11": {
           "type": "Test",
-          "prompt": "Test 8+",
+          "prompt": "Test 8+. Pass: remove Reign in Blood and this Echo, then regain 1 Morale. Fail: discard this Echo; Reign in Blood remains active.",
           "branches": [
             {
               "label": "Pass",
@@ -7155,6 +7262,41 @@
         },
         "N99": {
           "type": "End"
+        },
+        "N01": {
+          "type": "Check",
+          "prompt": "Is Reign in Blood active?",
+          "branches": [
+            {
+              "label": "Yes",
+              "input": "Player.Tokens",
+              "operator": "HAS",
+              "value": "ReignInBlood",
+              "next": "N10"
+            },
+            {
+              "label": "No",
+              "input": "Player.Tokens",
+              "operator": "NOT_HAS",
+              "value": "ReignInBlood",
+              "next": "N90"
+            }
+          ]
+        },
+        "N90": {
+          "type": "Action",
+          "action": {
+            "type": "Remove",
+            "target": "Card",
+            "value": "Self"
+          },
+          "next": "N99",
+          "flags": [
+            {
+              "name": "OverrideAfterPlay",
+              "value": true
+            }
+          ]
         }
       }
     },
@@ -10787,10 +10929,10 @@
           "branches": [
             {
               "label": "Dig",
-              "input": "Host.Infantry",
+              "input": "Host.InfantryClass",
               "operator": "GTE",
               "value": 1,
-              "next": "N10"
+              "next": "N05"
             },
             {
               "label": "Leave the dead alone",
@@ -10871,13 +11013,26 @@
           "type": "Action",
           "action": {
             "type": "Lose",
-            "target": "Infantry",
+            "target": "SelectedInfantryClass",
             "value": 1
           },
           "next": "N99"
         },
         "N99": {
           "type": "End"
+        },
+        "N05": {
+          "type": "Select",
+          "prompt": "Assign 1 Infantry-class unit to dig for ancient weapons",
+          "branches": [
+            {
+              "label": "AssignedInfantryClass",
+              "input": "HostInfantryClassUnits",
+              "operator": null,
+              "value": null,
+              "next": "N10"
+            }
+          ]
         }
       }
     },

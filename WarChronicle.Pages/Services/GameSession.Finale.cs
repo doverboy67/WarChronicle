@@ -349,6 +349,30 @@ public sealed partial class GameSession
             ? "Middelalderen falls. The Host survives the final battle."
             : "The Host is destroyed before Middelalderen.");
 
+        if (outcome == "Won")
+        {
+            var epilogue = BuildFinaleVictoryEpilogue(finale, combat);
+            foreach (var line in epilogue)
+                finale.Log.Add(line);
+
+            if (!finale.IsTest)
+            {
+                Chronicle.Add(new(
+                    CalendarStamp,
+                    "Middelalderen falls. The Host survives the final battle.",
+                    ChronicleTone.Result,
+                    "Middelalderen Falls"));
+                foreach (var line in epilogue)
+                {
+                    Chronicle.Add(new(
+                        CalendarStamp,
+                        line,
+                        ChronicleTone.Narrative,
+                        "After the Battle"));
+                }
+            }
+        }
+
         if (!finale.IsTest)
         {
             if (outcome == "Won")
@@ -356,6 +380,55 @@ public sealed partial class GameSession
             else
                 EndCampaign("Defeat", "The Host was destroyed in the final battle at Middelalderen.");
         }
+    }
+
+    private IReadOnlyList<string> BuildFinaleVictoryEpilogue(FinaleState finale, CombatState combat)
+    {
+        var lines = new List<string>
+        {
+            "The gates are broken. Smoke hangs above the walls as the last organized defenders scatter through Middelalderen."
+        };
+
+        var initialUnits = combat.InitialPlayerUnits.Values.Sum();
+        var survivingUnits = combat.PlayerUnits.Values.Sum();
+        var lostUnits = Math.Max(0, initialUnits - survivingUnits);
+        var survivingFighters = survivingUnits * 100;
+
+        if (survivingUnits <= 2)
+            lines.Add($"What remains of the Host enters the city in a ragged column. Roughly {survivingFighters:N0} fighters still stand after losing {lostUnits} Units in the assault.");
+        else if (survivingUnits <= 5)
+            lines.Add($"The battered Host enters the city with roughly {survivingFighters:N0} fighters still under its banners after losing {lostUnits} Units in the assault.");
+        else
+            lines.Add($"The Host enters Middelalderen in force, roughly {survivingFighters:N0} fighters still under its banners after losing {lostUnits} Units in the assault.");
+
+        if (finale.Morale <= 3)
+            lines.Add("They reached the walls with their spirits worn thin, but the final victory carries through the ranks like a second wind.");
+        else if (finale.Morale >= 7)
+            lines.Add("The confidence that carried the Host to the walls survives the battle with it.");
+        else
+            lines.Add("Exhaustion gives way to the first stunned realization that the long campaign is finally over.");
+
+        var allies = Tribes.Where(t => string.Equals(t.Rapport, "Allied", StringComparison.OrdinalIgnoreCase)).Select(t => t.Name).ToArray();
+        var friendly = Tribes.Where(t => string.Equals(t.Rapport, "Friendly", StringComparison.OrdinalIgnoreCase)).Select(t => t.Name).ToArray();
+        var hostile = Tribes.Where(t => string.Equals(t.Rapport, "Hostile", StringComparison.OrdinalIgnoreCase)).Select(t => t.Name).ToArray();
+
+        if (allies.Length > 0)
+            lines.Add($"The names of old allies travel with the victory: {string.Join(", ", allies)}.");
+        else if (friendly.Length > 0)
+            lines.Add($"Not every road to Middelalderen was made by force. The Host leaves friends behind it among {string.Join(", ", friendly)}.");
+
+        if (hostile.Length > 0)
+            lines.Add($"Old grudges remain beyond the city walls. {string.Join(", ", hostile)} will remember the Host differently.");
+
+        var stores = ResourceValue("Food") + ResourceValue("Wood") + ResourceValue("Stone");
+        if (stores <= 2)
+            lines.Add("The baggage train is nearly bare. The Host did not arrive rich, only alive.");
+        else if (stores >= 7)
+            lines.Add("Enough remains in the baggage train to remind the survivors that preparation mattered as much as courage.");
+
+        lines.Add("Every hard march, bargain, refusal, risk, and compromise now lies behind the Host. Some consequences returned on the road. Others never had the chance.");
+        lines.Add("The Host has survived.");
+        return lines;
     }
 
     public void EndTestFinale()
