@@ -1,3 +1,15 @@
+War Chronicle Browser Update 0528
+
+Update 0528 (v0.5.0.28):
+- Refreshed browser content from War Chronicle Master(20260922-212843).xlsx.
+- Hedge Knights now appear only on Plains and Forest Explore terrain, matching the updated master.
+- Hire Mercenaries now requires a Barbarian-controlled Settlement and is capped at 2 Mercenaries for 1 Coin each.
+- Riff Raff Echo outcome lines now display the AC/DC song title in bold while keeping the saved/exported Chronicle text plain.
+- Debug Scene/Echo simulation now runs against a temporary campaign snapshot. After the simulated card finishes, all campaign mutations are rolled back, including Echo seeding, deck/discard changes, resources, units, Rapport, tokens, and Chronicle entries. A transient Debug result remains visible for inspection but is not written to saves or exported game logs.
+- Debug simulation is available only at stable saveable checkpoints so the complete pre-test campaign state can be restored safely.
+- Bumped CSS, helper-script, and GitHub Pages data cache tokens to 0528.
+- The in-app rulebook remains War Chronicle Rulebook Draft 0.5.8.2. SaveVersion remains 1; the existing build-version warning applies to older saves.
+
 War Chronicle Browser Update 0527
 
 Update 0527 (v0.5.0.27):

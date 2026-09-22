@@ -27,7 +27,7 @@ public sealed class WcDataCatalog
         if (_document is not null)
             return;
 
-        await using var stream = await _http.GetStreamAsync("Data/wc_data.json?v=0527", cancellationToken);
+        await using var stream = await _http.GetStreamAsync("Data/wc_data.json?v=0528", cancellationToken);
         _document = await JsonDocument.ParseAsync(stream, cancellationToken: cancellationToken);
         _logger.LogInformation("Loaded War Chronicle data from static Pages content.");
     }

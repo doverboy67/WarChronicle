@@ -1,7 +1,7 @@
 {
   "schema_version": "0.3.0",
-  "generated_at_utc": "2026-09-22T16:36:43+00:00",
-  "source_workbook": "War Chronicle Master(20260922-162035).xlsx",
+  "generated_at_utc": "2026-09-22T21:33:42+00:00",
+  "source_workbook": "War Chronicle Master(20260922-212843).xlsx",
   "cards": {
     "CAMP-001": {
       "id": "CAMP-001",
@@ -122,7 +122,7 @@
       "echo_num": null,
       "title": "Hire Mercenaries",
       "keyword": "Field",
-      "location": "Any",
+      "location": "Barbarian",
       "time": 2,
       "cost": {
         "type": "Variable",
@@ -131,7 +131,7 @@
       "after_play": "RemoveOrDiscard",
       "text": {
         "flavor": "There are always swords for hire where fear is near and silver is honest.",
-        "effect": "<b>Advance 2 Time Recruit up to 3 Mercenaries</b> (Infantry class) <b>for 1 Coin each.</b><br><br><b>Mercenaries:</b><br><ul><li>May exceed Host MU limits</li><li>Use white Mercenary tokens.</li><li>Disband from your Host in the Winter season.</li></ul>"
+        "effect": "<b>Advance 2 Time Recruit up to 2 Mercenaries</b> (Infantry class) <b>for 1 Coin each.</b><br><br><b>Mercenaries:</b><br><ul><li>May exceed Host MU limits</li><li>Use white Mercenary tokens.</li><li>Disband from your Host in the Winter season.</li></ul>"
       },
       "notes": null
     },
@@ -2073,10 +2073,9 @@
       "title": "Hedge Knights",
       "terrain_keywords": [
         "Plains",
-        "Forest",
-        "Mountain"
+        "Forest"
       ],
-      "image": "all.png",
+      "image": "pf.png",
       "text": {
         "flavor": "A company of battle-worn knights seeks shelter. They claim to be the last of their order.",
         "effect": "May immediately Recruit up to 2 Cavalry, paying 2 Coins for each.<br><br>Mercenaries:<br><ul><li>May exceed Host MU limits</li><li>Use white Mercenary tokens.</li><li>Disband from your Host in the Winter season.</li></il>"
@@ -3102,7 +3101,7 @@
           "branches": [
             {
               "label": "SelectedCount",
-              "input": "Integer0..3",
+              "input": "Integer0..2",
               "operator": null,
               "value": null,
               "next": "N02"

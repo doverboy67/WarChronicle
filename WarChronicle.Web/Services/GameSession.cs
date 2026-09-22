@@ -112,10 +112,13 @@ public sealed partial class GameSession
     private string? _pendingResourceGainNextNode;
     private bool _pendingResourceGainOpenStaging;
 
-    // Debug card simulation uses the real Camp EventFlow resolver, but the
-    // selected card is not physically drawn from or disposed into the Camp
-    // deck merely because it was launched from Debug.
+    // Debug card simulation uses the real Camp EventFlow resolver against a
+    // temporary snapshot. When the simulated card finishes, the campaign is
+    // restored exactly to its pre-simulation state.
     private bool _debugCampSimulation;
+    private string? _debugSaveSnapshot;
+    private int _debugSnapshotChronicleCount;
+    private readonly List<ChronicleEntry> _debugSimulationChronicle = [];
     private GamePhase _debugReturnPhase;
     private CampStep _debugReturnCampStep;
     private MobilizationStep _debugReturnMobilizationStep;
@@ -158,6 +161,7 @@ public sealed partial class GameSession
     public EndOfSeasonStep EndOfSeasonStep { get; private set; } = EndOfSeasonStep.Ready;
     public WinterStep WinterStep { get; private set; } = WinterStep.Ready;
     public List<CampCardState> CampHand { get; } = [];
+    public IReadOnlyList<ChronicleEntry> DebugSimulationChronicle => _debugSimulationChronicle;
     public FlowPromptState? FlowPrompt
     {
         get => _flowPrompt;
@@ -297,6 +301,7 @@ public sealed partial class GameSession
 
     public bool CanSimulateCampCard => _catalog is not null
         && !_debugCampSimulation
+        && CanSaveGame
         && _activeFlow is null
         && FlowPrompt is null
         && Combat is null
@@ -312,6 +317,13 @@ public sealed partial class GameSession
         if (card is null || card.CardType is not ("Scene" or "Echo"))
             return;
 
+        // Capture the complete stable campaign state before running the real
+        // resolver. Debug may mutate resources, decks, Echo pools, Rapport,
+        // units, tokens, and the Chronicle while the test is visible, but none
+        // of those mutations are allowed to survive the simulation.
+        _debugSimulationChronicle.Clear();
+        _debugSnapshotChronicleCount = Chronicle.Count;
+        _debugSaveSnapshot = CreateSaveJson("DebugSnapshot");
         _debugCampSimulation = true;
         _debugReturnPhase = Phase;
         _debugReturnCampStep = CampStep;
@@ -320,17 +332,41 @@ public sealed partial class GameSession
 
         StartCampCard(card, special: true);
 
-        // If the simulated card's Time advance itself triggers the Finale, the
-        // normal Camp resolver intentionally stops immediately. Do not leave
-        // Debug simulation state hanging behind that transition.
+        // If the simulated card's printed Time advance itself triggers the
+        // Finale, the normal Camp resolver intentionally stops immediately.
+        // Restore the snapshot here because CompleteCampCard will not run.
         if (Phase == GamePhase.Finale && _debugCampSimulation)
-        {
-            _debugCampSimulation = false;
-            PendingCampCard = null;
-            _activeChronicleEntryIndex = null;
-        }
+            RestoreDebugSimulationSnapshot();
 
         Changed?.Invoke();
+    }
+
+    private bool RestoreDebugSimulationSnapshot()
+    {
+        var snapshot = _debugSaveSnapshot;
+        var catalog = _catalog;
+        var transcriptStart = Math.Clamp(_debugSnapshotChronicleCount, 0, Chronicle.Count);
+        var transcript = Chronicle.Skip(transcriptStart).ToList();
+        _debugSaveSnapshot = null;
+        _debugCampSimulation = false;
+
+        if (string.IsNullOrWhiteSpace(snapshot) || catalog is null)
+            return false;
+
+        if (TryRestoreSaveJson(snapshot, catalog))
+        {
+            // Keep a transient read-only copy of what happened in the test so
+            // the player can still inspect the result after the real campaign
+            // state and Chronicle have been restored. This overlay is never
+            // written to saves or exported game logs.
+            _debugSimulationChronicle.Clear();
+            _debugSimulationChronicle.AddRange(transcript);
+            Changed?.Invoke();
+            return true;
+        }
+
+        _logger.LogWarning("Unable to restore the campaign after Debug card simulation.");
+        return false;
     }
 
     public void BeginCamp()
@@ -587,16 +623,13 @@ public sealed partial class GameSession
 
         if (debugSimulation)
         {
-            // Debug launches a card through its real EventFlow, but does not
-            // pretend the card was drawn from the Camp deck. Card effects such
-            // as Echo seeding still happen because they are part of the flow.
-            PendingCampCard = null;
-            _activeChronicleEntryIndex = null;
-            _campPhaseEnding = false;
-            _debugCampSimulation = false;
-
-            if (Phase != GamePhase.GameOver && Phase != GamePhase.Finale)
+            // Debug resolves the real EventFlow, then rolls back every campaign
+            // mutation, including Echo seeding and deck-zone changes.
+            if (!RestoreDebugSimulationSnapshot())
             {
+                PendingCampCard = null;
+                _activeChronicleEntryIndex = null;
+                _campPhaseEnding = false;
                 Phase = _debugReturnPhase;
                 CampStep = _debugReturnCampStep;
                 MobilizationStep = _debugReturnMobilizationStep;
@@ -2352,6 +2385,9 @@ public sealed partial class GameSession
         _pendingResourceGainNextNode = null;
         _pendingResourceGainOpenStaging = false;
         _debugCampSimulation = false;
+        _debugSaveSnapshot = null;
+        _debugSnapshotChronicleCount = 0;
+        _debugSimulationChronicle.Clear();
         _debugReturnPhase = GamePhase.Mobilization;
         _debugReturnCampStep = CampStep.Ready;
         _debugReturnMobilizationStep = MobilizationStep.ExploreReady;
@@ -3766,9 +3802,11 @@ public sealed partial class GameSession
             return options;
         }
 
-        if (string.Equals(input, "Integer0..3", StringComparison.OrdinalIgnoreCase))
+        var integerRange = Regex.Match(input, @"^Integer0\.\.(\d+)$", RegexOptions.IgnoreCase);
+        if (integerRange.Success)
         {
-            var max = Math.Min(3, ResourceValue("Coin"));
+            var cap = int.Parse(integerRange.Groups[1].Value);
+            var max = Math.Min(cap, ResourceValue("Coin"));
             for (var i = 0; i <= max; i++)
             {
                 var detail = i == 0

@@ -517,6 +517,47 @@
                 </article>
             }
 
+            @if (_debugMode && Session.DebugSimulationChronicle.Count > 0)
+            {
+                <div class="chronicle-history-control">
+                    <span>Debug simulation complete. Campaign state restored; this result is not part of the saved Chronicle.</span>
+                </div>
+                @foreach (var entry in Session.DebugSimulationChronicle)
+                {
+                    var debugTypeClass = entry.Calendar.Contains("• Scene", StringComparison.OrdinalIgnoreCase)
+                        ? "scene-event"
+                        : entry.Calendar.Contains("• Echo", StringComparison.OrdinalIgnoreCase)
+                            ? "echo-event"
+                            : string.Empty;
+                    <article class="chronicle-entry @(entry.Tone.ToString().ToLowerInvariant()) @(entry.Choices is not null ? "chronicle-decision" : string.Empty) @(string.IsNullOrWhiteSpace(entry.Heading) ? "follow-on" : string.Empty) @debugTypeClass">
+                        <div class="chronicle-stamp">
+                            <span>DEBUG • @entry.Calendar</span>
+                        </div>
+                        @if (!string.IsNullOrWhiteSpace(entry.Heading))
+                        {
+                            <div class="chronicle-title"><span>@entry.Heading</span></div>
+                        }
+                        <p>@ChronicleText(entry)</p>
+                        @if (entry.Choices is not null)
+                        {
+                            <div class="chronicle-choice-options">
+                                @foreach (var choice in entry.Choices)
+                                {
+                                    var selected = string.Equals(entry.SelectedChoiceId, choice.Id, StringComparison.OrdinalIgnoreCase);
+                                    <button class="chronicle-choice @(selected ? "is-selected" : string.Empty) @(choice.Disabled ? "is-unavailable" : string.Empty)" disabled>
+                                        <strong>@ChronicleChoiceText(choice.Label)</strong>
+                                        @if (!string.IsNullOrWhiteSpace(choice.Detail))
+                                        {
+                                            <span>@ChronicleChoiceText(choice.Detail)</span>
+                                        }
+                                    </button>
+                                }
+                            </div>
+                        }
+                    </article>
+                }
+            }
+
             @if (Session.HasPendingCombat && Session.Combat is { } pendingCombat)
             {
                 <article class="decision-block combat-gate-block">
@@ -1513,7 +1554,7 @@
 }
 
 @code {
-    private const string AppVersion = "v0.5.0.27";
+    private const string AppVersion = "v0.5.0.28";
 
     // Presentation coordinates only, expressed as fixed pixel offsets from
     // the center of the play-area panel. This keeps the physical relationship
@@ -2022,6 +2063,14 @@
         _ => $"{tribe.Name}: {tribe.Rapport}."
     };
 
+    private static readonly string[] RiffRaffResultTitles =
+    {
+        "Jailbreak", "Problem Child", "Ride On", "Dirty Deeds Done Dirt Cheap", "Big Balls",
+        "If You Want Blood (You've Got It)", "Night Prowler", "Beating Around the Bush", "Shot Down in Flames", "Highway to Hell",
+        "Kicked in the Teeth", "Down Payment Blues", "Dog Eat Dog", "Whole Lotta Rosie", "The Jack",
+        "Night of the Long Knives", "This House Is on Fire", "Fly on the Wall", "Thunderstruck", "Moneytalks"
+    };
+
     private static MarkupString ChronicleText(ChronicleEntry entry)
         => ChronicleMarkup(entry.Text);
 
@@ -2030,9 +2079,20 @@
 
     private static MarkupString ChronicleMarkup(string? rawText)
     {
-        var text = System.Text.Encodings.Web.HtmlEncoder.Default.Encode(rawText ?? string.Empty);
+        var raw = rawText ?? string.Empty;
+        var riffRaffTitle = RiffRaffResultTitles.FirstOrDefault(title =>
+            raw.StartsWith(title + " - ", StringComparison.Ordinal));
+        var text = System.Text.Encodings.Web.HtmlEncoder.Default.Encode(raw);
         if (string.IsNullOrWhiteSpace(text))
             return new MarkupString(text);
+
+        // Riff Raff outcome lines retain plain text in saves/logs, while the
+        // displayed Chronicle emphasizes the AC/DC song title.
+        if (!string.IsNullOrWhiteSpace(riffRaffTitle))
+        {
+            var encodedTitle = System.Text.Encodings.Web.HtmlEncoder.Default.Encode(riffRaffTitle);
+            text = $"<strong>{encodedTitle}</strong>{text[encodedTitle.Length..]}";
+        }
 
         // Chronicle iconography belongs to mechanical statements, not the narrative
         // prose around them. Iconify only action/cost sentences, then let the normal
