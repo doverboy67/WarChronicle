@@ -45,7 +45,7 @@
         <section class="save-resume-card content-setup-card" role="dialog" aria-modal="true" aria-label="Choose War Chronicle content">
             <div class="eyebrow">New Chronicle</div>
             <h2>Choose Content</h2>
-            <p>Base content is required. Add either expansion pack, or both, before the decks are built.</p>
+            <p>Base content is required. Add any expansion content before the decks are built.</p>
             <div class="content-pack-list">
                 <label class="content-pack mandatory">
                     <input type="checkbox" checked disabled />
@@ -58,6 +58,10 @@
                 <label class="content-pack">
                     <input type="checkbox" @bind="_includeStrangers" />
                     <span><strong>Stranger in a Strange Land</strong><small>Optional Scene, Echo, and Explore content</small></span>
+                </label>
+                <label class="content-pack">
+                    <input type="checkbox" @bind="_includeRiffRaff" />
+                    <span><strong>Riff Raff</strong><small>Optional Riff Raff Scene and Echo arc</small></span>
                 </label>
             </div>
             <div class="save-resume-actions">
@@ -1508,7 +1512,7 @@
 }
 
 @code {
-    private const string AppVersion = "v0.5.0.26";
+    private const string AppVersion = "v0.5.0.27";
 
     // Presentation coordinates only, expressed as fixed pixel offsets from
     // the center of the play-area panel. This keeps the physical relationship
@@ -1604,6 +1608,7 @@
     private bool _showContentSetup;
     private bool _includeSeasons;
     private bool _includeStrangers;
+    private bool _includeRiffRaff;
     private bool _saveCheckComplete;
     private string? _saveStatus;
     private string? _resumeError;
@@ -1739,6 +1744,7 @@
         _showContentSetup = true;
         _includeSeasons = false;
         _includeStrangers = false;
+        _includeRiffRaff = false;
         _saveStatus = null;
         _resumeError = null;
         return Task.CompletedTask;
@@ -1765,6 +1771,7 @@
         _showContentSetup = true;
         _includeSeasons = false;
         _includeStrangers = false;
+        _includeRiffRaff = false;
         _saveStatus = null;
         _resumeError = null;
         _archivedGameLogId = null;
@@ -1785,6 +1792,8 @@
             sets.Add("SitA");
         if (_includeStrangers)
             sets.Add("SiaSL");
+        if (_includeRiffRaff)
+            sets.Add("PackC");
 
         Session.StartNewGame(Catalog, sets);
         await JS.InvokeVoidAsync("wcSave.clear");

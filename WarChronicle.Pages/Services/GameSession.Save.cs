@@ -317,7 +317,8 @@ public sealed partial class GameSession
             foreach (var set in save.EnabledContentSets ?? [])
             {
                 if (string.Equals(set, "SitA", StringComparison.OrdinalIgnoreCase)
-                    || string.Equals(set, "SiaSL", StringComparison.OrdinalIgnoreCase))
+                    || string.Equals(set, "SiaSL", StringComparison.OrdinalIgnoreCase)
+                    || string.Equals(set, "PackC", StringComparison.OrdinalIgnoreCase))
                     _enabledContentSets.Add(set);
             }
 

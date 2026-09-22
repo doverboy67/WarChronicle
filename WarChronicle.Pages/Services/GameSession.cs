@@ -236,7 +236,8 @@ public sealed partial class GameSession
         foreach (var set in enabledSets ?? Enumerable.Empty<string>())
         {
             if (string.Equals(set, "SitA", StringComparison.OrdinalIgnoreCase)
-                || string.Equals(set, "SiaSL", StringComparison.OrdinalIgnoreCase))
+                || string.Equals(set, "SiaSL", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(set, "PackC", StringComparison.OrdinalIgnoreCase))
                 _enabledContentSets.Add(set);
         }
 
@@ -2078,6 +2079,14 @@ public sealed partial class GameSession
         if (HasToken("HighOverlookClearRoad"))
             cost = Math.Max(1, cost - 1);
 
+        var riffRaffShortcut = HasToken("RiffRaffShortcut");
+        if (riffRaffShortcut)
+        {
+            cost = 0;
+            ActiveTokens.Remove("RiffRaffShortcut");
+            AddNarrativeText("The Host takes the Riff Raff shortcut and loses no Time on this Explore.");
+        }
+
         AdvanceTime(cost);
         if (Phase == GamePhase.Finale)
         {
@@ -3743,6 +3752,19 @@ public sealed partial class GameSession
     private List<FlowPromptOption> BuildSelectOptions(string input)
     {
         var options = new List<FlowPromptOption>();
+
+        if (string.Equals(input, "RiffRaffInfantryRecruitCount", StringComparison.OrdinalIgnoreCase))
+        {
+            var militaryRoom = Math.Max(0, 10 - (HostCount("Archers") + HostCount("Cavalry") + HostCount("Infantry")));
+            var max = Math.Min(2, Math.Min(ResourceValue("Coin"), Math.Min(AvailableForceCount("Infantry"), militaryRoom)));
+            for (var i = 0; i <= max; i++)
+            {
+                var label = i == 0 ? "Recruit none" : i == 1 ? "Recruit 1 Infantry" : "Recruit 2 Infantry";
+                var detail = i == 0 ? "Keep your Coin." : $"Pay {i} Coin. Recruit {i} Infantry.";
+                options.Add(new($"select:{i}", label, detail));
+            }
+            return options;
+        }
 
         if (string.Equals(input, "Integer0..3", StringComparison.OrdinalIgnoreCase))
         {
@@ -6021,6 +6043,18 @@ public sealed partial class GameSession
         if (amount <= 0)
             return;
 
+        if (string.Equals(target, "Infantry", StringComparison.OrdinalIgnoreCase))
+        {
+            var militaryRoom = Math.Max(0, 10 - (HostCount("Archers") + HostCount("Cavalry") + HostCount("Infantry")));
+            var recruited = Math.Min(amount, Math.Min(militaryRoom, AvailableForceCount("Infantry")));
+            if (recruited <= 0)
+                return;
+            SetHostCount("Infantry", HostCount("Infantry") + recruited);
+            AdjustAvailableForce("Infantry", -recruited);
+            AddNarrativeText($"Recruit {recruited} Infantry.");
+            return;
+        }
+
         if (string.Equals(target, "Levy", StringComparison.OrdinalIgnoreCase))
         {
             var room = Math.Max(0, 6 - HostCount("Levy"));
@@ -6215,7 +6249,10 @@ public sealed partial class GameSession
     {
         if (string.IsNullOrWhiteSpace(pool))
             return;
-        var candidates = _unseededEchoes.Where(c => string.Equals(c.EchoPool, pool, StringComparison.OrdinalIgnoreCase)).ToList();
+        var candidates = _unseededEchoes
+            .Where(c => string.Equals(c.EchoPool, pool, StringComparison.OrdinalIgnoreCase))
+            .Where(c => PendingCampCard is null || !string.Equals(c.Id, PendingCampCard.Id, StringComparison.OrdinalIgnoreCase))
+            .ToList();
         if (candidates.Count == 0)
             return;
         var card = random ? candidates[Random.Shared.Next(candidates.Count)] : candidates[0];
@@ -6350,6 +6387,8 @@ public sealed partial class GameSession
             return TotalHostUnits();
         if (string.Equals(input, "Host.Infantry", StringComparison.OrdinalIgnoreCase))
             return HostCount("Infantry");
+        if (string.Equals(input, "Host.Levy", StringComparison.OrdinalIgnoreCase))
+            return HostCount("Levy");
         if (string.Equals(input, "Host.InfantryClass", StringComparison.OrdinalIgnoreCase))
             return HostCount("Infantry") + HostCount("Mercenaries");
         if (string.Equals(input, "Player.Advancements", StringComparison.OrdinalIgnoreCase))
@@ -7150,6 +7189,7 @@ public sealed partial class GameSession
         "Firepots" => "Before the first Combat round, you may remove Firepots and roll 3d6. Each 4+ inflicts 1 casualty as if from a Cavalry attack.",
         "Painkiller" => "Whenever a Military Unit or Levy would be lost from any game effect, roll 1d6 for that loss. On 5–6, prevent it.",
         "ForcedMarch" or "Forced March" => "While active, normal Explore costs 1 Time instead of 2.",
+        "RiffRaffShortcut" => "Your next Explore does not advance Time.",
         "ReignInBlood" or "Reign in Blood" => "While active, the Host may not Disengage from Combat.",
         "Scouting" => "When Exploring, draw 2 Terrain cards and choose 1.",
         "CampSteward" or "Camp Steward" => "During Work, you may instead gain 1 Resource matching the adjacent Terrain or buy 1 Resource for 1 Coin less than its Market Buy value.",
@@ -7168,6 +7208,7 @@ public sealed partial class GameSession
         "AncientPathway" => "Ancient Pathway",
         "HighOverlookClearRoad" => "Clear Road",
         "HighOverlookScoutApproach" => "Scout the Approach",
+        "RiffRaffShortcut" => "Highway to Hell",
         "ReignInBlood" => "Reign in Blood",
         "ForcedMarch" => "Forced March",
         "CampSteward" => "Camp Steward",

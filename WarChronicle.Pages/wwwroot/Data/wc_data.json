@@ -1,7 +1,7 @@
 {
   "schema_version": "0.3.0",
-  "generated_at_utc": "2026-09-21T02:07:41+00:00",
-  "source_workbook": "War Chronicle Master(9).xlsx",
+  "generated_at_utc": "2026-09-22T16:36:43+00:00",
+  "source_workbook": "War Chronicle Master(20260922-162035).xlsx",
   "cards": {
     "CAMP-001": {
       "id": "CAMP-001",
@@ -338,7 +338,7 @@
       "type": "Echo",
       "set": "Base",
       "card_num": null,
-      "echo_pool": "A",
+      "echo_pool": "AS",
       "echo_num": 1,
       "title": "The Sun-Touched Demand Blood",
       "keyword": "Hostile",
@@ -351,7 +351,7 @@
       "after_play": "Discard",
       "text": {
         "flavor": "Before the gathered faithful, your victory was an insult that could not be ignored. The fire has not forgotten. It comes now to burn shame away in battle.",
-        "effect": "<b>Advance 2 Time and discard all drawn Camp cards except the Work card.</b> If The Sun-Touched are no longer Hostile, return this card to the unseeded Echo Supply.<br><br>If The Sun-Touched are Hostile: <b>You may Parley:</b> Pay 2 resources matching the terrain adjacent to this Settlement or pay 5 Coin. Then test Rapport (8+). Apply the normal Hostile -1 DRM to this test.<br><br><b>• Pass:</b> Set this tribe to Neutral and return this card to the unseeded Echoes pile.<br><b>• Fail, Cannot Pay, or Decline to Parley:</b> The tribe attacks.<br><br><center><b>After resolving this Echo, end the Camp Phase.</b></center><br><br><center><b>Enemy Host</b><br><b>Year 1:</b> 2A, 2I, 1L<br><b>Year 2:</b> 3A, 2I, 2L<br><b>Year 3:</b> 2A, 1C, 2I, 3L</center>"
+        "effect": "<b>Advance 2 Time and discard all drawn Camp cards except the Work card.</b> If The Sun-Touched are no longer Hostile, return this card to the unseeded Echo Supply.<br><br>If The Sun-Touched are Hostile: <b>You may Parley:</b> Pay 2 resources matching the terrain adjacent to this Settlement or pay 5 Coin. Then test Rapport (9+). Do not apply the Hostile Rapport DRM to this test.<br><br><b>• Pass:</b> Set this tribe to Neutral and return this card to the unseeded Echoes pile.<br><b>• Fail, Cannot Pay, or Decline to Parley:</b> The tribe attacks.<br><br><center><b>After resolving this Echo, end the Camp Phase.</b></center><br><br><center><b>Enemy Host</b><br><b>Year 1:</b> 2A, 2I, 1L<br><b>Year 2:</b> 3A, 2I, 2L<br><b>Year 3:</b> 2A, 1C, 2I, 3L</center>"
       },
       "notes": "Hostile Echo."
     },
@@ -360,7 +360,7 @@
       "type": "Echo",
       "set": "Base",
       "card_num": null,
-      "echo_pool": "A",
+      "echo_pool": "AP",
       "echo_num": 2,
       "title": "Pale Hands Retribution",
       "keyword": "Hostile",
@@ -373,7 +373,7 @@
       "after_play": "Discard",
       "text": {
         "flavor": "They do not howl for vengeance. They come in silence, pale faces streaked with ash, to reclaim what was taken and punish the hand that dared to hold it.",
-        "effect": "<b>Advance 2 Time and discard all drawn Camp cards except the Work card.</b> If The Pale Hands are no longer Hostile, return this card to the unseeded Echo Supply.<br><br>If The Pale Hands are Hostile: <b>You may Parley:</b> Pay 2 resources matching the terrain adjacent to this Settlement, or pay 5 Coin. Then test Rapport (8+). Apply the normal Hostile -1 DRM to this test.<br><br><b>• Pass:</b> Set this tribe to Neutral and return this card to the unseeded Echoes pile.<br><b>• Fail, Cannot Pay, or Decline to Parley:</b> The tribe attacks.<br><br><center><b>After resolving this Echo, end the Camp Phase.</b></center><br><br><center><b>Enemy Host</b><br><b>Year 1:</b> 3I, 2L<br><b>Year 2:</b> 1A, 3I, 3L<br><b>Year 3:</b> 1A, 4I, 3L</center>"
+        "effect": "<b>Advance 2 Time and discard all drawn Camp cards except the Work card.</b> If The Pale Hands are no longer Hostile, return this card to the unseeded Echo Supply.<br><br>If The Pale Hands are Hostile: <b>You may Parley:</b> Pay 2 resources matching the terrain adjacent to this Settlement, or pay 5 Coin. Then test Rapport (9). Do not apply the Hostile Rapport DRM to this test.<br><br><b>• Pass:</b> Set this tribe to Neutral and return this card to the unseeded Echoes pile.<br><b>• Fail, Cannot Pay, or Decline to Parley:</b> The tribe attacks.<br><br><center><b>After resolving this Echo, end the Camp Phase.</b></center><br><br><center><b>Enemy Host</b><br><b>Year 1:</b> 3I, 2L<br><b>Year 2:</b> 1A, 3I, 3L<br><b>Year 3:</b> 1A, 4I, 3L</center>"
       },
       "notes": "Hostile Echo."
     },
@@ -382,7 +382,7 @@
       "type": "Echo",
       "set": "Base",
       "card_num": null,
-      "echo_pool": "A",
+      "echo_pool": "AN",
       "echo_num": 3,
       "title": "Nightstone Vengeance",
       "keyword": "Hostile",
@@ -395,7 +395,7 @@
       "after_play": "Discard",
       "text": {
         "flavor": "The Nightstone Clan does not forgive defeat. They watch, they wait, and when you grow comfortable behind your own walls, they strike with cold purpose.",
-        "effect": "<b>Advance 2 Time and discard all drawn Camp cards except the Work card.</b> If The Nightstone Clan are no longer Hostile, return this card to the unseeded Echo Supply.<br><br>If The Nightstone Clan are Hostile: <b>You may Parley:</b> Pay 2 resources matching the terrain adjacent to this Settlement, or pay 5 Coin. Then test Rapport (8+). Apply the normal Hostile -1 DRM to this test.<br><br><b>• Pass:</b> Set this tribe to Neutral and return this card to the unseeded Echoes pile.<br><b>• Fail, Cannot Pay, or Decline to Parley:</b> The tribe attacks.<br><br><center><b>After resolving this Echo, end the Camp Phase.</b></center><br><br><center><b>Enemy Host</b><br><b>Year 1:</b> 2A, 1C, 2I<br><b>Year 2:</b> 1A, 1C, 2I, 2L<br><b>Year 3:</b> 2A, 1C, 2I, 3L</center>"
+        "effect": "<b>Advance 2 Time and discard all drawn Camp cards except the Work card.</b> If The Nightstone Clan are no longer Hostile, return this card to the unseeded Echo Supply.<br><br>If The Nightstone Clan are Hostile: <b>You may Parley:</b> Pay 2 resources matching the terrain adjacent to this Settlement, or pay 5 Coin. Then test Rapport (9). Do not apply the Hostile Rapport DRM to this test.<br><br><b>• Pass:</b> Set this tribe to Neutral and return this card to the unseeded Echoes pile.<br><b>• Fail, Cannot Pay, or Decline to Parley:</b> The tribe attacks.<br><br><center><b>After resolving this Echo, end the Camp Phase.</b></center><br><br><center><b>Enemy Host</b><br><b>Year 1:</b> 2A, 1C, 2I<br><b>Year 2:</b> 1A, 1C, 2I, 2L<br><b>Year 3:</b> 2A, 1C, 2I, 3L</center>"
       },
       "notes": "Hostile Echo."
     },
@@ -404,7 +404,7 @@
       "type": "Echo",
       "set": "Base",
       "card_num": null,
-      "echo_pool": "A",
+      "echo_pool": "AQ",
       "echo_num": 4,
       "title": "Quietus Unbound",
       "keyword": "Hostile",
@@ -417,7 +417,7 @@
       "after_play": "Discard",
       "text": {
         "flavor": "No oath was shouted. No challenge was given. Yet the trespass lingers like a stain. When the Quietus comes, it does so with the certainty of a sentence already passed.",
-        "effect": "<b>Advance 2 Time and discard all drawn Camp cards except the Work card.</b> If The Quietus are no longer Hostile, return this card to the unseeded Echo Supply.<br><br>If The Quietus are Hostile: <b>You may Parley:</b> Pay 2 resources matching the terrain adjacent to this Settlement, or pay 5 Coin. Then test Rapport (8+). Apply the normal Hostile -1 DRM to this test.<br><br><b>• Pass:</b> Set this tribe to Neutral and return this card to the unseeded Echoes pile.<br><b>• Fail, Cannot Pay, or Decline to Parley:</b> The tribe attacks.<br><br><center><b>After resolving this Echo, end the Camp Phase.</b></center><br><br><center><b>Enemy Host</b><br><b>Year 1:</b> 1P, 1A, 1I, 2L<br><b>Year 2:</b> 1P, 1A, 1I, 5L<br><b>Year 3:</b> 1P, 1A, 2I, 6L</center>"
+        "effect": "<b>Advance 2 Time and discard all drawn Camp cards except the Work card.</b> If The Quietus are no longer Hostile, return this card to the unseeded Echo Supply.<br><br>If The Quietus are Hostile: <b>You may Parley:</b> Pay 2 resources matching the terrain adjacent to this Settlement, or pay 5 Coin. Then test Rapport (9). Do not apply the Hostile Rapport DRM to this test.<br><br><b>• Pass:</b> Set this tribe to Neutral and return this card to the unseeded Echoes pile.<br><b>• Fail, Cannot Pay, or Decline to Parley:</b> The tribe attacks.<br><br><center><b>After resolving this Echo, end the Camp Phase.</b></center><br><br><center><b>Enemy Host</b><br><b>Year 1:</b> 1P, 1A, 1I, 2L<br><b>Year 2:</b> 1P, 1A, 1I, 5L<br><b>Year 3:</b> 1P, 1A, 2I, 6L</center>"
       },
       "notes": "Hostile Echo."
     },
@@ -439,7 +439,7 @@
       "after_play": "Remove",
       "text": {
         "flavor": "A child’s careless game has set dry kindling smoldering near a granary. The danger is small now. It will not stay that way for long.",
-        "effect": "<center><b>Advance 1 Time and Roll 2d6:</b></center><b>8+:</b> The fire is put out in time for grateful eyes to see it. <b>Gain 1 Morale.</b> Seed 1 random <b>Q Echo.</b><br><br><b>7 or less:</b> The flame is stamped out before anyone even notices. No effect."
+        "effect": "<center><b>Advance 1 Time and Roll 2d6:</b></center><b>8+:</b> The fire is put out in time for grateful eyes to see it. <b>Gain 1 Morale.</b> Seed 1 random <b>QS Echo.</b><br><br><b>7 or less:</b> The flame is stamped out before anyone even notices. No effect."
       },
       "notes": null
     },
@@ -448,7 +448,7 @@
       "type": "Echo",
       "set": "Base",
       "card_num": null,
-      "echo_pool": "Q",
+      "echo_pool": "QS",
       "echo_num": 1,
       "title": "The Saved Granary",
       "keyword": null,
@@ -470,7 +470,7 @@
       "type": "Echo",
       "set": "Base",
       "card_num": null,
-      "echo_pool": "Q",
+      "echo_pool": "QS",
       "echo_num": 2,
       "title": "The Child Still Tells the Story",
       "keyword": null,
@@ -492,7 +492,7 @@
       "type": "Echo",
       "set": "Base",
       "card_num": null,
-      "echo_pool": "Q",
+      "echo_pool": "QS",
       "echo_num": 3,
       "title": "Smoke Draws Out the Culprit",
       "keyword": null,
@@ -527,7 +527,7 @@
       "after_play": "Remove",
       "text": {
         "flavor": "There is shouting at Pepperridge Farm that draws your host’s attention. Dr. Pepper, known nearby for treating sick horses and troubled cattle, and his family are being harassed by the Crumb family, a local rival bakery, who accuse them of stealing recipes. The Crumbs offer food and silver for your backing, though your host can see well enough that both were taken from the Pepper family’s own stores.",
-        "effect": "<center><b>Advance 1 Time. You may side with the Crumb family.</b></center><br>If you do, <b>gain 2 Food and 5 Coin.</b> Seed 1 random <b>P Echo.</b> Otherwise, seed 1 random <b>N Echo.</b>"
+        "effect": "<center><b>Advance 1 Time. You may side with the Crumb family.</b></center><br>If you do, <b>gain 2 Food and 5 Coin.</b> Seed 1 random <b>CR Echo.</b> Otherwise, seed 1 random <b>DP Echo.</b>"
       },
       "notes": null
     },
@@ -536,7 +536,7 @@
       "type": "Echo",
       "set": "Base",
       "card_num": null,
-      "echo_pool": "P",
+      "echo_pool": "CR",
       "echo_num": 1,
       "title": "Pepperridge Farm Remembers",
       "keyword": null,
@@ -558,7 +558,7 @@
       "type": "Echo",
       "set": "Base",
       "card_num": null,
-      "echo_pool": "P",
+      "echo_pool": "CR",
       "echo_num": 2,
       "title": "Pepperridge Farm Remembers",
       "keyword": null,
@@ -580,7 +580,7 @@
       "type": "Echo",
       "set": "Base",
       "card_num": null,
-      "echo_pool": "P",
+      "echo_pool": "CR",
       "echo_num": 3,
       "title": "Pepperridge Farm Remembers",
       "keyword": null,
@@ -615,7 +615,7 @@
       "after_play": "Remove",
       "text": {
         "flavor": "A family’s cart has broken an axle in the mud, and much of their life lies scattered in the road around them. Others have passed them by. Your host can stop, lend hands, and set the cart right before the road swallows the day entire.",
-        "effect": "<b>Advance 1 Time and Roll 2d6:</b><br><b>6+:</b> The cart is righted, the axle bound well enough to travel, and the family parts from your host with gratitude plain on every face. Gain 1 Morale. Seed 1 random <b>C Echo.</b><br><br><b>5 or less:</b> The cart is righted all the same, but the help is taken more as necessity than kindness. No effect."
+        "effect": "<b>Advance 1 Time and Roll 2d6:</b><br><b>6+:</b> The cart is righted, the axle bound well enough to travel, and the family parts from your host with gratitude plain on every face. Gain 1 Morale. Seed 1 random <b>SC Echo.</b><br><br><b>5 or less:</b> The cart is righted all the same, but the help is taken more as necessity than kindness. No effect."
       },
       "notes": null
     },
@@ -624,7 +624,7 @@
       "type": "Echo",
       "set": "Base",
       "card_num": null,
-      "echo_pool": "C",
+      "echo_pool": "SC",
       "echo_num": 1,
       "title": "Fortune Finds the Grateful",
       "keyword": null,
@@ -646,7 +646,7 @@
       "type": "Echo",
       "set": "Base",
       "card_num": null,
-      "echo_pool": "C",
+      "echo_pool": "SC",
       "echo_num": 2,
       "title": "The Road Was Spoken Well Of",
       "keyword": null,
@@ -668,7 +668,7 @@
       "type": "Echo",
       "set": "Base",
       "card_num": null,
-      "echo_pool": "C",
+      "echo_pool": "SC",
       "echo_num": 3,
       "title": "A Coin Remembered",
       "keyword": null,
@@ -703,7 +703,7 @@
       "after_play": "Remove",
       "text": {
         "flavor": "A roadside shrine has become a place of local giving. Candles burn low, coins sit in the offering bowl, and food for the poor rests under cloth beside the stone.",
-        "effect": "<b>Advance 1 Time.</b> When your host stops nearby, a sudden uproar breaks out: silver is missing, and one of your men is being named as the thief. The charge cannot be proven, but your host can feel how badly the locals want someone to answer for it.<br><br>You leave the matter unsettled and march on rather than lose time to finding the truth. Seed 1 random <b>M Echo.</b>"
+        "effect": "<b>Advance 1 Time.</b> When your host stops nearby, a sudden uproar breaks out: silver is missing, and one of your men is being named as the thief. The charge cannot be proven, but your host can feel how badly the locals want someone to answer for it.<br><br>You leave the matter unsettled and march on rather than lose time to finding the truth. Seed 1 random <b>MA Echo.</b>"
       },
       "notes": null
     },
@@ -712,7 +712,7 @@
       "type": "Echo",
       "set": "Base",
       "card_num": null,
-      "echo_pool": "M",
+      "echo_pool": "MA",
       "echo_num": 1,
       "title": "The Truth Comes Out",
       "keyword": null,
@@ -734,7 +734,7 @@
       "type": "Echo",
       "set": "Base",
       "card_num": null,
-      "echo_pool": "M",
+      "echo_pool": "MA",
       "echo_num": 2,
       "title": "Innocence Proven",
       "keyword": null,
@@ -769,7 +769,7 @@
       "after_play": "Remove",
       "text": {
         "flavor": "A muddy ring forms at the edge of camp. Coins flash, voices rise, and the Host looks to you: will one of your own step forward?",
-        "effect": "<b>Advance 1 Time and Choose one:</b></p><p><b>• Send in a Fighter:</b> Choose 1 Military Unit in your Host and roll 1d6:<br><b>1:</b> Lose that Unit. Seed 1 random <b>B Echo.</b><br><b>2-3:</b> Lose 1 Morale. Seed 1 random <b>B Echo.</b><br><b>4-5:</b> Gain 2 Coins. Seed 1 random <b>D Echo.</b><br><b>6:</b> Gain 3 Coins and 1 Morale. Seed 1 random <b>D Echo.</b><br><br><b>• Refuse the Challenge: Lose 1 Morale.</b>"
+        "effect": "<b>Advance 1 Time and Choose one:</b></p><p><b>• Send in a Fighter:</b> Choose 1 Military Unit in your Host and roll 1d6:<br><b>1:</b> Lose that Unit. Seed 1 random <b>WB Echo.</b><br><b>2-3:</b> Lose 1 Morale. Seed 1 random <b>WB Echo.</b><br><b>4-5:</b> Gain 2 Coins. Seed 1 random <b>WA Echo.</b><br><b>6:</b> Gain 3 Coins and 1 Morale. Seed 1 random <b>WA Echo.</b><br><br><b>• Refuse the Challenge: Lose 1 Morale.</b>"
       },
       "notes": null
     },
@@ -778,7 +778,7 @@
       "type": "Echo",
       "set": "Base",
       "card_num": null,
-      "echo_pool": "D",
+      "echo_pool": "WA",
       "echo_num": 1,
       "title": "Champion of the Camp",
       "keyword": null,
@@ -800,7 +800,7 @@
       "type": "Echo",
       "set": "Base",
       "card_num": null,
-      "echo_pool": "D",
+      "echo_pool": "WA",
       "echo_num": 2,
       "title": "Known in Every Ale-Tent",
       "keyword": null,
@@ -822,7 +822,7 @@
       "type": "Echo",
       "set": "Base",
       "card_num": null,
-      "echo_pool": "B",
+      "echo_pool": "WB",
       "echo_num": 1,
       "title": "Old Wounds Reopen",
       "keyword": null,
@@ -844,7 +844,7 @@
       "type": "Echo",
       "set": "Base",
       "card_num": null,
-      "echo_pool": "B",
+      "echo_pool": "WB",
       "echo_num": 2,
       "title": "A Grudge Carried Forward",
       "keyword": null,
@@ -879,7 +879,7 @@
       "after_play": "Remove",
       "text": {
         "flavor": "At a neighboring village fair, a fat prize pig escapes its pen, charges through a council moot, knocks over a local banner, and settles proudly into the Lord’s chair. The locals begin arguing whether this is an omen, a joke, or treason. You make a jape about how much the pig resembles the Lord.",
-        "effect": "<b>Advance 1 Time</b> and Refer to your Rapport with the tribe in or closest to your Host’s location.<ul><li>Friendly or Allied: Seed 1 random <b>E Echo.</b></li><li>Neutral or Hostile: Seed 1 random <b>F Echo.</b></li></ul>"
+        "effect": "<b>Advance 1 Time</b> and Refer to your Rapport with the tribe in or closest to your Host’s location.<ul><li>Friendly or Allied: Seed 1 random <b>PA Echo.</b></li><li>Neutral or Hostile: Seed 1 random <b>PB Echo.</b></li></ul>"
       },
       "notes": null
     },
@@ -888,7 +888,7 @@
       "type": "Echo",
       "set": "Base",
       "card_num": null,
-      "echo_pool": "E",
+      "echo_pool": "PA",
       "echo_num": 1,
       "title": "The Lord’s Pig",
       "keyword": null,
@@ -910,7 +910,7 @@
       "type": "Echo",
       "set": "Base",
       "card_num": null,
-      "echo_pool": "E",
+      "echo_pool": "PA",
       "echo_num": 2,
       "title": "A Tale Worth Repeating",
       "keyword": null,
@@ -932,7 +932,7 @@
       "type": "Echo",
       "set": "Base",
       "card_num": null,
-      "echo_pool": "F",
+      "echo_pool": "PB",
       "echo_num": 1,
       "title": "A Joke Grows Teeth",
       "keyword": null,
@@ -954,7 +954,7 @@
       "type": "Echo",
       "set": "Base",
       "card_num": null,
-      "echo_pool": "F",
+      "echo_pool": "PB",
       "echo_num": 2,
       "title": "The Pig’s Retainers",
       "keyword": null,
@@ -989,7 +989,7 @@
       "after_play": "Remove",
       "text": {
         "flavor": "A village keeps firepots, pitch jars, and old siege oil for defense. The stores are dangerous, poorly sealed, and exactly the sort of thing that could break an enemy line if used first.",
-        "effect": "<b>Advance 1 Time and Choose 1:</b><ul><li><b>Take the Firepots:</b> Place the <i>Firepots</i> token in your Baggage Train. Seed one random <b>U Echo.</b></li><li><b>Condemn the Stockpile:</b> Gain +1 Leadership. Lose 1 Morale.</li></ul><br><b>Firepots effect:</b> Before the first round of a Combat you may discard it to roll 3d6. For each 4+ rolled, assign 1 casualty to the enemy Host. Assign casualties as if it were a Cavalry attack."
+        "effect": "<b>Advance 1 Time and Choose 1:</b><ul><li><b>Take the Firepots:</b> Place the <i>Firepots</i> token in your Baggage Train. Seed one random <b>FF Echo.</b></li><li><b>Condemn the Stockpile:</b> Gain +1 Leadership. Lose 1 Morale.</li></ul><br><b>Firepots effect:</b> Before the first round of a Combat you may discard it to roll 3d6. For each 4+ rolled, assign 1 casualty to the enemy Host. Assign casualties as if it were a Cavalry attack."
       },
       "notes": null
     },
@@ -998,7 +998,7 @@
       "type": "Echo",
       "set": "SitA",
       "card_num": null,
-      "echo_pool": "U",
+      "echo_pool": "FF",
       "echo_num": 1,
       "title": "Unstable Pitch",
       "keyword": null,
@@ -1020,7 +1020,7 @@
       "type": "Echo",
       "set": "SitA",
       "card_num": null,
-      "echo_pool": "U",
+      "echo_pool": "FF",
       "echo_num": 2,
       "title": "Smoke Without Fire",
       "keyword": null,
@@ -1033,7 +1033,7 @@
       "after_play": "Special",
       "text": {
         "flavor": "The pitch seeps through its wrappings. The stink spreads through the carts, clings to blankets, fouls food, and makes every soldier nervous about striking sparks.",
-        "effect": "If the <i>Firepots</i> token is still in your Baggage Train, <b>Advance 1 Time and Choose 1:</b><ul><li><b>Dump the Firepots:</b> Remove the <i>Firepots</i> token from your Baggage Train and Remove this Echo from the game.</li><li><b>Carry the Risk:</b> Remove this card from the game and Seed the remaining <b>U Echo</b> into the Camp discard pile.</li></ul><br>If the <i>Firepots</i> token is no longer in your Baggage Train, <b>Remove this card.</b>"
+        "effect": "If the <i>Firepots</i> token is still in your Baggage Train, <b>Advance 1 Time and Choose 1:</b><ul><li><b>Dump the Firepots:</b> Remove the <i>Firepots</i> token from your Baggage Train and Remove this Echo from the game.</li><li><b>Carry the Risk:</b> Remove this card from the game and Seed the remaining <b>FF Echo</b> into the Camp discard pile.</li></ul><br>If the <i>Firepots</i> token is no longer in your Baggage Train, <b>Remove this card.</b>"
       },
       "notes": null
     },
@@ -1055,7 +1055,7 @@
       "after_play": "Remove",
       "text": {
         "flavor": "A battlefield surgeon offers the Host a bitter black draught used by mercenaries who need men standing longer than men should. He does not call it medicine. He calls it time bought in advance.",
-        "effect": "<b>Advance 1 Time and Choose 1:</b><ul><li><b>Take the Draught:</b> Gain the <i>Painkiller</i> token. Seed the <b>K Echo.</b></li><li><b>Refuse the Dose:</b> Gain +1 Morale.</li></ul><br><b>Painkiller effect:</b> Whenever you would lose 1 or more Military Units or Levy from any game effect, including Combat, roll 1d6 for each unit that would be lost. On 5–6, prevent that unit loss. On 1–4, lose that unit normally. This benefit remains active until removed."
+        "effect": "<b>Advance 1 Time and Choose 1:</b><ul><li><b>Take the Draught:</b> Gain the <i>Painkiller</i> token. Seed the <b>PK Echo.</b></li><li><b>Refuse the Dose:</b> Gain +1 Morale.</li></ul><br><b>Painkiller effect:</b> Whenever you would lose 1 or more Military Units or Levy from any game effect, including Combat, roll 1d6 for each unit that would be lost. On 5–6, prevent that unit loss. On 1–4, lose that unit normally. This benefit remains active until removed."
       },
       "notes": null
     },
@@ -1064,7 +1064,7 @@
       "type": "Echo",
       "set": "SitA",
       "card_num": null,
-      "echo_pool": "K",
+      "echo_pool": "PK",
       "echo_num": 1,
       "title": "Victim of Changes",
       "keyword": null,
@@ -1099,7 +1099,7 @@
       "after_play": "Remove",
       "text": {
         "flavor": "The officers find a marching cadence that keeps the Host moving long after common sense says to stop. Boots strike road. Wagons creak. No one complains because no one has breath left to complain.",
-        "effect": "<b>Advance 1 Time and Choose 1:</b><br><ul><li><b>Force the March:</b> Gain the <i>Forced March</i> token. Gain +1 Morale and 1 Leadership. Seed one random L Echo.</li><li><b>Keep a Human Pace:</b> No effect.</li></ul><br><b>Forced March effect:</b> While this token is active, your Explore phase costs 1 Time instead of 2 Time."
+        "effect": "<b>Advance 1 Time and Choose 1:</b><br><ul><li><b>Force the March:</b> Gain the <i>Forced March</i> token. Gain +1 Morale and 1 Leadership. Seed one random LK Echo.</li><li><b>Keep a Human Pace:</b> No effect.</li></ul><br><b>Forced March effect:</b> While this token is active, your Explore phase costs 1 Time instead of 2 Time."
       },
       "notes": null
     },
@@ -1108,7 +1108,7 @@
       "type": "Echo",
       "set": "SitA",
       "card_num": null,
-      "echo_pool": "L",
+      "echo_pool": "LK",
       "echo_num": 1,
       "title": "Out of Step",
       "keyword": null,
@@ -1130,7 +1130,7 @@
       "type": "Echo",
       "set": "SitA",
       "card_num": null,
-      "echo_pool": "L",
+      "echo_pool": "LK",
       "echo_num": 2,
       "title": "March ör Die",
       "keyword": null,
@@ -1152,7 +1152,7 @@
       "type": "Echo",
       "set": "SitA",
       "card_num": null,
-      "echo_pool": "R",
+      "echo_pool": "RB",
       "echo_num": 1,
       "title": "World Painted Blood",
       "keyword": null,
@@ -1174,7 +1174,7 @@
       "type": "Echo",
       "set": "SitA",
       "card_num": null,
-      "echo_pool": "R",
+      "echo_pool": "RB",
       "echo_num": 2,
       "title": "No Remörse",
       "keyword": null,
@@ -1187,7 +1187,7 @@
       "after_play": "Special",
       "text": {
         "flavor": "Men who once looked away now speak more easily of what must be done. The road has taught them a lesson, and they have learned it too well.",
-        "effect": "If the <i>Reign in Blood</i> token is active, <b>Lose 1 Morale, then Test 8+.</b><ul><li><b>Pass:</b> Remove the <i>Reign in Blood</i> token. Remove this Echo from the game. Gain 1 Morale.</li><li><b>Fail:</b> Discard this Echo. The <i>Reign in Blood</i> token remains active.</li></ul><br><br>If the <i>Reign in Blood</i> token is not active, <b>Remove this Echo from the game.</b>"
+        "effect": "If the <i>Reign in Blood</i> token is active, <b>Lose 1 Morale, then Test 8+.</b><ul><li><b>Pass:</b> Remove the <i>Reign in Blood</i> token. Remove this Echo from the game. Gain 1 Morale.</li><li><b>Fail:</b> Discard this Echo. The <i>Reign in Blood</i> token remains active.</li></ul>"
       },
       "notes": null
     },
@@ -1196,7 +1196,7 @@
       "type": "Echo",
       "set": "SitA",
       "card_num": null,
-      "echo_pool": "S",
+      "echo_pool": "BD",
       "echo_num": 1,
       "title": "After All (The Dead)",
       "keyword": null,
@@ -1218,7 +1218,7 @@
       "type": "Echo",
       "set": "SitA",
       "card_num": null,
-      "echo_pool": "S",
+      "echo_pool": "BD",
       "echo_num": 2,
       "title": "Remember Tomorrow",
       "keyword": null,
@@ -1275,7 +1275,7 @@
       "after_play": "Remove",
       "text": {
         "flavor": "A local priest leads an unfamiliar rite just beyond camp. The drums, chants, and strange gestures unsettle the Host. Soon your soldiers are watching more than resting.",
-        "effect": "<b>Advance 1 Time and Choose 1:</b><br><ul><li><b>Let the Rite Continue:</b> Advance 1 Time. Seed one random <b>G Echo.</b></li><li><b>Interrupt the Priest:</b> Gain 1 Leadership. Seed one random <b>H Echo.</b></li><li><b>Let Your Priest Judge It:</b> Requirement: <i>Priest.</i> Test 8+.<ul><li><b>Pass:</b> Gain 1 Leadership and 1 Morale. Seed one random <b>G Echo.</b></li><li><b>Fail:</b> Lose 1 Morale. Seed one random <b>H Echo.</b></li></ul></li></ul>"
+        "effect": "<b>Advance 1 Time and Choose 1:</b><br><ul><li><b>Let the Rite Continue:</b> Advance 1 Time. Seed one random <b>RC Echo.</b></li><li><b>Interrupt the Priest:</b> Gain 1 Leadership. Seed one random <b>SR Echo.</b></li><li><b>Let Your Priest Judge It:</b> Requirement: <i>Priest.</i> Test 8+.<ul><li><b>Pass:</b> Gain 1 Leadership and 1 Morale. Seed one random <b>RC Echo.</b></li><li><b>Fail:</b> Lose 1 Morale. Seed one random <b>SR Echo.</b></li></ul></li></ul>"
       },
       "notes": null
     },
@@ -1284,7 +1284,7 @@
       "type": "Echo",
       "set": "SiaSL",
       "card_num": null,
-      "echo_pool": "G",
+      "echo_pool": "RC",
       "echo_num": 1,
       "title": "Born Again",
       "keyword": null,
@@ -1306,7 +1306,7 @@
       "type": "Echo",
       "set": "SiaSL",
       "card_num": null,
-      "echo_pool": "G",
+      "echo_pool": "RC",
       "echo_num": 2,
       "title": "The Writ",
       "keyword": null,
@@ -1328,7 +1328,7 @@
       "type": "Echo",
       "set": "SiaSL",
       "card_num": null,
-      "echo_pool": "H",
+      "echo_pool": "SR",
       "echo_num": 1,
       "title": "Hole in the Sky",
       "keyword": null,
@@ -1350,7 +1350,7 @@
       "type": "Echo",
       "set": "SiaSL",
       "card_num": null,
-      "echo_pool": "H",
+      "echo_pool": "SR",
       "echo_num": 2,
       "title": "Falling Off the Edge of the World",
       "keyword": null,
@@ -1372,7 +1372,7 @@
       "type": "Echo",
       "set": "SiaSL",
       "card_num": null,
-      "echo_pool": "T",
+      "echo_pool": "S1",
       "echo_num": 1,
       "title": "Sacred Heart",
       "keyword": null,
@@ -1394,7 +1394,7 @@
       "type": "Echo",
       "set": "SiaSL",
       "card_num": null,
-      "echo_pool": "T",
+      "echo_pool": "S2",
       "echo_num": 2,
       "title": "Believer",
       "keyword": null,
@@ -1416,7 +1416,7 @@
       "type": "Echo",
       "set": "SiaSL",
       "card_num": null,
-      "echo_pool": "T",
+      "echo_pool": "S3",
       "echo_num": 3,
       "title": "Last in Line",
       "keyword": null,
@@ -1438,7 +1438,7 @@
       "type": "Echo",
       "set": "SiaSL",
       "card_num": null,
-      "echo_pool": "T",
+      "echo_pool": "S4",
       "echo_num": 4,
       "title": "Shot in the Dark",
       "keyword": null,
@@ -1473,7 +1473,7 @@
       "after_play": "Remove",
       "text": {
         "flavor": "Tiny bootprints appear around the Baggage Train each morning. The soldiers laugh at first, blaming “fair folk with marching orders.” Then flour is spilled, straps are loosened, and someone finds a child-sized print inside a sealed cart.",
-        "effect": "<b>Advance 1 Time and Choose 1:</b><br><ul><li><b>Laugh It Off:</b> Gain 1 Morale. Seed one random <b>V Echo.</b></li><li><b>Set a Watch:</b> Gain 1 Leadership. Lose 1 Morale.</li><li><b>Let Your Priest Name It:</b> Requirement: <i>Priest.</i> Test 8+.</li><ul><li><b>Pass:</b> Gain 1 Morale and 1 Leadership.</li><li><b>Fail:</b> Lose 1 Morale. Seed one random <b>V Echo.</b></li></ul></li></ul>"
+        "effect": "<b>Advance 1 Time and Choose 1:</b><br><ul><li><b>Laugh It Off:</b> Gain 1 Morale. Seed one random <b>FB Echo.</b></li><li><b>Set a Watch:</b> Gain 1 Leadership. Lose 1 Morale.</li><li><b>Let Your Priest Name It:</b> Requirement: <i>Priest.</i> Test 8+.</li><ul><li><b>Pass:</b> Gain 1 Morale and 1 Leadership.</li><li><b>Fail:</b> Lose 1 Morale. Seed one random <b>FB Echo.</b></li></ul></li></ul>"
       },
       "notes": null
     },
@@ -1482,7 +1482,7 @@
       "type": "Echo",
       "set": "SiaSL",
       "card_num": null,
-      "echo_pool": "V",
+      "echo_pool": "FB",
       "echo_num": 1,
       "title": "Children of the Grave",
       "keyword": null,
@@ -1504,7 +1504,7 @@
       "type": "Echo",
       "set": "SiaSL",
       "card_num": null,
-      "echo_pool": "V",
+      "echo_pool": "FB",
       "echo_num": 2,
       "title": "Rat Salad",
       "keyword": null,
@@ -1526,7 +1526,7 @@
       "type": "Echo",
       "set": "Base",
       "card_num": null,
-      "echo_pool": "N",
+      "echo_pool": "DP",
       "echo_num": 1,
       "title": "Be a Pepper Too?",
       "keyword": null,
@@ -1548,7 +1548,7 @@
       "type": "Echo",
       "set": "Base",
       "card_num": null,
-      "echo_pool": "N",
+      "echo_pool": "DP",
       "echo_num": 2,
       "title": "The Cookie Crumbles",
       "keyword": null,
@@ -1562,6 +1562,116 @@
       "text": {
         "flavor": "The Crumbs have not forgotten your slight at Pepperridge Farm. They descend upon your camp at last, armed with pitchforks, cudgels, and a grudge they have clearly been nursing since you parted ways. It seems the Crumbs remember, too.",
         "effect": "Battle <b>6 Levy</b>.<br><br>Crumb Levy do not Rout when they roll a 1.<br><br>If you Disengage, the <b>Camp phase ends</b>."
+      },
+      "notes": null
+    },
+    "SCENE-028": {
+      "id": "SCENE-028",
+      "type": "Scene",
+      "set": "PackC",
+      "card_num": 28,
+      "echo_pool": null,
+      "echo_num": null,
+      "title": "Riff Raff",
+      "keyword": null,
+      "location": "Any",
+      "time": 0,
+      "cost": {
+        "type": null,
+        "value": null
+      },
+      "after_play": "Remove",
+      "text": {
+        "flavor": "What began as kin, peddlers, runaways, failed soldiers, and other hangers-on has become something closer to a village on the march. They trail the Baggage Train, sleep beyond the fires, trade among themselves, and answer to no officer.<br><br>Most are harmless enough. Probably.<br><br>Lately, however, too many small troubles seem to begin in their part of camp.",
+        "effect": "<center><b>Seed a random RR Echo</b><br>When resolving a Riff Raff Echo, refer to the Riff Raff Rules card.</center>"
+      },
+      "notes": null
+    },
+    "ECHO-RR-01": {
+      "id": "ECHO-RR-01",
+      "type": "Echo",
+      "set": "PackC",
+      "card_num": null,
+      "echo_pool": "RR",
+      "echo_num": 1,
+      "title": "Riff Raff",
+      "keyword": null,
+      "location": "Any",
+      "time": 0,
+      "cost": {
+        "type": null,
+        "value": null
+      },
+      "after_play": "Special",
+      "text": {
+        "flavor": "The camp followers have been busy. Of course they have.",
+        "effect": "<b>2-3</b>: <b><i>Jailbreak</i></b> - Some camp followers help a troublesome Levy slip away before punishment can be carried out. Advance 1 Time. Lose 1 Levy. If you have no Levy, lose 1 Morale instead.<br><b>4-6</b>: <b><i>Problem Child</i></b> - Another mess demands an officer's attention. Advance 1 Time.<br><b>7</b>: <b><i>Ride On</i></b> - For once, they mind their own business. No effect.<br><b>8-10</b>: <b><i>Dirty Deeds Done Dirt Cheap</i></b> - Something unpleasant needed doing. The camp followers handled it before anyone thought to ask how. Gain 1 Coin.<br><b>11-12</b>: <b><i>Big Balls</i></b> - An outrageous wager somehow pays off. Some of the winnings even reach the Host. Gain 2 Coin."
+      },
+      "notes": null
+    },
+    "ECHO-RR-02": {
+      "id": "ECHO-RR-02",
+      "type": "Echo",
+      "set": "PackC",
+      "card_num": null,
+      "echo_pool": "RR",
+      "echo_num": 2,
+      "title": "Riff Raff",
+      "keyword": null,
+      "location": "Any",
+      "time": 0,
+      "cost": {
+        "type": null,
+        "value": null
+      },
+      "after_play": "Special",
+      "text": {
+        "flavor": "The Riff Raff have wandered farther than usual. That is rarely a good sign.",
+        "effect": "<b>2-3</b>: <b><i>If You Want Blood (You've Got It)</i></b> - A brawl turns ugly before the Host can stop it. Advance 1 Time. Lose 1 Morale.<br><b>4-6</b>: <b><i>Night Prowler</i></b> - Someone has been prowling the camp after dark. Advance 1 Time. Lose 1 Coin.<br><b>7</b>: <b><i>Beating Around the Bush</i></b> - Plenty of talk, little action. No effect.<br><b>8-10</b>: <b><i>Shot Down in Flames</i></b> - The Riff Raff expose a petty scheme before it reaches the Host. Gain 1 Leadership.<br><b>11-12</b>: <b><i>Highway to Hell</i></b> - One of the followers knows a disreputable shortcut. Place a reminder cube on the Explore deck. Your next Explore does not advance Time."
+      },
+      "notes": null
+    },
+    "ECHO-RR-03": {
+      "id": "ECHO-RR-03",
+      "type": "Echo",
+      "set": "PackC",
+      "card_num": null,
+      "echo_pool": "RR",
+      "echo_num": 3,
+      "title": "Riff Raff",
+      "keyword": null,
+      "location": "Any",
+      "time": 0,
+      "cost": {
+        "type": null,
+        "value": null
+      },
+      "after_play": "Special",
+      "text": {
+        "flavor": "The camp followers have found new ways to keep themselves occupied. The Host may regret noticing.",
+        "effect": "<b>2-3</b>: <b><i>Kicked in the Teeth</i></b> - A quarrel with locals ends badly. Advance 1 Time. Lose 1 Morale.<br><b>4-6</b>: <b><i>Down Payment Blues</i></b> - A creditor arrives with a bill for something bought in the Host's name. Lose 1 Coin or advance 1 Time.<br><b>7</b>: <b><i>Dog Eat Dog</i></b> - They cheat, hustle, and quarrel among themselves. No effect.<br><b>8-10</b>: <b><i>Whole Lotta Rosie</i></b> - Rosie's side business is thriving. The Host gets a cut. Gain 1 Coin.<br><b>11-12</b>: <b><i>The Jack</i></b> - One of Rosie's customers returns with an embarrassing complaint. Soon everyone is laughing at the poor bastard. Gain 1 Morale."
+      },
+      "notes": null
+    },
+    "ECHO-RR-04": {
+      "id": "ECHO-RR-04",
+      "type": "Echo",
+      "set": "PackC",
+      "card_num": null,
+      "echo_pool": "RR",
+      "echo_num": 4,
+      "title": "Riff Raff",
+      "keyword": null,
+      "location": "Any",
+      "time": 0,
+      "cost": {
+        "type": null,
+        "value": null
+      },
+      "after_play": "Special",
+      "text": {
+        "flavor": "While some faces have changed, the Riff Raff remain much the same. Trouble still follows.",
+        "effect": "<b>2-3</b>: <b><i>Night of the Long Knives</i></b> - A vicious feud erupts among the followers. Advance 1 Time. Lose 1 Morale.<br><b>4-6</b>: <b><i>This House Is on Fire</i></b> - A cookfire spreads through the followers' tents and stores. Advance 1 Time. Lose 1 Food.<br><b>7</b>: <b><i>Fly on the Wall</i></b> - Rumors pass through camp all night. None prove useful. No effect.<br><b>8-10</b>: <b><i>Thunderstruck</i></b> - Lightning fells a tree near camp. The followers waste no time putting it to use. Gain 1 Wood.<br><b>11-12</b>: <b><i>Moneytalks</i></b> - A few followers prove surprisingly capable fighters. You may recruit up to 2 Infantry for 1 Coin each."
       },
       "notes": null
     }
@@ -1982,7 +2092,7 @@
       "image": "Plains.png",
       "text": {
         "flavor": "The Host finds the aftermath of slaughter: blood in the mud, broken doors, and spoils left among the dead. No one claims responsibility. Your soldiers understand the lesson.",
-        "effect": "<b>Choose 1:</b><br><ul><li><b>Take What Remains:</b> Gain 3 Coin and 1 Leadership. Gain the <i>Reign in Blood</i> token. Seed one random <b>R Echo.</b></li><li><b>Bury the Dead:</b> Advance 1 Time and Seed one random <b>S Echo.</b></li></ul><br><b>Reign in Blood effect:</b> While this token is active, your Host may not Disengage from Combat."
+        "effect": "<b>Choose 1:</b><br><ul><li><b>Take What Remains:</b> Gain 3 Coin and 1 Leadership. Gain the <i>Reign in Blood</i> token. Seed one random <b>RB Echo.</b></li><li><b>Bury the Dead:</b> Advance 1 Time and Seed one random <b>BD Echo.</b></li></ul><br><b>Reign in Blood effect:</b> While this token is active, your Host may not Disengage from Combat."
       }
     },
     "EXPLORE-032": {
@@ -1995,7 +2105,7 @@
       "image": "Forest.png",
       "text": {
         "flavor": "A ring of painted stones waits in a forest clearing, arranged around a crude image of Middelalderen. The marks look Quietus: part prayer, part boundary, part warning.",
-        "effect": "If The Quietus have not been encountered, discard this Card with no effect.<br><br>If The Quietus have been encountered, refer to your current Rapport with them:<ul><li><b>Allied:</b> Seed Echo <b>T1.</b></li><li><b>Friendly:</b> Seed Echo <b>T2.</b></li><li><b>Neutral:</b> Seed <b>T3.</b></li><li><b>Hostile:</b> Seed <b>T4.</b>"
+        "effect": "If The Quietus have not been encountered, discard this Card with no effect.<br><br>If The Quietus have been encountered, refer to your current Rapport with them:<ul><li><b>Allied:</b> Seed Echo <b>S1.</b></li><li><b>Friendly:</b> Seed Echo <b>S2.</b></li><li><b>Neutral:</b> Seed <b>S3.</b></li><li><b>Hostile:</b> Seed <b>S4.</b>"
       }
     }
   },
@@ -2173,7 +2283,7 @@
       "tribe": "The Quietus",
       "tribute": "Tribute: 2C",
       "setup": "A small sanctuary still stands where the road narrows. Its bell has not rung in years. The keepers ask why your march should disturb what remains consecrated.",
-      "effect": "<hr><b>If Allied:</b> Gain 1 Priest if you do not already have one; otherwise gain 1 Leadership.<br><br><b><i>Choose 1:</i></b><br><b>Religious Contact — Pay 1 Leadership: (8+)</b><br><ul><li><b>Pass:</b> Gain 1 Rapport and 1 Morale.</li><li><b>Fail:</b> No additional effect.</li></ul><br><b>Restore the Bell (10+)</b><br><ul><li><b>Pass:</b> Gain 1 Morale and 1 Research.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Take the Relic (7+)</b><br><ul><li><b>Pass:</b> Gain 1 Research and 1 Leadership.</li><li><b>Fail:</b> Lose 1 Rapport.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 1 Research and 1 Leadership.</li><li><b>Disengage:</b> Lose 1 Morale.</li></ul>",
+      "effect": "<hr><b>If Allied:</b> Gain 1 Priest if you do not already have one; otherwise gain 1 Leadership.<br><br><b><i>Choose 1:</i></b><br><b>Religious Contact — Pay 1 Leadership: (8+)</b><br><ul><li><b>Pass:</b> Gain 1 Rapport and 1 Morale.</li><li><b>Fail:</b> No additional effect.</li></ul><br><b>Restore the Bell (10+)</b><br><ul><li><b>Pass:</b> Gain 1 Morale and 1 Research.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Take the Relic (7+)</b><br><ul><li><b>Pass:</b> Gain 1 Research and 1 Leadership.</li><li><b>Fail:</b> Lose 1 Rapport.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 1 Research.</li><li><b>Disengage:</b> Lose 1 Morale.</li></ul>",
       "host": "<b>Enemy Host</b><br><b>Y1:</b> 1P, 1I, 3L - <b>Y2:</b> 1P, 2I, 3L - <b>Y3:</b> 1P, 1A, 2I, 5L"
     },
     "ARRIVAL-010": {
@@ -2206,7 +2316,7 @@
       "tribe": "The Quietus",
       "tribute": "Tribute: 3C",
       "setup": "A row of unlit candles blocks the road, each set before a stone bearing no name. Quietus keepers ask your host to pay witness before passing, for some roads are owed to the dead before they are granted to the living.",
-      "effect": "<hr><b>If Allied:</b> If you do not already have a Priest, gain 1 Priest. Otherwise gain 1 Leadership.<br><br><b><i>Choose 1:</i></b><br><b>Pay Witness (8+)</b><br><ul><li><b>Pass:</b> Gain 1 Rapport and 1 Leadership, but lose 1 Morale.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Ask the Keepers (9+)</b><br><ul><li><b>Pass:</b> Gain 1 Research or 1 Leadership.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Pocket the Candle Silver (7+)</b><br><ul><li><b>Pass:</b> Gain 3 Coin and 1 Leadership.</li><li><b>Fail:</b> Lose 1 Rapport.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 1 Research and 1 Leadership.</li><li><b>Disengage:</b> Lose 1 Morale.</li></ul>",
+      "effect": "<hr><b>If Allied:</b> If you do not already have a Priest, gain 1 Priest. Otherwise gain 1 Leadership.<br><br><b><i>Choose 1:</i></b><br><b>Pay Witness (8+)</b><br><ul><li><b>Pass:</b> Gain 1 Rapport and 1 Leadership, but lose 1 Morale.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Ask the Keepers (9+)</b><br><ul><li><b>Pass:</b> Gain 1 Research or 1 Leadership.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Pocket the Candle Silver (7+)</b><br><ul><li><b>Pass:</b> Gain 3 Coin and 1 Leadership.</li><li><b>Fail:</b> Lose 1 Rapport.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 1 Research.</li><li><b>Disengage:</b> Lose 1 Morale.</li></ul>",
       "host": "<b>Enemy Host</b><br><b>Y1:</b> 1P, 1A, 1I, 2L - <b>Y2:</b> 1P, 1A, 1I, 5L - <b>Y3:</b> 1P, 1A, 2I, 6L"
     },
     "ARRIVAL-020": {
@@ -2449,87 +2559,105 @@
     }
   },
   "echo_pools": {
-    "A": [
-      "ECHO-A-01",
-      "ECHO-A-02",
-      "ECHO-A-03",
+    "AN": [
+      "ECHO-A-03"
+    ],
+    "AP": [
+      "ECHO-A-02"
+    ],
+    "AQ": [
       "ECHO-A-04"
     ],
-    "B": [
-      "ECHO-B-01",
-      "ECHO-B-02"
+    "AS": [
+      "ECHO-A-01"
     ],
-    "C": [
-      "ECHO-C-01",
-      "ECHO-C-02",
-      "ECHO-C-03"
+    "BD": [
+      "ECHO-S-01",
+      "ECHO-S-02"
     ],
-    "D": [
-      "ECHO-D-01",
-      "ECHO-D-02"
-    ],
-    "E": [
-      "ECHO-E-01",
-      "ECHO-E-02"
-    ],
-    "F": [
-      "ECHO-F-01",
-      "ECHO-F-02"
-    ],
-    "G": [
-      "ECHO-G-01",
-      "ECHO-G-02"
-    ],
-    "H": [
-      "ECHO-H-01",
-      "ECHO-H-02"
-    ],
-    "K": [
-      "ECHO-K-01"
-    ],
-    "L": [
-      "ECHO-L-01",
-      "ECHO-L-02"
-    ],
-    "M": [
-      "ECHO-M-01",
-      "ECHO-M-02"
-    ],
-    "P": [
+    "CR": [
       "ECHO-P-01",
       "ECHO-P-02",
       "ECHO-P-03"
     ],
-    "Q": [
+    "DP": [
+      "ECHO-N-01",
+      "ECHO-N-02"
+    ],
+    "FB": [
+      "ECHO-V-01",
+      "ECHO-V-02"
+    ],
+    "FF": [
+      "ECHO-U-01",
+      "ECHO-U-02"
+    ],
+    "LK": [
+      "ECHO-L-01",
+      "ECHO-L-02"
+    ],
+    "MA": [
+      "ECHO-M-01",
+      "ECHO-M-02"
+    ],
+    "PA": [
+      "ECHO-E-01",
+      "ECHO-E-02"
+    ],
+    "PB": [
+      "ECHO-F-01",
+      "ECHO-F-02"
+    ],
+    "PK": [
+      "ECHO-K-01"
+    ],
+    "QS": [
       "ECHO-Q-01",
       "ECHO-Q-02",
       "ECHO-Q-03"
     ],
-    "R": [
+    "RB": [
       "ECHO-R-01",
       "ECHO-R-02"
     ],
-    "S": [
-      "ECHO-S-01",
-      "ECHO-S-02"
+    "RC": [
+      "ECHO-G-01",
+      "ECHO-G-02"
     ],
-    "T": [
-      "ECHO-T-01",
-      "ECHO-T-02",
-      "ECHO-T-03",
+    "RR": [
+      "ECHO-RR-01",
+      "ECHO-RR-02",
+      "ECHO-RR-03",
+      "ECHO-RR-04"
+    ],
+    "S1": [
+      "ECHO-T-01"
+    ],
+    "S2": [
+      "ECHO-T-02"
+    ],
+    "S3": [
+      "ECHO-T-03"
+    ],
+    "S4": [
       "ECHO-T-04"
     ],
-    "U": [
-      "ECHO-U-01",
-      "ECHO-U-02"
+    "SC": [
+      "ECHO-C-01",
+      "ECHO-C-02",
+      "ECHO-C-03"
     ],
-    "V": [
-      "ECHO-V-01",
-      "ECHO-V-02"
+    "SR": [
+      "ECHO-H-01",
+      "ECHO-H-02"
     ],
-    "N": [
-      "ECHO-N-01",
-      "ECHO-N-02"
+    "WA": [
+      "ECHO-D-01",
+      "ECHO-D-02"
+    ],
+    "WB": [
+      "ECHO-B-01",
+      "ECHO-B-02"
     ]
   },
   "flows": {
@@ -4938,7 +5066,7 @@
           "action": {
             "type": "SeedRandomEcho",
             "target": "EchoPool",
-            "value": "Q"
+            "value": "QS"
           },
           "next": "N99"
         },
@@ -5127,7 +5255,7 @@
           "action": {
             "type": "SeedRandomEcho",
             "target": "EchoPool",
-            "value": "P"
+            "value": "CR"
           },
           "next": "N99"
         },
@@ -5139,7 +5267,7 @@
           "action": {
             "type": "SeedRandomEcho",
             "target": "EchoPool",
-            "value": "N"
+            "value": "DP"
           },
           "next": "N99"
         }
@@ -5320,7 +5448,7 @@
           "action": {
             "type": "SeedRandomEcho",
             "target": "EchoPool",
-            "value": "C"
+            "value": "SC"
           },
           "next": "N99"
         },
@@ -5444,7 +5572,7 @@
           "action": {
             "type": "SeedRandomEcho",
             "target": "EchoPool",
-            "value": "M"
+            "value": "MA"
           },
           "next": "N99"
         },
@@ -5647,7 +5775,7 @@
           "action": {
             "type": "SeedRandomEcho",
             "target": "EchoPool",
-            "value": "B"
+            "value": "WB"
           },
           "next": "N99"
         },
@@ -5665,7 +5793,7 @@
           "action": {
             "type": "SeedRandomEcho",
             "target": "EchoPool",
-            "value": "B"
+            "value": "WB"
           },
           "next": "N99"
         },
@@ -5683,7 +5811,7 @@
           "action": {
             "type": "SeedRandomEcho",
             "target": "EchoPool",
-            "value": "D"
+            "value": "WA"
           },
           "next": "N99"
         },
@@ -5710,7 +5838,7 @@
           "action": {
             "type": "SeedRandomEcho",
             "target": "EchoPool",
-            "value": "D"
+            "value": "WA"
           },
           "next": "N99"
         },
@@ -5933,7 +6061,7 @@
           "action": {
             "type": "SeedRandomEcho",
             "target": "EchoPool",
-            "value": "E"
+            "value": "PA"
           },
           "next": "N99"
         },
@@ -5942,7 +6070,7 @@
           "action": {
             "type": "SeedRandomEcho",
             "target": "EchoPool",
-            "value": "F"
+            "value": "PB"
           },
           "next": "N99"
         },
@@ -6116,7 +6244,7 @@
           "action": {
             "type": "SeedRandomEcho",
             "target": "EchoPool",
-            "value": "U"
+            "value": "FF"
           },
           "next": "N99"
         },
@@ -6463,7 +6591,7 @@
           "action": {
             "type": "SeedRemainingEcho",
             "target": "EchoPool",
-            "value": "U"
+            "value": "FF"
           },
           "next": "N99",
           "flags": [
@@ -6730,7 +6858,7 @@
           "action": {
             "type": "SeedRandomEcho",
             "target": "EchoPool",
-            "value": "L"
+            "value": "LK"
           },
           "next": "N99"
         },
@@ -7068,7 +7196,7 @@
           "action": {
             "type": "SeedRandomEcho",
             "target": "EchoPool",
-            "value": "R"
+            "value": "RB"
           },
           "next": "N99"
         },
@@ -7086,7 +7214,7 @@
           "action": {
             "type": "SeedRandomEcho",
             "target": "EchoPool",
-            "value": "S"
+            "value": "BD"
           },
           "next": "N99"
         },
@@ -7605,7 +7733,7 @@
           "action": {
             "type": "SeedRandomEcho",
             "target": "EchoPool",
-            "value": "G"
+            "value": "RC"
           },
           "next": "N99"
         },
@@ -7623,7 +7751,7 @@
           "action": {
             "type": "SeedRandomEcho",
             "target": "EchoPool",
-            "value": "H"
+            "value": "SR"
           },
           "next": "N99"
         },
@@ -7670,7 +7798,7 @@
           "action": {
             "type": "SeedRandomEcho",
             "target": "EchoPool",
-            "value": "G"
+            "value": "RC"
           },
           "next": "N99"
         },
@@ -7688,7 +7816,7 @@
           "action": {
             "type": "SeedRandomEcho",
             "target": "EchoPool",
-            "value": "H"
+            "value": "SR"
           },
           "next": "N99"
         },
@@ -8645,7 +8773,7 @@
           "action": {
             "type": "SeedRandomEcho",
             "target": "EchoPool",
-            "value": "V"
+            "value": "FB"
           },
           "next": "N99"
         },
@@ -8719,7 +8847,7 @@
           "action": {
             "type": "SeedRandomEcho",
             "target": "EchoPool",
-            "value": "V"
+            "value": "FB"
           },
           "next": "N99"
         },
@@ -19119,6 +19247,682 @@
           "type": "End"
         }
       }
+    },
+    "EF-SCENE-028": {
+      "source": {
+        "type": "Scene",
+        "id": "SCENE-028"
+      },
+      "trigger": "OnResolve",
+      "start_node": "N01",
+      "nodes": {
+        "N01": {
+          "type": "Action",
+          "action": {
+            "type": "SeedRandomEcho",
+            "target": "EchoPool",
+            "value": "RR"
+          },
+          "next": "N99"
+        },
+        "N99": {
+          "type": "End"
+        }
+      }
+    },
+    "EF-ECHO-RR-01": {
+      "source": {
+        "type": "Echo",
+        "id": "ECHO-RR-01"
+      },
+      "trigger": "OnResolve",
+      "start_node": "N01",
+      "nodes": {
+        "N01": {
+          "type": "Roll",
+          "prompt": "Roll 2d6 for Riff Raff",
+          "branches": [
+            {
+              "label": "2-3",
+              "input": "2d6",
+              "operator": "LTE",
+              "value": 3,
+              "next": "N10",
+              "player_text": "Jailbreak - Some camp followers help a troublesome Levy slip away before punishment can be carried out."
+            },
+            {
+              "label": "4-6",
+              "input": "2d6",
+              "operator": "LTE",
+              "value": 6,
+              "next": "N20",
+              "player_text": "Problem Child - Another mess demands an officer's attention."
+            },
+            {
+              "label": "7",
+              "input": "2d6",
+              "operator": "EQ",
+              "value": 7,
+              "next": "N30",
+              "player_text": "Ride On - For once, they mind their own business. No effect."
+            },
+            {
+              "label": "8-10",
+              "input": "2d6",
+              "operator": "LTE",
+              "value": 10,
+              "next": "N40",
+              "player_text": "Dirty Deeds Done Dirt Cheap - Something unpleasant needed doing. The camp followers handled it before anyone thought to ask how."
+            },
+            {
+              "label": "11-12",
+              "input": "2d6",
+              "operator": "GTE",
+              "value": 11,
+              "next": "N50",
+              "player_text": "Big Balls - An outrageous wager somehow pays off. Some of the winnings even reach the Host."
+            }
+          ]
+        },
+        "N10": {
+          "type": "Action",
+          "action": {
+            "type": "Advance",
+            "target": "Time",
+            "value": 1
+          },
+          "next": "N11"
+        },
+        "N11": {
+          "type": "Check",
+          "prompt": "Is there a Levy to lose?",
+          "branches": [
+            {
+              "label": "Yes",
+              "input": "Host.Levy",
+              "operator": "GTE",
+              "value": 1,
+              "next": "N12"
+            },
+            {
+              "label": "No",
+              "input": "Host.Levy",
+              "operator": "LTE",
+              "value": 0,
+              "next": "N13"
+            }
+          ]
+        },
+        "N12": {
+          "type": "Action",
+          "action": {
+            "type": "Lose",
+            "target": "Levy",
+            "value": 1
+          },
+          "next": "N90",
+          "flags": [
+            {
+              "name": "NoShortfall",
+              "value": true
+            }
+          ]
+        },
+        "N13": {
+          "type": "Action",
+          "action": {
+            "type": "Lose",
+            "target": "Morale",
+            "value": 1
+          },
+          "next": "N90"
+        },
+        "N20": {
+          "type": "Action",
+          "action": {
+            "type": "Advance",
+            "target": "Time",
+            "value": 1
+          },
+          "next": "N90"
+        },
+        "N30": {
+          "type": "Action",
+          "action": {
+            "type": "Ignore",
+            "target": "None",
+            "value": 0
+          },
+          "next": "N90"
+        },
+        "N40": {
+          "type": "Action",
+          "action": {
+            "type": "Gain",
+            "target": "Coin",
+            "value": 1
+          },
+          "next": "N90"
+        },
+        "N50": {
+          "type": "Action",
+          "action": {
+            "type": "Gain",
+            "target": "Coin",
+            "value": 2
+          },
+          "next": "N90"
+        },
+        "N90": {
+          "type": "Action",
+          "action": {
+            "type": "SeedRandomEcho",
+            "target": "EchoPool",
+            "value": "RR"
+          },
+          "next": "N91"
+        },
+        "N91": {
+          "type": "Action",
+          "action": {
+            "type": "Remove",
+            "target": "Card",
+            "value": "Self"
+          },
+          "next": "N99",
+          "flags": [
+            {
+              "name": "OverrideAfterPlay",
+              "value": true
+            }
+          ]
+        },
+        "N99": {
+          "type": "End"
+        }
+      }
+    },
+    "EF-ECHO-RR-02": {
+      "source": {
+        "type": "Echo",
+        "id": "ECHO-RR-02"
+      },
+      "trigger": "OnResolve",
+      "start_node": "N01",
+      "nodes": {
+        "N01": {
+          "type": "Roll",
+          "prompt": "Roll 2d6 for Riff Raff",
+          "branches": [
+            {
+              "label": "2-3",
+              "input": "2d6",
+              "operator": "LTE",
+              "value": 3,
+              "next": "N10",
+              "player_text": "If You Want Blood (You've Got It) - A brawl turns ugly before the Host can stop it."
+            },
+            {
+              "label": "4-6",
+              "input": "2d6",
+              "operator": "LTE",
+              "value": 6,
+              "next": "N20",
+              "player_text": "Night Prowler - Someone has been prowling the camp after dark."
+            },
+            {
+              "label": "7",
+              "input": "2d6",
+              "operator": "EQ",
+              "value": 7,
+              "next": "N30",
+              "player_text": "Beating Around the Bush - Plenty of talk, little action. No effect."
+            },
+            {
+              "label": "8-10",
+              "input": "2d6",
+              "operator": "LTE",
+              "value": 10,
+              "next": "N40",
+              "player_text": "Shot Down in Flames - The Riff Raff expose a petty scheme before it reaches the Host."
+            },
+            {
+              "label": "11-12",
+              "input": "2d6",
+              "operator": "GTE",
+              "value": 11,
+              "next": "N50",
+              "player_text": "Highway to Hell - One of the followers knows a disreputable shortcut."
+            }
+          ]
+        },
+        "N10": {
+          "type": "Action",
+          "action": {
+            "type": "Advance",
+            "target": "Time",
+            "value": 1
+          },
+          "next": "N11"
+        },
+        "N11": {
+          "type": "Action",
+          "action": {
+            "type": "Lose",
+            "target": "Morale",
+            "value": 1
+          },
+          "next": "N90"
+        },
+        "N20": {
+          "type": "Action",
+          "action": {
+            "type": "Advance",
+            "target": "Time",
+            "value": 1
+          },
+          "next": "N21"
+        },
+        "N21": {
+          "type": "Action",
+          "action": {
+            "type": "Lose",
+            "target": "Coin",
+            "value": 1
+          },
+          "next": "N90"
+        },
+        "N30": {
+          "type": "Action",
+          "action": {
+            "type": "Ignore",
+            "target": "None",
+            "value": 0
+          },
+          "next": "N90"
+        },
+        "N40": {
+          "type": "Action",
+          "action": {
+            "type": "Gain",
+            "target": "Leadership",
+            "value": 1
+          },
+          "next": "N90"
+        },
+        "N50": {
+          "type": "Action",
+          "action": {
+            "type": "GainToken",
+            "target": "RiffRaffShortcut",
+            "value": 1
+          },
+          "next": "N90"
+        },
+        "N90": {
+          "type": "Action",
+          "action": {
+            "type": "SeedRandomEcho",
+            "target": "EchoPool",
+            "value": "RR"
+          },
+          "next": "N91"
+        },
+        "N91": {
+          "type": "Action",
+          "action": {
+            "type": "Remove",
+            "target": "Card",
+            "value": "Self"
+          },
+          "next": "N99",
+          "flags": [
+            {
+              "name": "OverrideAfterPlay",
+              "value": true
+            }
+          ]
+        },
+        "N99": {
+          "type": "End"
+        }
+      }
+    },
+    "EF-ECHO-RR-03": {
+      "source": {
+        "type": "Echo",
+        "id": "ECHO-RR-03"
+      },
+      "trigger": "OnResolve",
+      "start_node": "N01",
+      "nodes": {
+        "N01": {
+          "type": "Roll",
+          "prompt": "Roll 2d6 for Riff Raff",
+          "branches": [
+            {
+              "label": "2-3",
+              "input": "2d6",
+              "operator": "LTE",
+              "value": 3,
+              "next": "N10",
+              "player_text": "Kicked in the Teeth - A quarrel with locals ends badly."
+            },
+            {
+              "label": "4-6",
+              "input": "2d6",
+              "operator": "LTE",
+              "value": 6,
+              "next": "N20",
+              "player_text": "Down Payment Blues - A creditor arrives with a bill for something bought in the Host's name."
+            },
+            {
+              "label": "7",
+              "input": "2d6",
+              "operator": "EQ",
+              "value": 7,
+              "next": "N30",
+              "player_text": "Dog Eat Dog - They cheat, hustle, and quarrel among themselves. No effect."
+            },
+            {
+              "label": "8-10",
+              "input": "2d6",
+              "operator": "LTE",
+              "value": 10,
+              "next": "N40",
+              "player_text": "Whole Lotta Rosie - Rosie's side business is thriving. The Host gets a cut."
+            },
+            {
+              "label": "11-12",
+              "input": "2d6",
+              "operator": "GTE",
+              "value": 11,
+              "next": "N50",
+              "player_text": "The Jack - One of Rosie's customers returns with an embarrassing complaint. Soon everyone is laughing at the poor bastard."
+            }
+          ]
+        },
+        "N10": {
+          "type": "Action",
+          "action": {
+            "type": "Advance",
+            "target": "Time",
+            "value": 1
+          },
+          "next": "N11"
+        },
+        "N11": {
+          "type": "Action",
+          "action": {
+            "type": "Lose",
+            "target": "Morale",
+            "value": 1
+          },
+          "next": "N90"
+        },
+        "N20": {
+          "type": "Choice",
+          "prompt": "A creditor wants payment for a follower's debt.",
+          "branches": [
+            {
+              "label": "Pay 1 Coin",
+              "input": "Player.Coin",
+              "operator": "GTE",
+              "value": 1,
+              "next": "N21",
+              "notes": "Pay the creditor and keep moving."
+            },
+            {
+              "label": "Refuse Payment",
+              "input": null,
+              "operator": null,
+              "value": null,
+              "next": "N22",
+              "notes": "Advance 1 Time dealing with the dispute."
+            }
+          ]
+        },
+        "N21": {
+          "type": "Action",
+          "action": {
+            "type": "Spend",
+            "target": "Coin",
+            "value": 1
+          },
+          "next": "N90"
+        },
+        "N22": {
+          "type": "Action",
+          "action": {
+            "type": "Advance",
+            "target": "Time",
+            "value": 1
+          },
+          "next": "N90"
+        },
+        "N30": {
+          "type": "Action",
+          "action": {
+            "type": "Ignore",
+            "target": "None",
+            "value": 0
+          },
+          "next": "N90"
+        },
+        "N40": {
+          "type": "Action",
+          "action": {
+            "type": "Gain",
+            "target": "Coin",
+            "value": 1
+          },
+          "next": "N90"
+        },
+        "N50": {
+          "type": "Action",
+          "action": {
+            "type": "Gain",
+            "target": "Morale",
+            "value": 1
+          },
+          "next": "N90"
+        },
+        "N90": {
+          "type": "Action",
+          "action": {
+            "type": "SeedRandomEcho",
+            "target": "EchoPool",
+            "value": "RR"
+          },
+          "next": "N91"
+        },
+        "N91": {
+          "type": "Action",
+          "action": {
+            "type": "Remove",
+            "target": "Card",
+            "value": "Self"
+          },
+          "next": "N99",
+          "flags": [
+            {
+              "name": "OverrideAfterPlay",
+              "value": true
+            }
+          ]
+        },
+        "N99": {
+          "type": "End"
+        }
+      }
+    },
+    "EF-ECHO-RR-04": {
+      "source": {
+        "type": "Echo",
+        "id": "ECHO-RR-04"
+      },
+      "trigger": "OnResolve",
+      "start_node": "N01",
+      "nodes": {
+        "N01": {
+          "type": "Roll",
+          "prompt": "Roll 2d6 for Riff Raff",
+          "branches": [
+            {
+              "label": "2-3",
+              "input": "2d6",
+              "operator": "LTE",
+              "value": 3,
+              "next": "N10",
+              "player_text": "Night of the Long Knives - A vicious feud erupts among the followers."
+            },
+            {
+              "label": "4-6",
+              "input": "2d6",
+              "operator": "LTE",
+              "value": 6,
+              "next": "N20",
+              "player_text": "This House Is on Fire - A cookfire spreads through the followers' tents and stores."
+            },
+            {
+              "label": "7",
+              "input": "2d6",
+              "operator": "EQ",
+              "value": 7,
+              "next": "N30",
+              "player_text": "Fly on the Wall - Rumors pass through camp all night. None prove useful. No effect."
+            },
+            {
+              "label": "8-10",
+              "input": "2d6",
+              "operator": "LTE",
+              "value": 10,
+              "next": "N40",
+              "player_text": "Thunderstruck - Lightning fells a tree near camp. The followers waste no time putting it to use."
+            },
+            {
+              "label": "11-12",
+              "input": "2d6",
+              "operator": "GTE",
+              "value": 11,
+              "next": "N50",
+              "player_text": "Moneytalks - A few followers prove surprisingly capable fighters."
+            }
+          ]
+        },
+        "N10": {
+          "type": "Action",
+          "action": {
+            "type": "Advance",
+            "target": "Time",
+            "value": 1
+          },
+          "next": "N11"
+        },
+        "N11": {
+          "type": "Action",
+          "action": {
+            "type": "Lose",
+            "target": "Morale",
+            "value": 1
+          },
+          "next": "N90"
+        },
+        "N20": {
+          "type": "Action",
+          "action": {
+            "type": "Advance",
+            "target": "Time",
+            "value": 1
+          },
+          "next": "N21"
+        },
+        "N21": {
+          "type": "Action",
+          "action": {
+            "type": "Lose",
+            "target": "Food",
+            "value": 1
+          },
+          "next": "N90"
+        },
+        "N30": {
+          "type": "Action",
+          "action": {
+            "type": "Ignore",
+            "target": "None",
+            "value": 0
+          },
+          "next": "N90"
+        },
+        "N40": {
+          "type": "Action",
+          "action": {
+            "type": "Gain",
+            "target": "Wood",
+            "value": 1
+          },
+          "next": "N90"
+        },
+        "N50": {
+          "type": "Select",
+          "prompt": "Recruit up to 2 Infantry for 1 Coin each.",
+          "branches": [
+            {
+              "label": "SelectedCount",
+              "input": "RiffRaffInfantryRecruitCount",
+              "operator": null,
+              "value": null,
+              "next": "N51"
+            }
+          ]
+        },
+        "N51": {
+          "type": "Action",
+          "action": {
+            "type": "Spend",
+            "target": "Coin",
+            "value": "SelectedCount"
+          },
+          "next": "N52"
+        },
+        "N52": {
+          "type": "Action",
+          "action": {
+            "type": "Recruit",
+            "target": "Infantry",
+            "value": "SelectedCount"
+          },
+          "next": "N90"
+        },
+        "N90": {
+          "type": "Action",
+          "action": {
+            "type": "SeedRandomEcho",
+            "target": "EchoPool",
+            "value": "RR"
+          },
+          "next": "N91"
+        },
+        "N91": {
+          "type": "Action",
+          "action": {
+            "type": "Remove",
+            "target": "Card",
+            "value": "Self"
+          },
+          "next": "N99",
+          "flags": [
+            {
+              "name": "OverrideAfterPlay",
+              "value": true
+            }
+          ]
+        },
+        "N99": {
+          "type": "End"
+        }
+      }
     }
   },
   "source_index": {
@@ -20181,6 +20985,46 @@
       "triggers": {
         "OnResolve": [
           "EF-ECHO-N-02"
+        ]
+      }
+    },
+    "SCENE-028": {
+      "source_type": "Scene",
+      "triggers": {
+        "OnResolve": [
+          "EF-SCENE-028"
+        ]
+      }
+    },
+    "ECHO-RR-01": {
+      "source_type": "Echo",
+      "triggers": {
+        "OnResolve": [
+          "EF-ECHO-RR-01"
+        ]
+      }
+    },
+    "ECHO-RR-02": {
+      "source_type": "Echo",
+      "triggers": {
+        "OnResolve": [
+          "EF-ECHO-RR-02"
+        ]
+      }
+    },
+    "ECHO-RR-03": {
+      "source_type": "Echo",
+      "triggers": {
+        "OnResolve": [
+          "EF-ECHO-RR-03"
+        ]
+      }
+    },
+    "ECHO-RR-04": {
+      "source_type": "Echo",
+      "triggers": {
+        "OnResolve": [
+          "EF-ECHO-RR-04"
         ]
       }
     }

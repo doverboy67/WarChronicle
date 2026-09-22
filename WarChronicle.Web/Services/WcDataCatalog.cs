@@ -51,7 +51,7 @@ public sealed class WcDataCatalog
 
     public IReadOnlyList<ExploreCardState> GetExploreCards(bool includeOptional = false)
         => GetExploreCards(includeOptional
-            ? new[] { "Base", "SitA", "SiaSL" }
+            ? new[] { "Base", "SitA", "SiaSL", "PackC" }
             : new[] { "Base" });
 
     public IReadOnlyList<ExploreCardState> GetExploreCards(IEnumerable<string> enabledSets)
@@ -125,7 +125,7 @@ public sealed class WcDataCatalog
 
     public IReadOnlyList<CampCardState> GetCampCards(bool includeOptional = false)
         => GetCampCards(includeOptional
-            ? new[] { "Base", "SitA", "SiaSL" }
+            ? new[] { "Base", "SitA", "SiaSL", "PackC" }
             : new[] { "Base" });
 
     public IReadOnlyList<CampCardState> GetCampCards(IEnumerable<string> enabledSets)

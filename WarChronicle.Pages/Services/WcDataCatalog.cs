@@ -27,7 +27,7 @@ public sealed class WcDataCatalog
         if (_document is not null)
             return;
 
-        await using var stream = await _http.GetStreamAsync("Data/wc_data.json?v=0525", cancellationToken);
+        await using var stream = await _http.GetStreamAsync("Data/wc_data.json?v=0527", cancellationToken);
         _document = await JsonDocument.ParseAsync(stream, cancellationToken: cancellationToken);
         _logger.LogInformation("Loaded War Chronicle data from static Pages content.");
     }
@@ -50,7 +50,7 @@ public sealed class WcDataCatalog
 
     public IReadOnlyList<ExploreCardState> GetExploreCards(bool includeOptional = false)
         => GetExploreCards(includeOptional
-            ? new[] { "Base", "SitA", "SiaSL" }
+            ? new[] { "Base", "SitA", "SiaSL", "PackC" }
             : new[] { "Base" });
 
     public IReadOnlyList<ExploreCardState> GetExploreCards(IEnumerable<string> enabledSets)
@@ -124,7 +124,7 @@ public sealed class WcDataCatalog
 
     public IReadOnlyList<CampCardState> GetCampCards(bool includeOptional = false)
         => GetCampCards(includeOptional
-            ? new[] { "Base", "SitA", "SiaSL" }
+            ? new[] { "Base", "SitA", "SiaSL", "PackC" }
             : new[] { "Base" });
 
     public IReadOnlyList<CampCardState> GetCampCards(IEnumerable<string> enabledSets)

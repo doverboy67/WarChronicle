@@ -1,3 +1,17 @@
+War Chronicle Browser Update 0527
+
+Update 0527 (v0.5.0.27):
+- Refreshed browser content from War Chronicle Master(20260922-162035).xlsx.
+- Migrated browser Echo pools to the current master workbook IDs. Echo-row CardNum plus the authored Scene/Explore seeding instructions are now the browser source of truth; legacy EchoID/EchoOptions and Dextrous-only CardNum2 are not required by the browser build.
+- Added Riff Raff as a selectable optional expansion containing the Riff Raff Scene and its four-Echo arc.
+- Riff Raff Echoes resolve their authored five-band 2d6 tables. Leadership is not offered on these rolls. The Chronicle includes the AC/DC song-title result name along with the narrative/effect.
+- After a Riff Raff Echo resolves, it removes itself and seeds a random remaining RR Echo into the Camp discard pile. If none remain unseeded, the arc ends.
+- Implemented Highway to Hell as a reminder effect: the next Explore advances 0 Time, then the reminder clears automatically.
+- Implemented Down Payment Blues as Pay 1 Coin or advance 1 Time. The Coin option is unavailable if the Host cannot pay; this voluntary payment does not use Global Shortfall.
+- Implemented Moneytalks as optional recruitment of up to 2 Infantry for 1 Coin each, respecting the normal Military Unit limit and available Infantry.
+- Bumped CSS, helper-script, and GitHub Pages data cache tokens to 0527.
+- The in-app rulebook remains War Chronicle Rulebook Draft 0.5.8.2. SaveVersion remains 1; the existing build-version warning applies to older saves.
+
 War Chronicle Browser Update 0526
 
 Update 0526 (v0.5.0.26):
