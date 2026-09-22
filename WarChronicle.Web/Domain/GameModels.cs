@@ -260,6 +260,7 @@ public sealed class CombatState
     public bool ResolvingFirepots { get; set; }
     public bool ResolvingPursuit { get; set; }
     public int PursuitLaneIndex { get; set; }
+    public bool EnemyLevyNoRout { get; set; }
     public bool PainkillerActive { get; set; }
     public List<CombatDie> PlayerRoll { get; } = [];
     public List<CombatDie> EnemyRoll { get; } = [];

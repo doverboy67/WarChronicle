@@ -12,18 +12,30 @@
 {
     <div class="save-resume-overlay">
         <section class="save-resume-card" role="dialog" aria-modal="true" aria-label="Saved War Chronicle campaign">
-            <div class="eyebrow">Saved Chronicle</div>
-            <h2>Continue your campaign?</h2>
-            <p>A saved War Chronicle campaign was found in this browser.</p>
+            <div class="eyebrow">@(_saveBuildMismatch ? "Version Change" : "Saved Chronicle")</div>
+            <h2>@(_saveBuildMismatch ? "Saved campaign from an earlier build" : "Continue your campaign?")</h2>
+            @if (_saveBuildMismatch)
+            {
+                <p>This campaign was saved with <strong>@SavedBuildLabel</strong>. The current browser is <strong>@AppVersion</strong>.</p>
+                <p>Rules, cards, or game behavior may have changed. Continuing loads the existing campaign into the current build and may produce unexpected results.</p>
+            }
+            else
+            {
+                <p>A saved War Chronicle campaign was found in this browser.</p>
+            }
+            @if (!_saveFormatCompatible)
+            {
+                <p class="save-error">This save uses an incompatible save format and cannot be continued safely in this build.</p>
+            }
             @if (!string.IsNullOrWhiteSpace(_resumeError))
             {
                 <p class="save-error">@_resumeError</p>
             }
             <div class="save-resume-actions">
-                <button class="primary-save-action" @onclick="ContinueSavedGameAsync">Continue Saved Game</button>
+                <button class="primary-save-action" disabled="@(!_saveFormatCompatible)" @onclick="ContinueSavedGameAsync">Continue Saved Game</button>
                 <button @onclick="StartFreshGameAsync">Start New Game</button>
             </div>
-            <small>The save stays on this browser and device.</small>
+            <small>Starting a new game does not erase this save until the new Chronicle is actually begun.</small>
         </section>
     </div>
 }
@@ -50,7 +62,11 @@
                 </label>
             </div>
             <div class="save-resume-actions">
-                <button class="primary-save-action" @onclick="BeginNewChronicle">Begin Chronicle</button>
+                <button class="primary-save-action" @onclick="BeginNewChronicleAsync">Begin Chronicle</button>
+                @if (_preserveExistingSaveForNewGame)
+                {
+                    <button @onclick="ReturnToSavedGamePrompt">Back to Saved Game</button>
+                }
             </div>
         </section>
     </div>
@@ -208,6 +224,7 @@
                     <div class="advancement-offer-list">
                         @foreach (var offer in Session.AdvancementOffer)
                         {
+                            var commitLabel = Catalog.GetAdvancementCommitLabel(offer.Id);
                             <article class="advancement-mini-card" title="@offer.Effect">
                                 <div class="advancement-mini-card-heading">
                                     <strong>@offer.Name</strong>
@@ -216,6 +233,10 @@
                                         <span>@offer.Cost</span>
                                     }
                                 </div>
+                                @if (!string.IsNullOrWhiteSpace(commitLabel))
+                                {
+                                    <div class="advancement-commit-cost">Commit: @commitLabel</div>
+                                }
                                 <p>@offer.Effect</p>
                             </article>
                         }
@@ -418,7 +439,22 @@
         </header>
 
         <div class="chronicle-scroll">
-            @for (var chronicleIndex = 0; chronicleIndex < Session.Chronicle.Count; chronicleIndex++)
+            @if (HiddenChronicleEntryCount > 0)
+            {
+                <div class="chronicle-history-control">
+                    <span>@HiddenChronicleEntryCount earlier Chronicle entries are retained but not rendered for performance.</span>
+                    <button class="secondary-action" @onclick="ShowFullChronicle">Show Earlier History</button>
+                </div>
+            }
+            else if (_showFullChronicle && Session.Chronicle.Count > ChronicleRenderLimit)
+            {
+                <div class="chronicle-history-control">
+                    <span>Full Chronicle history is currently rendered.</span>
+                    <button class="secondary-action" @onclick="ShowRecentChronicle">Show Recent Only</button>
+                </div>
+            }
+
+            @for (var chronicleIndex = ChronicleRenderStart; chronicleIndex < Session.Chronicle.Count; chronicleIndex++)
             {
                 var entry = Session.Chronicle[chronicleIndex];
                 var decisionActive = Session.IsChronicleDecisionActive(chronicleIndex);
@@ -777,11 +813,16 @@
                             <div class="camp-choice-list refit-offer-list">
                                 @foreach (var offer in Session.AdvancementOffer)
                                 {
+                                    var commitLabel = Catalog.GetAdvancementCommitLabel(offer.Id);
                                     <article class="camp-choice-card @(!Session.CanBuyRefitAdvancement(offer.Id) ? "is-unavailable" : string.Empty)">
                                         <div class="camp-choice-heading">
                                             <strong>@offer.Name</strong>
                                             <span>@offer.Cost</span>
                                         </div>
+                                        @if (!string.IsNullOrWhiteSpace(commitLabel))
+                                        {
+                                            <div class="advancement-commit-cost">Commit: @commitLabel</div>
+                                        }
                                         <p class="camp-choice-flavor">@offer.Effect</p>
                                         <button class="camp-choice-select" disabled="@(!Session.CanBuyRefitAdvancement(offer.Id))" @onclick="() => Session.BuyRefitAdvancement(offer.Id)">
                                             Buy @offer.Name
@@ -865,11 +906,16 @@
                             <div class="camp-choice-list refit-offer-list">
                                 @foreach (var offer in Session.AdvancementOffer)
                                 {
+                                    var commitLabel = Catalog.GetAdvancementCommitLabel(offer.Id);
                                     <article class="camp-choice-card @(!Session.CanBuyRefitAdvancement(offer.Id) ? "is-unavailable" : string.Empty)">
                                         <div class="camp-choice-heading">
                                             <strong>@offer.Name</strong>
                                             <span>@offer.Cost</span>
                                         </div>
+                                        @if (!string.IsNullOrWhiteSpace(commitLabel))
+                                        {
+                                            <div class="advancement-commit-cost">Commit: @commitLabel</div>
+                                        }
                                         <p class="camp-choice-flavor">@offer.Effect</p>
                                         <button class="camp-choice-select" disabled="@(!Session.CanBuyRefitAdvancement(offer.Id))" @onclick="() => Session.BuyRefitAdvancement(offer.Id)">
                                             Buy @offer.Name
@@ -1463,7 +1509,7 @@
 }
 
 @code {
-    private const string AppVersion = "v0.5.0.23";
+    private const string AppVersion = "v0.5.0.26";
 
     // Presentation coordinates only, expressed as fixed pixel offsets from
     // the center of the play-area panel. This keeps the physical relationship
@@ -1552,6 +1598,9 @@
         _debugTapWindowStart = DateTime.MinValue;
     }
 
+    private const int ChronicleRenderLimit = 160;
+    private static readonly TimeSpan ActiveGameLogPersistInterval = TimeSpan.FromSeconds(10);
+
     private bool _showResumePrompt;
     private bool _showContentSetup;
     private bool _includeSeasons;
@@ -1559,11 +1608,20 @@
     private bool _saveCheckComplete;
     private string? _saveStatus;
     private string? _resumeError;
+    private string? _savedBuildVersion;
+    private bool _saveBuildMismatch;
+    private bool _saveFormatCompatible = true;
+    private bool _preserveExistingSaveForNewGame;
+    private bool _showFullChronicle;
     private object? _minimizedCombat;
     private bool _finaleSummaryDismissed;
     private Guid? _archivedGameLogId;
     private string? _gameLogFilename;
     private bool _gameLogDirty;
+    private DateTime _lastActiveGameLogPersistUtc = DateTime.MinValue;
+    private string SavedBuildLabel => string.IsNullOrWhiteSpace(_savedBuildVersion) ? "an earlier/unknown build" : _savedBuildVersion;
+    private int ChronicleRenderStart => _showFullChronicle ? 0 : Math.Max(0, Session.Chronicle.Count - ChronicleRenderLimit);
+    private int HiddenChronicleEntryCount => ChronicleRenderStart;
     private string SaveButtonTitle => Session.CanSaveGame ? "Save this campaign in this browser." : Session.SaveUnavailableReason;
     private bool CombatInspectionMode => Session.CombatVisible && Session.Combat is { } combat && IsCombatMinimized(combat);
 
@@ -1582,6 +1640,25 @@
             {
                 _showResumePrompt = await JS.InvokeAsync<bool>("wcSave.hasSave");
                 _showContentSetup = !_showResumePrompt;
+
+                if (_showResumePrompt)
+                {
+                    var json = await JS.InvokeAsync<string?>("wcSave.load");
+                    if (!string.IsNullOrWhiteSpace(json)
+                        && Session.TryReadSaveMetadata(json, out var buildVersion, out _, out var formatCompatible))
+                    {
+                        _savedBuildVersion = buildVersion;
+                        _saveFormatCompatible = formatCompatible;
+                        _saveBuildMismatch = string.IsNullOrWhiteSpace(buildVersion)
+                            || !string.Equals(buildVersion, AppVersion, StringComparison.OrdinalIgnoreCase);
+                    }
+                    else
+                    {
+                        _savedBuildVersion = null;
+                        _saveFormatCompatible = false;
+                        _saveBuildMismatch = true;
+                    }
+                }
             }
             catch
             {
@@ -1596,6 +1673,15 @@
             await ArchiveCompletedGameLogAsync();
         else if (Session.GameEndedUtc is null && _gameLogDirty && !_showResumePrompt && !_showContentSetup)
             await PersistActiveGameLogAsync();
+
+        try
+        {
+            await JS.InvokeVoidAsync("wcActionLock.release");
+        }
+        catch
+        {
+            // Action locking is a UI safety feature only; never interrupt play if JS is unavailable.
+        }
     }
 
     private async Task SaveGameAsync()
@@ -1605,9 +1691,10 @@
 
         try
         {
-            var json = Session.CreateSaveJson();
+            var json = Session.CreateSaveJson(AppVersion);
             await JS.InvokeVoidAsync("wcSave.save", json);
             _saveStatus = "Saved";
+            await PersistActiveGameLogAsync(force: true);
         }
         catch
         {
@@ -1618,6 +1705,12 @@
     private async Task ContinueSavedGameAsync()
     {
         _resumeError = null;
+        if (!_saveFormatCompatible)
+        {
+            _resumeError = "That save format is not compatible with this build.";
+            return;
+        }
+
         try
         {
             var json = await JS.InvokeAsync<string?>("wcSave.load");
@@ -1625,7 +1718,10 @@
             {
                 _showResumePrompt = false;
                 _showContentSetup = false;
-                _saveStatus = "Save loaded";
+                _preserveExistingSaveForNewGame = false;
+                _showFullChronicle = false;
+                _lastActiveGameLogPersistUtc = DateTime.MinValue;
+                _saveStatus = _saveBuildMismatch ? $"Loaded {SavedBuildLabel} save" : "Save loaded";
                 return;
             }
 
@@ -1637,18 +1733,24 @@
         }
     }
 
-    private async Task StartFreshGameAsync()
+    private Task StartFreshGameAsync()
     {
-        await JS.InvokeVoidAsync("wcSave.clear");
-        await JS.InvokeVoidAsync("wcGameLog.clearActive");
+        _preserveExistingSaveForNewGame = true;
         _showResumePrompt = false;
         _showContentSetup = true;
         _includeSeasons = false;
         _includeStrangers = false;
         _saveStatus = null;
         _resumeError = null;
-        _archivedGameLogId = null;
-        _gameLogFilename = null;
+        return Task.CompletedTask;
+    }
+
+    private void ReturnToSavedGamePrompt()
+    {
+        _showContentSetup = false;
+        _showResumePrompt = true;
+        _preserveExistingSaveForNewGame = false;
+        _resumeError = null;
     }
 
     private async Task StartNewGameFromDefeatAsync()
@@ -1669,9 +1771,15 @@
         _archivedGameLogId = null;
         _gameLogFilename = null;
         _finaleSummaryDismissed = false;
+        _showFullChronicle = false;
+        _preserveExistingSaveForNewGame = false;
+        _lastActiveGameLogPersistUtc = DateTime.MinValue;
+        _savedBuildVersion = null;
+        _saveBuildMismatch = false;
+        _saveFormatCompatible = true;
     }
 
-    private void BeginNewChronicle()
+    private async Task BeginNewChronicleAsync()
     {
         var sets = new List<string> { "Base" };
         if (_includeSeasons)
@@ -1680,18 +1788,33 @@
             sets.Add("SiaSL");
 
         Session.StartNewGame(Catalog, sets);
+        await JS.InvokeVoidAsync("wcSave.clear");
+        await JS.InvokeVoidAsync("wcGameLog.clearActive");
+
         _gameLogDirty = true;
+        _lastActiveGameLogPersistUtc = DateTime.MinValue;
         _archivedGameLogId = null;
         _gameLogFilename = null;
         _finaleSummaryDismissed = false;
+        _showFullChronicle = false;
         _showContentSetup = false;
+        _showResumePrompt = false;
+        _preserveExistingSaveForNewGame = false;
+        _savedBuildVersion = AppVersion;
+        _saveBuildMismatch = false;
+        _saveFormatCompatible = true;
         _saveStatus = null;
         _resumeError = null;
     }
 
-    private async Task PersistActiveGameLogAsync()
+    private async Task PersistActiveGameLogAsync(bool force = false)
     {
+        var now = DateTime.UtcNow;
+        if (!force && now - _lastActiveGameLogPersistUtc < ActiveGameLogPersistInterval)
+            return;
+
         _gameLogDirty = false;
+        _lastActiveGameLogPersistUtc = now;
         try
         {
             var json = Session.CreateGameLogJson(AppVersion);
@@ -1699,8 +1822,19 @@
         }
         catch
         {
-            // Logging is best-effort and must never interrupt play.
+            // Logging is best-effort and must never interrupt play. Retry after the throttle interval.
+            _gameLogDirty = true;
         }
+    }
+
+    private void ShowFullChronicle()
+    {
+        _showFullChronicle = true;
+    }
+
+    private void ShowRecentChronicle()
+    {
+        _showFullChronicle = false;
     }
 
     private async Task ArchiveCompletedGameLogAsync()
@@ -1784,6 +1918,7 @@
     {
         _saveStatus = null;
         _gameLogDirty = true;
+        _showFullChronicle = false;
         if (!Session.CombatVisible || Session.Combat is null)
             _minimizedCombat = null;
         if (Session.Finale is not { Step: FinaleStep.Complete })

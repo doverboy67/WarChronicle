@@ -12,6 +12,7 @@ public sealed partial class GameSession
         public GameSaveSnapshot() { }
 
         public int SaveVersion { get; set; } = CurrentSaveVersion;
+        public string? BuildVersion { get; set; }
         public DateTime SavedUtc { get; set; } = DateTime.UtcNow;
 
         public int Year { get; set; }
@@ -131,13 +132,14 @@ public sealed partial class GameSession
         }
     }
 
-    public string CreateSaveJson()
+    public string CreateSaveJson(string buildVersion)
     {
         if (!CanSaveGame)
             throw new InvalidOperationException(SaveUnavailableReason);
 
         var save = new GameSaveSnapshot
         {
+            BuildVersion = buildVersion,
             Year = Year,
             Season = Season,
             Time = Time,
@@ -268,6 +270,32 @@ public sealed partial class GameSession
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             WriteIndented = true
         });
+    }
+
+    public bool TryReadSaveMetadata(string json, out string? buildVersion, out DateTime? savedUtc, out bool formatCompatible)
+    {
+        buildVersion = null;
+        savedUtc = null;
+        formatCompatible = false;
+
+        if (string.IsNullOrWhiteSpace(json))
+            return false;
+
+        try
+        {
+            var save = JsonSerializer.Deserialize<GameSaveSnapshot>(json, SaveJsonOptions);
+            if (save is null)
+                return false;
+
+            buildVersion = save.BuildVersion;
+            savedUtc = save.SavedUtc == default ? null : save.SavedUtc;
+            formatCompatible = save.SaveVersion == CurrentSaveVersion;
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
     }
 
     public bool TryRestoreSaveJson(string json, WcDataCatalog catalog)

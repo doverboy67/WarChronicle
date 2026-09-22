@@ -1,4 +1,31 @@
-War Chronicle Browser Update 0523
+War Chronicle Browser Update 0526
+
+Update 0526 (v0.5.0.26):
+- Reverted First Contact to the earlier disposition table: 2-5 Hostile, 6-10 Neutral, 11-12 Friendly. No other gameplay or content changes were made in this update.
+
+Update 0525 (v0.5.0.25):
+- Reduced long-campaign slowdown from the growing Chronicle/log. The live Chronicle now renders only the most recent 160 entries by default while retaining the complete history in memory, saves, and exported game logs. A Show Earlier History control can render the full Chronicle on demand, and Show Recent Only returns to the faster view.
+- Throttled automatic in-progress game-log persistence to at most once every 10 seconds instead of serializing and rewriting the entire growing game log after every state change. Manual Save forces an immediate log persistence, and completed campaigns still archive the full log.
+- Added a global click-stacking guard. The first button click immediately locks all game buttons and displays a small Resolving… indicator until the resulting render completes; extra clicks are suppressed instead of entering the Blazor event queue. A safety timeout releases the lock if a UI error prevents a render.
+- Fixed/strengthened Friendly Tribute handling. Friendly Rapport now always bypasses the printed Arrival-card Tribute and presents the full Friendly menu: 2 Coin, 1 Food, 1 Wood, 1 Stone, or 1 Research. Unaffordable choices remain visible but disabled so the replacement rule is explicit. If none can be paid, proceed directly to the non-Hostile Rapport 8+ passage test.
+- Added Tactic commit information to Advancement offers. Standard Tactics now show Commit: 1 Leadership before purchase; Special Tactics identify their commit as Special (see effect). This appears both in the persistent On Offer panel and during Refit & Reform.
+- Added build-aware save warnings. New saves record the browser build version. If a saved campaign was created by a different build (or predates build tagging), startup warns that current rules/cards/behavior may differ and offers Continue Saved Game or Start New Game. Save-format incompatibility is detected separately and blocks unsafe loading.
+- Choosing Start New Game from the save warning no longer deletes the existing save immediately. The prior save is preserved through content selection and is cleared only when Begin Chronicle is actually chosen; a Back to Saved Game option is available before then.
+- Existing saves remain SaveVersion 1 compatible. Continuing an older save runs it under the current build and may therefore be a hybrid of saved campaign state and current engine behavior, exactly as stated in the warning.
+- Bumped CSS, helper-script, and GitHub Pages data cache tokens to 0525 so hosted browsers pick up the UI/behavior changes.
+
+Update 0524 (v0.5.0.24):
+- Refreshed the browser from War Chronicle Master(9).xlsx while continuing to treat CardData and EventFlow as derived data maintained by the browser build process rather than requiring manual workbook edits.
+- Added Pepperridge Farm's new N Echo branch. Refusing the Crumb family's offer now seeds a random N Echo: Be a Pepper Too? or The Cookie Crumbles.
+- Added Be a Pepper Too?: gain 1 Morale and 1 Leadership.
+- Added The Cookie Crumbles: fight 6 Crumb Levy; Crumb Levy do not Rout on natural 1s; if the Host Disengages, the Camp phase ends.
+- Updated Camp Steward Market buying text to make the 1-Coin discount minimum 0 explicit.
+- Implemented the revised Rapport-based Arrival Tribute rules from War Chronicle rules 0.5.8.2. Neutral and Hostile tribes use printed Tribute; Friendly tribes instead accept 2 Coin or 1 Food/Wood/Stone/Research; Allied tribes require no Tribute. Unpayable non-Hostile Tribute goes directly to the Rapport 8+ passage test with no partial payment or Global Shortfall.
+- Corrected First Contact to 2-4 Hostile, 5-10 Neutral, 11-12 Friendly.
+- Corrected Hostile Echo Parley to the rules-standard Rapport 8+ test with the normal Hostile -1 DRM, while keeping Parley optional and ending Camp after the Echo resolves.
+- Corrected Cavalry Pursuit: when the player Disengages, only enemy Cavalry make the free -1 DRM pursuit attack. Other enemy unit classes no longer receive pursuit attacks.
+- Updated the in-app rulebook to War Chronicle Rulebook Draft 0.5.8.2.
+- Bumped CSS and Pages data cache tokens to 0524.
 
 Update 0523 (v0.5.0.23):
 - Header now reads "War Chronicle • © 2026 - Bill Hunter • v0.5.0.23" with no "build" label.

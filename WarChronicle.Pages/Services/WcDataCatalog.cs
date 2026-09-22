@@ -27,7 +27,7 @@ public sealed class WcDataCatalog
         if (_document is not null)
             return;
 
-        await using var stream = await _http.GetStreamAsync("Data/wc_data.json?v=0523", cancellationToken);
+        await using var stream = await _http.GetStreamAsync("Data/wc_data.json?v=0525", cancellationToken);
         _document = await JsonDocument.ParseAsync(stream, cancellationToken: cancellationToken);
         _logger.LogInformation("Loaded War Chronicle data from static Pages content.");
     }
@@ -188,6 +188,28 @@ public sealed class WcDataCatalog
 
     public CampCardState? GetCampCard(string id, bool includeOptional = true)
         => GetCampCards(includeOptional).FirstOrDefault(c => string.Equals(c.Id, id, StringComparison.OrdinalIgnoreCase));
+
+    public string? GetAdvancementCommitLabel(string advancementId)
+    {
+        if (_document is null
+            || !_document.RootElement.TryGetProperty("advancements", out var cards)
+            || !cards.TryGetProperty(advancementId, out var card)
+            || !card.TryGetProperty("keyword", out var keywordProp)
+            || keywordProp.ValueKind != JsonValueKind.String)
+            return null;
+
+        var keyword = keywordProp.GetString() ?? string.Empty;
+        if (!keyword.StartsWith("Tactic", StringComparison.OrdinalIgnoreCase))
+            return null;
+
+        var parts = keyword.Split("::", 2, StringSplitOptions.TrimEntries);
+        if (parts.Length < 2 || string.IsNullOrWhiteSpace(parts[1]))
+            return "See effect";
+
+        return string.Equals(parts[1], "Special", StringComparison.OrdinalIgnoreCase)
+            ? "Special (see effect)"
+            : parts[1];
+    }
 
     public IReadOnlyList<AdvancementOfferState> GetBaseAdvancements()
     {

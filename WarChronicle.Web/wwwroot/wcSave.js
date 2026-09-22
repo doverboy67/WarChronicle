@@ -88,3 +88,48 @@ window.wcGameLog = {
         window.setTimeout(() => URL.revokeObjectURL(url), 1000);
     }
 };
+
+
+// Update 0525: lock game buttons immediately on the first click so extra
+// clicks cannot queue while Blazor is resolving the action. The first click
+// is allowed through; subsequent clicks are suppressed until the next render
+// releases the lock. A timeout is only a safety valve for unexpected errors.
+window.wcActionLock = (function () {
+    let locked = false;
+    let safetyTimer = null;
+
+    function release() {
+        locked = false;
+        if (safetyTimer !== null) {
+            window.clearTimeout(safetyTimer);
+            safetyTimer = null;
+        }
+        if (document.body)
+            document.body.classList.remove("wc-action-busy");
+    }
+
+    document.addEventListener("click", function (event) {
+        const button = event.target instanceof Element ? event.target.closest("button") : null;
+        if (!button || button.disabled)
+            return;
+
+        if (locked) {
+            event.preventDefault();
+            event.stopPropagation();
+            if (typeof event.stopImmediatePropagation === "function")
+                event.stopImmediatePropagation();
+            return;
+        }
+
+        locked = true;
+        if (document.body)
+            document.body.classList.add("wc-action-busy");
+
+        safetyTimer = window.setTimeout(release, 15000);
+    }, true);
+
+    return {
+        release: release,
+        isLocked: function () { return locked; }
+    };
+})();

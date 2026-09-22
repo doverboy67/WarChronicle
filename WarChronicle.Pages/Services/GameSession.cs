@@ -661,6 +661,13 @@ public sealed partial class GameSession
         PendingCampCard = null;
         _activeChronicleEntryIndex = null;
 
+        if (_campPhaseEnding || IsHostileEcho(card))
+        {
+            _combatDisengagedPending = false;
+            EndCampPhase();
+            return;
+        }
+
         if (_combatDisengagedPending)
         {
             _combatDisengagedPending = false;
@@ -668,12 +675,6 @@ public sealed partial class GameSession
                 _campDiscard.Add(remaining);
             CampHand.Clear();
             BeginForcedMobilization();
-            return;
-        }
-
-        if (_campPhaseEnding || IsHostileEcho(card))
-        {
-            EndCampPhase();
             return;
         }
 
@@ -2167,6 +2168,12 @@ public sealed partial class GameSession
             return;
         }
 
+        if (_specialPrompt == "ArrivalFriendlyTribute")
+        {
+            ResolveFriendlyTributePrompt(optionId);
+            return;
+        }
+
         if (_specialPrompt == "ArrivalTributeFallback")
         {
             ResolveTributeFallbackPrompt(optionId);
@@ -2859,6 +2866,22 @@ public sealed partial class GameSession
             return;
         }
 
+        var rapport = GetTribeRapport(_currentArrivalTribe).Trim();
+        var tribeName = CanonicalTribeName(_currentArrivalTribe);
+
+        if (string.Equals(rapport, "Allied", StringComparison.OrdinalIgnoreCase))
+        {
+            AddNarrativeText($"The {tribeName} receive the Host as allies. No Tribute is required.");
+            StartArrivalFlow();
+            return;
+        }
+
+        if (string.Equals(rapport, "Friendly", StringComparison.OrdinalIgnoreCase))
+        {
+            PresentFriendlyTributePrompt(tribeName);
+            return;
+        }
+
         if (!TryParseTribute(PendingArrivalCard.Tribute, out var resource, out var amount))
         {
             _logger.LogWarning("Could not parse Tribute '{Tribute}' for {CardId}; proceeding to options.", PendingArrivalCard.Tribute, PendingArrivalCard.Id);
@@ -2866,7 +2889,6 @@ public sealed partial class GameSession
             return;
         }
 
-        var tribeName = CanonicalTribeName(_currentArrivalTribe);
         AddNarrativeText(TributeDemandNarrative(tribeName, amount, resource));
 
         if (CanPayExactTribute(resource, amount))
@@ -2896,6 +2918,68 @@ public sealed partial class GameSession
 
         AddNarrativeText($"The Host cannot provide the demanded {amount} {resource} in full.");
         ContinueAfterUnpaidTribute();
+    }
+
+    private void PresentFriendlyTributePrompt(string tribeName)
+    {
+        // Friendly Rapport always replaces the printed Arrival-card Tribute.
+        // Show the entire Friendly menu so the player can see the rule explicitly;
+        // unaffordable choices remain visible but disabled.
+        var options = new List<FlowPromptOption>
+        {
+            new("tribute:friendly:coin", "Pay 2 Coin", Disabled: ResourceValue("Coin") < 2),
+            new("tribute:friendly:food", "Pay 1 Food", Disabled: ResourceValue("Food") < 1),
+            new("tribute:friendly:wood", "Pay 1 Wood", Disabled: ResourceValue("Wood") < 1),
+            new("tribute:friendly:stone", "Pay 1 Stone", Disabled: ResourceValue("Stone") < 1),
+            new("tribute:friendly:research", "Pay 1 Research", Disabled: ResourceValue("Research") < 1)
+        };
+
+        AddNarrativeText($"Friendly relations with the {tribeName} replace the printed Tribute with a modest customary gift.");
+
+        if (options.All(o => o.Disabled))
+        {
+            AddNarrativeText("The Host cannot provide any acceptable Friendly Tribute.");
+            ContinueAfterUnpaidTribute();
+            return;
+        }
+
+        _specialPrompt = "ArrivalFriendlyTribute";
+        FlowPrompt = new(
+            FlowPromptKind.Choice,
+            "Friendly Tribute",
+            $"Ignore the printed Tribute. Choose one customary gift for the {tribeName}.",
+            options);
+    }
+
+    private void ResolveFriendlyTributePrompt(string optionId)
+    {
+        FlowPrompt = null;
+        _specialPrompt = null;
+
+        string resource;
+        int amount;
+        switch (optionId)
+        {
+            case "tribute:friendly:coin": resource = "Coin"; amount = 2; break;
+            case "tribute:friendly:food": resource = "Food"; amount = 1; break;
+            case "tribute:friendly:wood": resource = "Wood"; amount = 1; break;
+            case "tribute:friendly:stone": resource = "Stone"; amount = 1; break;
+            case "tribute:friendly:research": resource = "Research"; amount = 1; break;
+            default: return;
+        }
+
+        if (!CanPayExactTribute(resource, amount))
+        {
+            AddNarrativeText("The selected Friendly Tribute is no longer available.");
+            ContinueAfterUnpaidTribute();
+            Changed?.Invoke();
+            return;
+        }
+
+        PayExactTribute(resource, amount);
+        AddNarrativeText($"The Host offers {amount} {resource} as Friendly Tribute.");
+        AfterTributePaid();
+        Changed?.Invoke();
     }
 
     private void ResolveTributeFallbackPrompt(string optionId)
@@ -4390,6 +4474,8 @@ public sealed partial class GameSession
         var flags = branches.EnumerateArray().SelectMany(GetFlags).ToArray();
         if (flags.Any(f => string.Equals(GetString(f, "name"), "IgnoreHostileRapportDRM", StringComparison.OrdinalIgnoreCase)))
             return 0;
+        if (flags.Any(f => string.Equals(GetString(f, "name"), "FixedDRM", StringComparison.OrdinalIgnoreCase)))
+            return FlagInt(flags, "FixedDRM", 0);
         if (flags.Any(f => string.Equals(GetString(f, "name"), "CurrentTribeRapportDRM", StringComparison.OrdinalIgnoreCase)))
             return CurrentTribeRapportDrm();
         if (flags.Any(f => string.Equals(GetString(f, "name"), "ApplyRapportDRM", StringComparison.OrdinalIgnoreCase)))
@@ -5176,6 +5262,7 @@ public sealed partial class GameSession
 
         var noDisengage = flags.Any(f => string.Equals(GetString(f, "name"), "NoDisengage", StringComparison.OrdinalIgnoreCase));
         var mayDisengage = !noDisengage;
+        var enemyLevyNoRout = flags.Any(f => string.Equals(GetString(f, "name"), "EnemyLevyNoRout", StringComparison.OrdinalIgnoreCase));
 
         BeginInteractiveCombat(
             enemyName,
@@ -5184,7 +5271,8 @@ public sealed partial class GameSession
             noDisengage: noDisengage,
             playerInitiated: flags.Any(f => string.Equals(GetString(f, "name"), "ArrivalAttack", StringComparison.OrdinalIgnoreCase)),
             isHostileEcho: _activeFlowContext == FlowContext.Camp && PendingCampCard is not null && IsHostileEcho(PendingCampCard),
-            sourceLabel: ActiveFlowHeading());
+            sourceLabel: ActiveFlowHeading(),
+            enemyLevyNoRout: enemyLevyNoRout);
     }
 
     private string CurrentCampEnemyHost(string value)

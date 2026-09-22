@@ -160,6 +160,7 @@ public sealed partial class GameSession
         IEnumerable<string>? committedTactics = null,
         bool lockPlayerTactics = false,
         bool isFinale = false,
+        bool enemyLevyNoRout = false,
         bool openImmediately = false)
     {
         enemyName = CombatEnemyDisplayName(enemyName);
@@ -189,6 +190,7 @@ public sealed partial class GameSession
             PlayerLeadership = leadership ?? Leadership,
             InitialPlayerLeadership = leadership ?? Leadership,
             FirepotsAvailable = firepotsActive,
+            EnemyLevyNoRout = enemyLevyNoRout,
             PainkillerActive = painkillerActive
         };
 
@@ -636,6 +638,7 @@ public sealed partial class GameSession
             var hit = type == "Levy" ? die.Value == 6 : die.Value + enemyDrm >= threshold;
             var rout = type == "Levy"
                 && die.Value == 1
+                && !combat.EnemyLevyNoRout
                 && !combat.EnemyAdvancements.Contains("ADV-M8");
             combat.EnemyRoll[i] = die with { Hit = hit, Rout = rout };
         }
@@ -1183,9 +1186,9 @@ public sealed partial class GameSession
     private void ResolveCavalryPursuit()
     {
         var combat = Combat!;
-        combat.Log.Add(new("Enemy Cavalry pursue the disengaging Host. The enemy receives one free attack round at -1 DRM."));
+        combat.Log.Add(new("Enemy Cavalry pursue the disengaging Host. Only the enemy Cavalry make one free attack at -1 DRM."));
         combat.ResolvingPursuit = true;
-        combat.PursuitLaneIndex = 0;
+        combat.PursuitLaneIndex = Array.IndexOf(CombatUnitTypes, "Cavalry");
         combat.Choices.Clear();
         combat.ChoicePrompt = string.Empty;
         ResolveNextPursuitLane();
@@ -1269,7 +1272,8 @@ public sealed partial class GameSession
             return;
         }
 
-        combat.PursuitLaneIndex++;
+        // Cavalry Pursuit is a Cavalry-only bonus attack, not a second full enemy Combat round.
+        combat.PursuitLaneIndex = CombatUnitTypes.Length;
         ResolveNextPursuitLane();
     }
 

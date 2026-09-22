@@ -2448,3 +2448,58 @@ img.depleted-token {
         min-height: 18px;
     }
 }
+
+
+/* Update 0525: performance controls, Tactic commit visibility, and click-stacking guard */
+.advancement-commit-cost {
+    margin: 4px 0 2px;
+    font-size: .72rem;
+    font-weight: 700;
+    color: #5f5546;
+}
+
+.chronicle-history-control {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 0 0 10px;
+    padding: 8px 10px;
+    border: 1px solid #c9bda8;
+    border-radius: 6px;
+    background: #eee6d7;
+    color: #645b4d;
+    font-size: .78rem;
+}
+
+.chronicle-history-control .secondary-action {
+    flex: 0 0 auto;
+}
+
+body.wc-action-busy button {
+    pointer-events: none !important;
+    cursor: wait !important;
+    opacity: .58;
+}
+
+body.wc-action-busy::after {
+    content: "Resolving…";
+    position: fixed;
+    right: 14px;
+    bottom: 14px;
+    z-index: 10000;
+    padding: 7px 11px;
+    border: 1px solid #8d7d63;
+    border-radius: 6px;
+    background: #f4ecdc;
+    color: #3f382f;
+    font: 700 .78rem/1.2 "Segoe UI", Arial, sans-serif;
+    box-shadow: 0 3px 12px rgba(0,0,0,.18);
+}
+
+@media (max-width: 640px) {
+    .chronicle-history-control {
+        align-items: stretch;
+        flex-direction: column;
+    }
+}
