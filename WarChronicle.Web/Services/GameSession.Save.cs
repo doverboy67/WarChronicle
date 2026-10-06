@@ -50,6 +50,9 @@ public sealed partial class GameSession
         public DateTime GameStartedUtc { get; set; }
         public DateTime? GameEndedUtc { get; set; }
         public List<CompletedBattleLog> BattleHistory { get; set; } = [];
+        public List<CampOfferLog> CampOffers { get; set; } = [];
+        public List<ExploreDrawLog> ExploreDraws { get; set; } = [];
+        public int ActiveCampOfferIndex { get; set; } = -1;
 
         public List<ResourceState> Resources { get; set; } = [];
         public List<MarketState> Market { get; set; } = [];
@@ -174,6 +177,9 @@ public sealed partial class GameSession
             GameStartedUtc = GameStartedUtc,
             GameEndedUtc = GameEndedUtc,
             BattleHistory = BattleHistory.ToList(),
+            CampOffers = _campOffers.ToList(),
+            ExploreDraws = _exploreDraws.ToList(),
+            ActiveCampOfferIndex = _activeCampOfferIndex,
             Resources = Resources.ToList(),
             Market = Market.ToList(),
             Host = Host.ToList(),
@@ -260,9 +266,94 @@ public sealed partial class GameSession
                 baggage = Baggage.ToArray()
             },
             chronicle = Chronicle.ToArray(),
+            campOffers = _campOffers.ToArray(),
+            exploreDraws = _exploreDraws.ToArray(),
             battles = BattleHistory.ToArray(),
             activeBattle,
             finaleLog = Finale?.Log.ToArray() ?? Array.Empty<string>()
+        };
+
+        return JsonSerializer.Serialize(document, new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            WriteIndented = true
+        });
+    }
+
+    public string CreateDiagnosticGameLogJson(string appVersion)
+    {
+        var finalHost = Host.ToDictionary(h => h.Type, h => h.Count, StringComparer.OrdinalIgnoreCase);
+        var finalResources = Resources.ToDictionary(r => r.Name, r => r.Value, StringComparer.OrdinalIgnoreCase);
+
+        var document = new
+        {
+            schemaVersion = 1,
+            logType = "War Chronicle Game Log",
+            diagnosticSnapshot = true,
+            snapshotUtc = DateTime.UtcNow,
+            gameId = GameLogId,
+            appVersion,
+            startedUtc = GameStartedUtc,
+            endedUtc = GameEndedUtc,
+            status = GameEndedUtc is null ? "InProgress" : "Completed",
+            outcome = CampaignOutcome,
+            endReason = CampaignEndReason,
+            contentSets = _enabledContentSets.OrderBy(x => x).ToArray(),
+            finalState = new
+            {
+                year = Year,
+                season = Season,
+                time = Time,
+                morale = Morale,
+                leadership = Leadership,
+                host = finalHost,
+                resources = finalResources,
+                activeTokens = ActiveTokens.OrderBy(x => x).ToArray(),
+                baggage = Baggage.ToArray()
+            },
+            chronicle = Chronicle.ToArray(),
+            campOffers = _campOffers.ToArray(),
+            exploreDraws = _exploreDraws.ToArray(),
+            battles = BattleHistory.ToArray(),
+            activeBattle = Combat is { IsTest: false } activeCombat ? new
+            {
+                startedUtc = activeCombat.StartedUtc,
+                sourceLabel = activeCombat.SourceLabel,
+                enemyName = activeCombat.EnemyName,
+                round = activeCombat.Round,
+                step = activeCombat.Step.ToString(),
+                playerUnits = activeCombat.PlayerUnits,
+                enemyUnits = activeCombat.EnemyUnits,
+                entries = activeCombat.Log.ToArray()
+            } : null,
+            finaleLog = Finale?.Log.ToArray() ?? Array.Empty<string>(),
+            diagnosticState = new
+            {
+                phase = Phase.ToString(),
+                mobilizationStep = MobilizationStep.ToString(),
+                campStep = CampStep.ToString(),
+                endOfSeasonStep = EndOfSeasonStep.ToString(),
+                winterStep = WinterStep.ToString(),
+                currentExploreTerrain = CurrentExploreTerrain.ToString(),
+                hasPriest = _hasPriest,
+                priestSource = _priestSource,
+                currentArrivalTribe = _currentArrivalTribe,
+                persistentItems = PersistentItems.ToArray(),
+                terrainDeck = _terrainDeck.ToArray(),
+                exploreDeck = _exploreDeck.ToArray(),
+                arrivalDeck = _arrivalDeck.ToArray(),
+                campDeck = _campDeck.ToArray(),
+                campDiscard = _campDiscard.ToArray(),
+                unseededScenes = _unseededScenes.ToArray(),
+                unseededEchoes = _unseededEchoes.ToArray(),
+                removedCampCards = _removedCampCards.ToArray(),
+                seededEchoes = _seededEchoes.ToArray(),
+                echoOrigins = _echoOrigins,
+                playArea = PlayArea.ToArray(),
+                tribes = Tribes.ToArray(),
+                advancements = AcquiredAdvancements.ToArray(),
+                availableForces = AvailableForces.ToArray()
+            }
         };
 
         return JsonSerializer.Serialize(document, new JsonSerializerOptions
@@ -318,7 +409,8 @@ public sealed partial class GameSession
             {
                 if (string.Equals(set, "SitA", StringComparison.OrdinalIgnoreCase)
                     || string.Equals(set, "SiaSL", StringComparison.OrdinalIgnoreCase)
-                    || string.Equals(set, "PackC", StringComparison.OrdinalIgnoreCase))
+                    || string.Equals(set, "PackC", StringComparison.OrdinalIgnoreCase)
+                    || string.Equals(set, "No Quarter", StringComparison.OrdinalIgnoreCase))
                     _enabledContentSets.Add(set);
             }
 
@@ -358,6 +450,9 @@ public sealed partial class GameSession
                 GameStartedUtc = save.GameStartedUtc;
             GameEndedUtc = save.GameEndedUtc;
             CopyList(BattleHistory, save.BattleHistory);
+            CopyList(_campOffers, save.CampOffers);
+            CopyList(_exploreDraws, save.ExploreDraws);
+            _activeCampOfferIndex = save.ActiveCampOfferIndex;
 
             CopyList(Resources, save.Resources);
             CopyList(Market, save.Market);

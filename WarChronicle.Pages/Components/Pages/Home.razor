@@ -63,6 +63,10 @@
                     <input type="checkbox" @bind="_includeRiffRaff" />
                     <span><strong>Riff Raff</strong><small>Optional Riff Raff Scene and Echo arc</small></span>
                 </label>
+                <label class="content-pack">
+                    <input type="checkbox" @bind="_includeNoQuarter" />
+                    <span><strong>No Quarter</strong><small>Hard-mode Scene, Echo, and Explore content</small></span>
+                </label>
             </div>
             <div class="save-resume-actions">
                 <button class="primary-save-action" @onclick="BeginNewChronicleAsync">Begin Chronicle</button>
@@ -85,6 +89,7 @@
             <div class="dev-test-tools">
                 <button class="save-game" disabled="@(!Session.CanSaveGame)" title="@SaveButtonTitle" @onclick="SaveGameAsync">Save Game</button>
                 <a class="header-action-link" href="War_Chronicle_Rulebook.pdf" target="_blank" rel="noopener" title="Open the War Chronicle rulebook in a new browser tab">Rulebook</a>
+                <button class="header-action-link" title="Download a diagnostic snapshot of the current campaign" @onclick="DownloadDiagnosticLogAsync">Download Log</button>
                 @if (Session.Finale is { Step: FinaleStep.Complete } && _finaleSummaryDismissed)
                 {
                     <button class="combat-demo" @onclick="OpenFinaleSummary">Finale Summary</button>
@@ -494,7 +499,14 @@
                             }
                         </div>
                     }
-                    <p>@ChronicleText(entry)</p>
+                    @if (entry.EchoIndicator)
+                    {
+                        <p class="chronicle-echo-seeded"><img src="images/card-ui/wc_icon_echo.png" alt="Echo consequence" title="This event creates a future Echo." /> <span>@ChronicleText(entry)</span></p>
+                    }
+                    else
+                    {
+                        <p>@ChronicleText(entry)</p>
+                    }
                     @if (entry.Choices is not null)
                     {
                         <div class="chronicle-choice-options">
@@ -504,7 +516,13 @@
                                 <button class="chronicle-choice @(selected ? "is-selected" : string.Empty) @(choice.Disabled ? "is-unavailable" : string.Empty)"
                                         disabled="@(!decisionActive || choice.Disabled)"
                                         @onclick="() => Session.ResolveFlowPrompt(choice.Id)">
-                                    <strong>@ChronicleChoiceText(choice.Label)</strong>
+                                    <div class="chronicle-choice-label">
+                                        <strong>@ChronicleChoiceText(choice.Label)</strong>
+                                        @if (choice.EchoIndicator)
+                                        {
+                                            <img class="chronicle-choice-echo-icon" src="images/card-ui/wc_icon_echo.png" alt="Echo consequence" title="This choice creates a future Echo." />
+                                        }
+                                    </div>
                                     @if (!string.IsNullOrWhiteSpace(choice.Detail))
                                     {
                                         <span>@ChronicleChoiceText(choice.Detail)</span>
@@ -536,7 +554,14 @@
                         {
                             <div class="chronicle-title"><span>@entry.Heading</span></div>
                         }
-                        <p>@ChronicleText(entry)</p>
+                        @if (entry.EchoIndicator)
+                        {
+                            <p class="chronicle-echo-seeded"><img src="images/card-ui/wc_icon_echo.png" alt="Echo consequence" /> <span>@ChronicleText(entry)</span></p>
+                        }
+                        else
+                        {
+                            <p>@ChronicleText(entry)</p>
+                        }
                         @if (entry.Choices is not null)
                         {
                             <div class="chronicle-choice-options">
@@ -544,7 +569,13 @@
                                 {
                                     var selected = string.Equals(entry.SelectedChoiceId, choice.Id, StringComparison.OrdinalIgnoreCase);
                                     <button class="chronicle-choice @(selected ? "is-selected" : string.Empty) @(choice.Disabled ? "is-unavailable" : string.Empty)" disabled>
-                                        <strong>@ChronicleChoiceText(choice.Label)</strong>
+                                        <div class="chronicle-choice-label">
+                                            <strong>@ChronicleChoiceText(choice.Label)</strong>
+                                            @if (choice.EchoIndicator)
+                                            {
+                                                <img class="chronicle-choice-echo-icon" src="images/card-ui/wc_icon_echo.png" alt="Echo consequence" />
+                                            }
+                                        </div>
                                         @if (!string.IsNullOrWhiteSpace(choice.Detail))
                                         {
                                             <span>@ChronicleChoiceText(choice.Detail)</span>
@@ -1134,7 +1165,7 @@
                         <section class="finale-step-card">
                             <div class="decision-kicker">Host Resolve Check</div>
                             <h3>Steel the Host for the final assault</h3>
-                            <p>Roll 1d10 against Morale. You may spend 1 Leadership to roll 2d10 and choose 1 result.</p>
+                            <p>Roll 1d10 against Morale. Before making a Morale d10 roll, you may spend 1 Leadership to roll 2d10 and choose 1 result.</p>
                             <div class="finale-button-row">
                                 <button class="combat-primary" @onclick="() => Session.ResolveFinaleCheck(false)">Roll 1d10</button>
                                 <button class="combat-primary" disabled="@(!Session.CanSpendLeadershipForFinaleResolve)" @onclick="() => Session.ResolveFinaleCheck(true)">Spend 1 Leadership • Roll 2d10</button>
@@ -1553,7 +1584,7 @@
 }
 
 @code {
-    private const string AppVersion = "v0.5.0.28";
+    private const string AppVersion = "v0.5.0.35";
 
     // Presentation coordinates only, expressed as fixed pixel offsets from
     // the center of the play-area panel. This keeps the physical relationship
@@ -1650,6 +1681,7 @@
     private bool _includeSeasons;
     private bool _includeStrangers;
     private bool _includeRiffRaff;
+    private bool _includeNoQuarter;
     private bool _saveCheckComplete;
     private string? _saveStatus;
     private string? _resumeError;
@@ -1786,6 +1818,7 @@
         _includeSeasons = false;
         _includeStrangers = false;
         _includeRiffRaff = false;
+        _includeNoQuarter = false;
         _saveStatus = null;
         _resumeError = null;
         return Task.CompletedTask;
@@ -1813,6 +1846,7 @@
         _includeSeasons = false;
         _includeStrangers = false;
         _includeRiffRaff = false;
+        _includeNoQuarter = false;
         _saveStatus = null;
         _resumeError = null;
         _archivedGameLogId = null;
@@ -1835,6 +1869,8 @@
             sets.Add("SiaSL");
         if (_includeRiffRaff)
             sets.Add("PackC");
+        if (_includeNoQuarter)
+            sets.Add("No Quarter");
 
         Session.StartNewGame(Catalog, sets);
         await JS.InvokeVoidAsync("wcSave.clear");
@@ -1927,6 +1963,20 @@
             _archivedGameLogId = Session.GameLogId;
 
         await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task DownloadDiagnosticLogAsync()
+    {
+        try
+        {
+            var json = Session.CreateDiagnosticGameLogJson(AppVersion);
+            var filename = $"WC_GameLog_Current_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.json";
+            await JS.InvokeVoidAsync("wcGameLog.download", json, filename);
+        }
+        catch
+        {
+            _saveStatus = "Log download failed";
+        }
     }
 
     private async Task DownloadGameLogAsync()
@@ -2121,6 +2171,10 @@
             text,
             @"^D3 roll: (?<a>\d+)",
             m => $"D3 roll: {NumericDieBadge(m.Groups["a"].Value)}");
+        text = System.Text.RegularExpressions.Regex.Replace(
+            text,
+            @"^Morale roll \(d10\): (?<a>\d+)",
+            m => $"Morale roll (d10): {NumericDieBadge(m.Groups["a"].Value)}");
 
         // Standard 2d6 Leadership test. The first two are primary dice; the
         // third is the Leadership die and receives its own treatment.

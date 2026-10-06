@@ -1,7 +1,7 @@
 {
   "schema_version": "0.3.0",
-  "generated_at_utc": "2026-09-22T21:33:42+00:00",
-  "source_workbook": "War Chronicle Master(20260922-212843).xlsx",
+  "generated_at_utc": "2026-10-06T00:00:00Z",
+  "source_workbook": "War Chronicle Master(6).xlsx",
   "cards": {
     "CAMP-001": {
       "id": "CAMP-001",
@@ -1674,6 +1674,204 @@
         "effect": "<b>2-3</b>: <b><i>Night of the Long Knives</i></b> - A vicious feud erupts among the followers. Advance 1 Time. Lose 1 Morale.<br><b>4-6</b>: <b><i>This House Is on Fire</i></b> - A cookfire spreads through the followers' tents and stores. Advance 1 Time. Lose 1 Food.<br><b>7</b>: <b><i>Fly on the Wall</i></b> - Rumors pass through camp all night. None prove useful. No effect.<br><b>8-10</b>: <b><i>Thunderstruck</i></b> - Lightning fells a tree near camp. The followers waste no time putting it to use. Gain 1 Wood.<br><b>11-12</b>: <b><i>Moneytalks</i></b> - A few followers prove surprisingly capable fighters. You may recruit up to 2 Infantry for 1 Coin each."
       },
       "notes": null
+    },
+    "ECHO-BG-01": {
+      "id": "ECHO-BG-01",
+      "type": "Echo",
+      "set": "No Quarter",
+      "card_num": null,
+      "echo_pool": "BG",
+      "echo_num": 1,
+      "title": "No Quarter",
+      "keyword": null,
+      "location": "Any",
+      "time": 0,
+      "cost": {
+        "type": null,
+        "value": null
+      },
+      "after_play": "Remove",
+      "text": {
+        "flavor": "Weeks may have passed since the toll was refused, but resentment travels roads the Host no longer walks. Word comes that old enemies have struck at the Host's holdings.",
+        "effect": "<b>Roll 1d6. Leadership may not be spent.</b><br><ul><li><b>1-4:</b> Destroy your Market. If you do not have a Market, lose 1 Morale.</li><li><b>5-6:</b> No effect.</li></ul>"
+      },
+      "notes": null
+    },
+    "ECHO-BG-02": {
+      "id": "ECHO-BG-02",
+      "type": "Echo",
+      "set": "No Quarter",
+      "card_num": null,
+      "echo_pool": "BG",
+      "echo_num": 2,
+      "title": "Seek & Destroy",
+      "keyword": null,
+      "location": "Any",
+      "time": 0,
+      "cost": {
+        "type": null,
+        "value": null
+      },
+      "after_play": "Remove",
+      "text": {
+        "flavor": "The brigands themselves are long gone from sight. Their grudge is not. Somewhere beyond the camp, men with old directions and fresh malice set their hands to ruin.",
+        "effect": "<b>Roll 1d6. Leadership may not be spent.</b><br><ul><li><b>1-4:</b> Destroy your Academy. If you do not have an Academy, lose 1 Morale.</li><li><b>5-6:</b> No effect.</li></ul>"
+      },
+      "notes": null
+    },
+    "ECHO-BG-03": {
+      "id": "ECHO-BG-03",
+      "type": "Echo",
+      "set": "No Quarter",
+      "card_num": null,
+      "echo_pool": "BG",
+      "echo_num": 3,
+      "title": "Nobody's Fault but Mine",
+      "keyword": null,
+      "location": "Any",
+      "time": 0,
+      "cost": {
+        "type": null,
+        "value": null
+      },
+      "after_play": "Remove",
+      "text": {
+        "flavor": "The choice was made on a distant road, and for a time it seemed forgotten. Now the debt returns, carried by fire, rumor, and men who remember being denied.",
+        "effect": "<b>Roll 1d6. Leadership may not be spent.</b><br><ul><li><b>1-4:</b> If you have a Temple, destroy it and lose your Priest. If you do not have a Temple, lose 1 Morale.</li><li><b>5-6:</b> No effect.</li></ul>"
+      },
+      "notes": null
+    },
+    "SCENE-029": {
+      "id": "SCENE-029",
+      "type": "Scene",
+      "set": "No Quarter",
+      "card_num": 29,
+      "echo_pool": null,
+      "echo_num": null,
+      "title": "Stand Up and Shout",
+      "keyword": null,
+      "location": "Any",
+      "time": 1,
+      "cost": {
+        "type": null,
+        "value": null
+      },
+      "after_play": "Remove",
+      "text": {
+        "flavor": "A delegation comes before the Host with torn cloaks, empty hands, and voices too loud to ignore. They come not with tribute, but with a plea. Their need is plain. So is the question beneath it: will the Host stand with those who once stood aside for them?",
+        "effect": "<b>Advance 1 Time.</b><br><br>The tribe with your highest Rapport asks the Host for aid. If tied, choose one.<br><br><b>Choose 1:</b><br><ul><li><b>Answer the Call:</b> Spend 2 Food or 2 Coin. Gain 1 Morale.</li><li><b>Send Protection:</b> Lose 1 Infantry or 1 Archer. Gain 1 Morale.</li><li><b>Turn Them Away:</b> Reduce that tribe's Rapport by 1 step and seed 1 random SS Echo.</li></ul>"
+      },
+      "notes": null
+    },
+    "ECHO-SS-01": {
+      "id": "ECHO-SS-01",
+      "type": "Echo",
+      "set": "No Quarter",
+      "card_num": null,
+      "echo_pool": "SS",
+      "echo_num": 1,
+      "title": "Bad Reputation",
+      "keyword": null,
+      "location": "Any",
+      "time": 0,
+      "cost": {
+        "type": null,
+        "value": null
+      },
+      "after_play": "Remove",
+      "text": {
+        "flavor": "The story changes as it travels. By the time it reaches other fires, the Host did not lack the means to help. It lacked the will.",
+        "effect": "<b>Roll 1d6. Leadership may not be spent.</b><br><ul><li><b>1-4:</b> Place a reminder token near the Rapport area of the Calendar. The next time you would gain Rapport with any tribe, do not gain it. Then remove the reminder token.</li><li><b>5-6:</b> No effect.</li></ul>"
+      },
+      "notes": null
+    },
+    "ECHO-SS-02": {
+      "id": "ECHO-SS-02",
+      "type": "Echo",
+      "set": "No Quarter",
+      "card_num": null,
+      "echo_pool": "SS",
+      "echo_num": 2,
+      "title": "The Unforgiven",
+      "keyword": null,
+      "location": "Any",
+      "time": 0,
+      "cost": {
+        "type": null,
+        "value": null
+      },
+      "after_play": "Remove",
+      "text": {
+        "flavor": "A name once spoken with hope is now spoken with bitterness. Somewhere in the realm, those who expected aid have learned to expect less.",
+        "effect": "<b>Roll 1d6. Leadership may not be spent.</b><br><ul><li><b>1-4:</b> Reduce the Rapport of the tribe with your highest Rapport by 1 step. If tied, choose one.</li><li><b>5-6:</b> No effect.</li></ul>"
+      },
+      "notes": null
+    },
+    "ECHO-SS-03": {
+      "id": "ECHO-SS-03",
+      "type": "Echo",
+      "set": "No Quarter",
+      "card_num": null,
+      "echo_pool": "SS",
+      "echo_num": 3,
+      "title": "No More Tears",
+      "keyword": null,
+      "location": "Any",
+      "time": 0,
+      "cost": {
+        "type": null,
+        "value": null
+      },
+      "after_play": "Remove",
+      "text": {
+        "flavor": "The plea was left behind, but not forgotten. Around the Host's fires, the tale returns in quieter voices, and no one is comforted by the telling.",
+        "effect": "<b>Roll 1d6. Leadership may not be spent.</b><br><ul><li><b>1-4:</b> Lose 1 Morale. If any tribe is Hostile, lose 2 Morale instead.</li><li><b>5-6:</b> No effect.</li></ul>"
+      },
+      "notes": null
+    },
+    "SCENE-030": {
+      "id": "SCENE-030",
+      "type": "Scene",
+      "set": "No Quarter",
+      "card_num": 30,
+      "echo_pool": null,
+      "echo_num": null,
+      "title": "For Whom the Bell Tolls",
+      "keyword": null,
+      "location": "Any",
+      "time": 1,
+      "cost": {
+        "type": null,
+        "value": null
+      },
+      "after_play": "Remove",
+      "text": {
+        "flavor": "The road has settled into the Host's bones. Boots split, wheels groan, and every dawn sounds less like a beginning than a sentence being carried out.",
+        "effect": "<b>Advance 1 Time. Make a Morale test.</b> Leadership may not be spent. Do not apply the Priest modifier.<br><ul><li><b>Pass:</b> No effect.</li><li><b>Fail:</b> Place the Slow March token on or near the Explore deck and seed Echo BT1.</li></ul><b>While the Slow March token is active, each Explore Step costs 3 Time instead of 2.</b>"
+      },
+      "notes": null
+    },
+    "ECHO-BT-01": {
+      "id": "ECHO-BT-01",
+      "type": "Echo",
+      "set": "No Quarter",
+      "card_num": null,
+      "echo_pool": "BT",
+      "echo_num": 1,
+      "title": "Time Marches On",
+      "keyword": null,
+      "location": "Any",
+      "time": 0,
+      "cost": {
+        "type": null,
+        "value": null
+      },
+      "after_play": "Special",
+      "text": {
+        "flavor": "The slow march has not ended. Men rise late, scouts return slower, and every mile seems to take more from the Host than it should.",
+        "effect": "<b>Make a Morale test.</b> Leadership may not be spent. Do not apply the Priest modifier.<br><ul><li><b>Pass:</b> Remove the Slow March token. Remove this Echo. Explore Steps cost 2 Time again.</li><li><b>Fail:</b> Discard this Echo. The Slow March token remains. Explore Steps continue to cost 3 Time.</li></ul>"
+      },
+      "notes": null
     }
   },
   "explore_cards": {
@@ -1980,7 +2178,7 @@
       "image": "pm.png",
       "text": {
         "flavor": "Your scouts reach a high rise where open ground and distant roads can both be watched. From here, signs of what lies ahead are easier to read than from the march below.",
-        "effect": "<b>Choose 1:</b><br><br><ul><li><b>Mark the Clear Road</b><br>Place a reminder token on the Explore deck. The next time you Explore, spend 1 less Time, to a minimum of 1. When you reveal the Explore card for that Explore, you may ignore its effect. Then remove the reminder token.</li><br><li><b>Scout the Approach</b><br>The next time you reveal a Clearing, if it has a Barbarian Icon, gain 1 Leadership. Otherwise, gain 1 Morale.</li></ul>"
+        "effect": "<b>Choose 1:</b><br><br><ul><li><b>Mark the Clear Road:</b> Gain the <i>Clear Road</i> token.<br><br>When an Explore event triggers, before resolving any part of it, you may discard this token to ignore that event.</li><br><li><b>Scout the Approach</b><br>The next time you reveal a Clearing, if it has a Barbarian Icon, gain 1 Leadership. Otherwise, gain 1 Morale.</li></ul>"
       }
     },
     "EXPLORE-024": {
@@ -2106,6 +2304,49 @@
         "flavor": "A ring of painted stones waits in a forest clearing, arranged around a crude image of Middelalderen. The marks look Quietus: part prayer, part boundary, part warning.",
         "effect": "If The Quietus have not been encountered, discard this Card with no effect.<br><br>If The Quietus have been encountered, refer to your current Rapport with them:<ul><li><b>Allied:</b> Seed Echo <b>S1.</b></li><li><b>Friendly:</b> Seed Echo <b>S2.</b></li><li><b>Neutral:</b> Seed <b>S3.</b></li><li><b>Hostile:</b> Seed <b>S4.</b>"
       }
+    },
+    "EXPLORE-033": {
+      "id": "EXPLORE-033",
+      "card_num": 33,
+      "title": "Thieves (and Liars)",
+      "terrain_keywords": [
+        "Plains",
+        "Forest",
+        "Mountain"
+      ],
+      "image": "all.png",
+      "text": {
+        "flavor": "Brigands step from the roadside and demand coin for safe passage.",
+        "effect": "Choose 1:<br><b>Pay the Toll:</b> Spend 2 Coin.<br><b>Refuse:</b> Seed 1 random BG Echo."
+      }
+    },
+    "EXPLORE-034": {
+      "id": "EXPLORE-034",
+      "card_num": 34,
+      "title": "Breaking the Law",
+      "terrain_keywords": [
+        "Plains",
+        "Forest"
+      ],
+      "image": "pf.png",
+      "text": {
+        "flavor": "Outlaws watch from the trees, laughing as they name their price.",
+        "effect": "Choose 1:<br><b>Pay the Toll:</b> Spend 3 Coin.<br><b>Refuse:</b> Seed 1 random BG Echo."
+      }
+    },
+    "EXPLORE-035": {
+      "id": "EXPLORE-035",
+      "card_num": 35,
+      "title": "Some Heads Are Gonna Roll",
+      "terrain_keywords": [
+        "Forest",
+        "Mountain"
+      ],
+      "image": "fm.png",
+      "text": {
+        "flavor": "The pass is held by hard men with blades drawn and no patience for bargaining.",
+        "effect": "Choose 1:<br><b>Pay the Toll:</b> Spend 4 Coin.<br><b>Refuse:</b> Seed 1 random BG Echo."
+      }
     }
   },
   "arrival_cards": {
@@ -2117,7 +2358,7 @@
       "tribe": "Nightstone Clan",
       "tribute": "Tribute: 1R",
       "setup": "A stone crossing has been chained and audited. Nightstone wardens claim the road by right of maintenance and demand recognition before any host passes.",
-      "effect": "<hr><b><i>Choose 1:</i></b><br><b>Negotiate the Toll (8+)</b><br><ul><li><b>Pass:</b> Gain 1 Leadership, or gain 1 Rapport and lose 1 Coin.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Recognize the Claim (9+)</b><br><ul><li><b>Pass:</b> Gain 1 Stone and 1 Coin.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Force Passage (7+)</b><br><ul><li><b>Pass:</b> Gain 2 Coin.</li><li><b>Fail:</b> Lose 1 Rapport.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 2 Coin and 1 Leadership.</li><li><b>Disengage:</b> Lose 1 Leadership.</li></ul>",
+      "effect": "<hr><b><i>Choose 1:</i></b><br><b>Negotiate the Toll (8+)</b><br><ul><li><b>Pass:</b> Gain 1 Leadership, or gain 1 Rapport and lose 1 Coin.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Recognize the Claim (9+)</b><br><ul><li><b>Pass:</b> Gain 2 Coin and 1 Food, Wood, or Stone.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Force Passage (7+)</b><br><ul><li><b>Pass:</b> Gain 2 Coin.</li><li><b>Fail:</b> Lose 1 Rapport.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 2 Coin.</li><li><b>Disengage:</b> Lose 1 Leadership.</li></ul>",
       "host": "<b>Enemy Host</b><br><b>Y1:</b> 1C, 2I - <b>Y2:</b> 1C, 2I, 3L - <b>Y3:</b> 1A, 1C, 2I, 4L"
     },
     "ARRIVAL-005": {
@@ -2128,7 +2369,7 @@
       "tribe": "Nightstone Clan",
       "tribute": "Tribute: 1F",
       "setup": "A burial road has collapsed into a quarry trench. Nightstone masons and mourners alike demand the passage be made right before any host crosses further. They can be bargained with, worked with, exploited, or defied, but not ignored lightly.",
-      "effect": "<hr><b><i>Choose 1:</i></b><br><b>Join the Work — Pay 1 Wood: (8+)</b><br><ul><li><b>Pass:</b> Gain 1 Rapport and 1 Leadership.</li><li><b>Fail:</b> No additional effect.</li></ul><br><b>Hire the Masons (9+)</b><br><ul><li><b>Pass:</b> Gain 1 Stone and 1 Coin, or gain 1 Research.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Press Them Aside (7+)</b><br><ul><li><b>Pass:</b> Gain 2 Coin.</li><li><b>Fail:</b> Lose 1 Rapport.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 1 Stone and 1 Leadership.</li><li><b>Disengage:</b> Lose 1 Leadership.</li></ul>",
+      "effect": "<hr><b><i>Choose 1:</i></b><br><b>Join the Work — Pay 1 Wood: (6+)</b><br><ul><li><b>Pass:</b> Gain 1 Rapport and 1 Leadership.</li><li><b>Fail:</b> No additional effect.</li></ul><br><b>Hire the Masons (9+)</b><br><ul><li><b>Pass:</b> Gain 1 Stone and 1 Coin, or gain 1 Research.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Press Them Aside (7+)</b><br><ul><li><b>Pass:</b> Gain 2 Coin.</li><li><b>Fail:</b> Lose 1 Rapport.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 1 Stone and 1 Leadership.</li><li><b>Disengage:</b> Lose 1 Leadership.</li></ul>",
       "host": "<b>Enemy Host</b><br><b>Y1:</b> 1A, 2I, 2L - <b>Y2:</b> 1A, 1C, 2I, 2L - <b>Y3:</b> 1A, 1C, 2I, 4L"
     },
     "ARRIVAL-008": {
@@ -2172,7 +2413,7 @@
       "tribe": "Pale Hands",
       "tribute": "Tribute: 1F",
       "setup": "Ash-grey scribes bar the way before a ruined record-house, disputing whether your march is worthy of entry. The archive may yield guidance or preserved knowledge depending on how you handle them.",
-      "effect": "<hr><b><i>Choose 1:</i></b><br><b>Seek Guidance (8+)</b><br><ul><li><b>Pass:</b> Gain 1 Leadership, or gain 1 Rapport and lose 1 Coin.</li><li><b>Fail:</b> Lose 1 Leadership.</li></ul><br><b>Preserve the Record (9+)</b><br><ul><li><b>Pass:</b> Gain 1 Research and 1 Coin.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Break the Seal (7+)</b><br><ul><li><b>Pass:</b> Gain 1 Research.</li><li><b>Fail:</b> Lose 1 Rapport.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 1 Research and 1 Leadership.</li><li><b>Disengage:</b> Lose 1 Leadership.</li></ul>",
+      "effect": "<hr><b><i>Choose 1:</i></b><br><b>Seek Guidance (8+)</b><br><ul><li><b>Pass:</b> Gain 1 Leadership, or gain 1 Rapport and lose 1 Coin.</li><li><b>Fail:</b> Lose 1 Leadership.</li></ul><br><b>Preserve the Record (9+)</b><br><ul><li><b>Pass:</b> Gain 1 Research and 1 Coin.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Break the Seal (6+)</b><br><ul><li><b>Pass:</b> Gain 1 Research.</li><li><b>Fail:</b> Lose 1 Rapport.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 1 Research and 1 Leadership.</li><li><b>Disengage:</b> Lose 1 Leadership.</li></ul>",
       "host": "<b>Enemy Host</b><br><b>Y1:</b> 1A, 2I, 2L - <b>Y2:</b> 1A, 3I, 2L - <b>Y3:</b> 4I, 4L"
     },
     "ARRIVAL-006": {
@@ -2183,7 +2424,7 @@
       "tribe": "Pale Hands",
       "tribute": "Tribute: 2C",
       "setup": "Someone has blackened the route markers ahead and stripped the old way-signs of their script. A small Pale Hands escort claims they can still guide worthy travelers, but not for free, and not for the faithless.",
-      "effect": "<hr><b>If Allied:</b> Gain 1 Leadership.<br><br><b><i>Choose 1:</i></b><br><b>Restore the Marks (8+)</b><br><ul><li><b>Pass:</b> Gain 1 Research.</li><li><b>Fail:</b> Lose 1 Leadership.</li></ul><br><b>Hire a Guide — Pay 1 Coin: (9+)</b><br><ul><li><b>Pass:</b> Gain 1 Rapport and 1 Leadership.</li><li><b>Fail:</b> No additional effect.</li></ul><br><b>Take the Hidden Route (7+)</b><br><ul><li><b>Pass:</b> Gain 1 Food and 1 Coin.</li><li><b>Fail:</b> Lose 1 Morale.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 1 Research and 1 Leadership.</li><li><b>Disengage:</b> Lose 1 Morale.</li></ul>",
+      "effect": "<hr><b>If Allied:</b> Gain 1 Leadership.<br><br><b><i>Choose 1:</i></b><br><b>Restore the Marks (8+)</b><br><ul><li><b>Pass:</b> Gain 1 Research.</li><li><b>Fail:</b> Lose 1 Leadership.</li></ul><br><b>Hire a Guide — Pay 1 Coin: (9+)</b><br><ul><li><b>Pass:</b> Gain 1 Rapport and 1 Leadership.</li><li><b>Fail:</b> No additional effect.</li></ul><br><b>Take the Hidden Route (6+)</b><br><ul><li><b>Pass:</b> Gain 1 Food and 2 Coin.</li><li><b>Fail:</b> Lose 1 Morale.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 1 Research and 1 Leadership.</li><li><b>Disengage:</b> Lose 1 Morale.</li></ul>",
       "host": "<b>Enemy Host</b><br><b>Y1:</b> 3I, 1L - <b>Y2:</b> 1A, 3I, 2L - <b>Y3:</b> 1C, 3I, 3L"
     },
     "ARRIVAL-011": {
@@ -2205,7 +2446,7 @@
       "tribe": "Pale Hands",
       "tribute": "Tribute: 1W",
       "setup": "Pale Hands scribes sit beneath a canvas awning, sorting weather-stained tablets into long rows. They claim the road ahead has been catalogued before, but only the worthy may learn what was written.",
-      "effect": "<hr><b>If Allied:</b> Gain 1 Leadership.<br><br><b><i>Choose 1:</i></b><br><b>Read the Index (8+)</b><br><ul><li><b>Pass:</b> Gain 1 Research.</li><li><b>Fail:</b> Lose 1 Leadership.</li></ul><br><b>Preserve the Tablets (9+)</b><br><ul><li><b>Pass:</b> Gain 1 Research and 1 Rapport, but lose 1 Morale.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Take the Forbidden Entry (7+)</b><br><ul><li><b>Pass:</b> Gain 1 Research.</li><li><b>Fail:</b> Lose 1 Morale.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 1 Research and 1 Leadership.</li><li><b>Disengage:</b> Lose 1 Morale.</li></ul>",
+      "effect": "<hr><b>If Allied:</b> Gain 1 Leadership.<br><br><b><i>Choose 1:</i></b><br><b>Read the Index (8+)</b><br><ul><li><b>Pass:</b> Gain 1 Research.</li><li><b>Fail:</b> Lose 1 Leadership.</li></ul><br><b>Preserve the Tablets (9+)</b><br><ul><li><b>Pass:</b> Gain 1 Research and 1 Rapport.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Take the Forbidden Entry (6+)</b><br><ul><li><b>Pass:</b> Gain 1 Research.</li><li><b>Fail:</b> Lose 1 Morale.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 1 Research and 1 Leadership.</li><li><b>Disengage:</b> Lose 1 Morale.</li></ul>",
       "host": "<b>Enemy Host</b><br><b>Y1:</b> 3I, 2L - <b>Y2:</b> 1A, 3I, 3L - <b>Y3:</b> 1A, 3I, 5L"
     },
     "ARRIVAL-016": {
@@ -2238,7 +2479,7 @@
       "tribe": "Sun-Touched",
       "tribute": "Tribute: 2C",
       "setup": "A cooking field lies half-burned beside the road. The Sun-Touched insist the stores are promised to their own, but smoke and hunger make everyone short-tempered.",
-      "effect": "<hr><b><i>Choose 1:</i></b><br><b>Share the Meal — Pay 1 Food: (8+)</b><br><ul><li><b>Pass:</b> Gain 1 Rapport and 1 Leadership.</li><li><b>Fail:</b> No additional effect.</li></ul><br><b>Claim the Bakes (9+)</b><br><ul><li><b>Pass:</b> Gain 2 Food and 1 Coin.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Buy Their Goodwill (7+)</b><br><ul><li><b>Pass:</b> Gain 1 Food and 1 Coin.</li><li><b>Fail:</b> Lose 1 Rapport.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 2 Food and 1 Leadership.</li><li><b>Disengage:</b> Lose 1 Morale.</li></ul>",
+      "effect": "<hr><b><i>Choose 1:</i></b><br><b>Share the Meal — Pay 1 Food: (8+)</b><br><ul><li><b>Pass:</b> Gain 1 Rapport and 1 Leadership.</li><li><b>Fail:</b> No additional effect.</li></ul><br><b>Claim the Bakes (9+)</b><br><ul><li><b>Pass:</b> Gain 2 Food and 1 Coin.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Buy Their Goodwill (6+)</b><br><ul><li><b>Pass:</b> Gain 1 Food and 1 Coin.</li><li><b>Fail:</b> Lose 1 Rapport.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 2 Food and 1 Leadership.</li><li><b>Disengage:</b> Lose 1 Morale.</li></ul>",
       "host": "<b>Enemy Host</b><br><b>Y1:</b> 1A, 2I, 2L - <b>Y2:</b> 2A, 2I, 3L - <b>Y3:</b> 3A, 2I, 4L"
     },
     "ARRIVAL-009": {
@@ -2271,7 +2512,7 @@
       "tribe": "Sun-Touched",
       "tribute": "Tribute: 1W",
       "setup": "Covered carts heavy with honey jars wait in the shade, watched by Sun-Touched keepers with smoke-pots and hooked knives. The honey is medicine, ration, and offering all at once.",
-      "effect": "<hr><b><i>Choose 1:</i></b><br><b>Share the Honey (8+)</b><br><ul><li><b>Pass:</b> Gain 1 Rapport and 1 Food, but lose 1 Coin.</li><li><b>Fail:</b> Lose 1 Food.</li></ul><br><b>Buy the Jars (9+)</b><br><ul><li><b>Pass:</b> Gain 1 Food and 1 Wood or 1 Stone.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Smoke the Keepers Out (7+)</b><br><ul><li><b>Pass:</b> Gain 2 Food.</li><li><b>Fail:</b> Damage 1 space in your Baggage Train.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 2 Food and 1 Leadership.</li><li><b>Disengage:</b> Lose 1 Morale.</li></ul>",
+      "effect": "<hr><b><i>Choose 1:</i></b><br><b>Share the Honey (8+)</b><br><ul><li><b>Pass:</b> Gain 1 Rapport and 1 Food, but lose 1 Coin.</li><li><b>Fail:</b> Lose 1 Food.</li></ul><br><b>Buy the Jars (9+)</b><br><ul><li><b>Pass:</b> Gain 1 Food and 1 Wood or 1 Stone.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Smoke the Keepers Out (7+)</b><br><ul><li><b>Pass:</b> Gain 2 Food and 2 Coin.</li><li><b>Fail:</b> Damage 1 space in your Baggage Train.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 2 Food and 1 Leadership.</li><li><b>Disengage:</b> Lose 1 Morale.</li></ul>",
       "host": "<b>Enemy Host</b><br><b>Y1:</b> 3A, 4L - <b>Y2:</b> 2A, 1C, 1I, 2L - <b>Y3:</b> 2A, 1C, 2I, 3L"
     },
     "ARRIVAL-004": {
@@ -2293,7 +2534,7 @@
       "tribe": "The Quietus",
       "tribute": "Tribute: 3C",
       "setup": "A reliquary wagon sits abandoned but watched. Quietus keepers say its contents must not be touched by the unordained, yet they do not hide that the road ahead has dangers only the devout survive well.",
-      "effect": "<hr><b><i>Choose 1:</i></b><br><b>Ask for Blessing (8+)</b><br><ul><li><b>Pass:</b> Gain 1 Leadership.</li><li><b>Fail:</b> Lose 1 Morale.</li></ul><br><b>Receive Instruction (9+)</b><br><ul><li><b>Pass:</b> Gain 1 Research and 1 Food.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Open the Casket (7+)</b><br><ul><li><b>Pass:</b> Gain 1 Research.</li><li><b>Fail:</b> Lose 1 Rapport.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 1 Research and 1 Leadership.</li><li><b>Disengage:</b> Lose 1 Morale.</li></ul>",
+      "effect": "<hr><b><i>Choose 1:</i></b><br><b>Ask for Blessing (8+)</b><br><ul><li><b>Pass:</b> Gain 1 Leadership.</li><li><b>Fail:</b> Lose 1 Morale.</li></ul><br><b>Receive Instruction (9+)</b><br><ul><li><b>Pass:</b> Gain 1 Research and 1 Food.</li><li><b>Fail:</b> Lose 1 Coin.</li></ul><br><b>Open the Casket (6+)</b><br><ul><li><b>Pass:</b> Gain 1 Research.</li><li><b>Fail:</b> Lose 1 Rapport.</li></ul><br><b>Attack:</b> Tribe becomes Hostile.<br><ul><li><b>Win:</b> Gain 1 Research and 1 Leadership.</li><li><b>Disengage:</b> Lose 1 Morale.</li></ul>",
       "host": "<b>Enemy Host</b><br><b>Y1:</b> 1I, 5L - <b>Y2:</b> 1P, 1I, 6L - <b>Y3:</b> 1P, 2I, 6L"
     },
     "ARRIVAL-012": {
@@ -2555,6 +2796,96 @@
       "cost": null,
       "commit": null,
       "effect": "Infantry roll 1 additional die when attacking."
+    },
+    "ADV-016": {
+      "id": "ADV-016",
+      "card_num": 16,
+      "title": "Armor",
+      "keyword": "Middelalderen Development",
+      "cost": null,
+      "commit": null,
+      "effect": "Place 1 shield token on this card. Remove this token to prevent 1 casualty to a <b><i>Military Unit</i></b> of your choice.<br><br>Replenish token after Combat ends."
+    },
+    "ADV-017": {
+      "id": "ADV-017",
+      "card_num": 17,
+      "title": "Armor",
+      "keyword": "Middelalderen Development",
+      "cost": null,
+      "commit": null,
+      "effect": "Place 1 shield token on this card. Remove this token to prevent 1 casualty to a <b><i>Military Unit</i></b> of your choice.<br><br>Replenish token after Combat ends."
+    },
+    "ADV-018": {
+      "id": "ADV-018",
+      "card_num": 18,
+      "title": "Armor",
+      "keyword": "Middelalderen Development",
+      "cost": null,
+      "commit": null,
+      "effect": "Place 1 shield token on this card. Remove this token to prevent 1 casualty to a <b><i>Military Unit</i></b> of your choice.<br><br>Replenish token after Combat ends."
+    },
+    "ADV-019": {
+      "id": "ADV-019",
+      "card_num": 19,
+      "title": "Halberds",
+      "keyword": "Middelalderen Development",
+      "cost": null,
+      "commit": null,
+      "effect": "Add +1 DRM to Infantry attack rolls."
+    },
+    "ADV-020": {
+      "id": "ADV-020",
+      "card_num": 20,
+      "title": "Stirrups",
+      "keyword": "Middelalderen Development",
+      "cost": null,
+      "commit": null,
+      "effect": "Add +1 DRM to Cavalry attack rolls."
+    },
+    "ADV-021": {
+      "id": "ADV-021",
+      "card_num": 21,
+      "title": "Longbows",
+      "keyword": "Middelalderen Development",
+      "cost": null,
+      "commit": null,
+      "effect": "Add +1 DRM to Archer attack rolls."
+    },
+    "ADV-022": {
+      "id": "ADV-022",
+      "card_num": 22,
+      "title": "Charge",
+      "keyword": "Middelalderen Tactic",
+      "cost": null,
+      "commit": null,
+      "effect": "Cavalry roll +1 die when attacking."
+    },
+    "ADV-023": {
+      "id": "ADV-023",
+      "card_num": 23,
+      "title": "Gritty",
+      "keyword": "Middelalderen Tactic",
+      "cost": null,
+      "commit": null,
+      "effect": "Levy will not rout this Combat."
+    },
+    "ADV-024": {
+      "id": "ADV-024",
+      "card_num": 24,
+      "title": "Darken the Skies",
+      "keyword": "Middelalderen Tactic",
+      "cost": null,
+      "commit": null,
+      "effect": "Archers roll 1 additional die when attacking."
+    },
+    "ADV-025": {
+      "id": "ADV-025",
+      "card_num": 25,
+      "title": "Surge",
+      "keyword": "Middelalderen Tactic",
+      "cost": null,
+      "commit": null,
+      "effect": "Infantry roll 1 additional die when attacking."
     }
   },
   "echo_pools": {
@@ -2657,6 +2988,19 @@
     "WB": [
       "ECHO-B-01",
       "ECHO-B-02"
+    ],
+    "BG": [
+      "ECHO-BG-01",
+      "ECHO-BG-02",
+      "ECHO-BG-03"
+    ],
+    "SS": [
+      "ECHO-SS-01",
+      "ECHO-SS-02",
+      "ECHO-SS-03"
+    ],
+    "BT": [
+      "ECHO-BT-01"
     ]
   },
   "flows": {
@@ -3491,7 +3835,7 @@
         },
         "N21": {
           "type": "Choice",
-          "prompt": "Discard top Tactics card for free?",
+          "prompt": "Discard top Advancement card for free?",
           "branches": [
             {
               "label": "Yes",
@@ -3513,7 +3857,7 @@
           "type": "Action",
           "action": {
             "type": "Discard",
-            "target": "DeckTop:Tactics",
+            "target": "DeckTop:Advancement",
             "value": 1
           },
           "next": "N23"
@@ -3522,13 +3866,13 @@
           "type": "Action",
           "action": {
             "type": "Reveal",
-            "target": "DeckTop:Tactics",
+            "target": "DeckTop:Advancement",
             "value": 1
           },
           "next": "N90",
           "flags": [
             {
-              "name": "CannotPurchaseRevealedTacticThisPhase",
+              "name": "CannotPurchaseRevealedAdvancementThisPhase",
               "value": true
             }
           ]
@@ -10795,15 +11139,7 @@
           "next": "N99",
           "flags": [
             {
-              "name": "NextExploreCostModifier",
-              "value": -1
-            },
-            {
-              "name": "MinimumExploreCost",
-              "value": 1
-            },
-            {
-              "name": "MayIgnoreNextExploreEffect",
+              "name": "MayIgnoreTriggeredExploreEvent",
               "value": true
             }
           ]
@@ -11846,13 +12182,13 @@
         },
         "O3_TEST": {
           "type": "Test",
-          "prompt": "Break the Seal: Test 7+",
+          "prompt": "Break the Seal: Test 6+",
           "branches": [
             {
               "label": "Pass",
               "input": "StandardTest",
               "operator": "GTE",
-              "value": 7,
+              "value": 6,
               "next": "O3_PASS_A1",
               "flags": [
                 {
@@ -11870,7 +12206,7 @@
               "label": "Fail",
               "input": "StandardTest",
               "operator": "LT",
-              "value": 7,
+              "value": 6,
               "next": "O3_FAIL_A1",
               "flags": [
                 {
@@ -11996,7 +12332,7 @@
               "notes": "Pass: Gain 1 Research and 1 Coin. Fail: Lose 1 Coin."
             },
             {
-              "label": "Break the Seal (7+)",
+              "label": "Break the Seal (6+)",
               "input": null,
               "operator": null,
               "value": null,
@@ -12480,23 +12816,14 @@
             }
           ]
         },
-        "O2_PASS_A2": {
-          "type": "Action",
-          "action": {
-            "type": "Gain",
-            "target": "Coin",
-            "value": 1
-          },
-          "next": "N99"
-        },
         "O2_PASS_A1": {
           "type": "Action",
           "action": {
             "type": "Gain",
-            "target": "Stone",
-            "value": 1
+            "target": "Coin",
+            "value": 2
           },
-          "next": "O2_PASS_A2"
+          "next": "O2_PASS_CHOICE"
         },
         "O2_FAIL_A1": {
           "type": "Action",
@@ -12722,7 +13049,7 @@
               "operator": null,
               "value": null,
               "next": "O2_TEST",
-              "notes": "Pass: Gain 1 Stone and 1 Coin. Fail: Lose 1 Coin."
+              "notes": "Pass: Gain 2 Coin and 1 Food, Wood, or Stone. Fail: Lose 1 Coin."
             },
             {
               "label": "Force Passage (7+)",
@@ -12738,12 +13065,66 @@
               "operator": null,
               "value": null,
               "next": "ATK_HOSTILE",
-              "notes": "Win: Gain 2 Coin and 1 Leadership. Disengage: Lose 1 Leadership."
+              "notes": "Win: Gain 2 Coin. Disengage: Lose 1 Leadership."
             }
           ]
         },
         "N99": {
           "type": "End"
+        },
+        "O2_PASS_CHOICE": {
+          "type": "Choice",
+          "prompt": "Choose the Resource you receive",
+          "branches": [
+            {
+              "label": "Gain 1 Food",
+              "input": null,
+              "operator": null,
+              "value": null,
+              "next": "O2_PASS_FOOD"
+            },
+            {
+              "label": "Gain 1 Wood",
+              "input": null,
+              "operator": null,
+              "value": null,
+              "next": "O2_PASS_WOOD"
+            },
+            {
+              "label": "Gain 1 Stone",
+              "input": null,
+              "operator": null,
+              "value": null,
+              "next": "O2_PASS_STONE"
+            }
+          ]
+        },
+        "O2_PASS_FOOD": {
+          "type": "Action",
+          "action": {
+            "type": "Gain",
+            "target": "Food",
+            "value": 1
+          },
+          "next": "N99"
+        },
+        "O2_PASS_WOOD": {
+          "type": "Action",
+          "action": {
+            "type": "Gain",
+            "target": "Wood",
+            "value": 1
+          },
+          "next": "N99"
+        },
+        "O2_PASS_STONE": {
+          "type": "Action",
+          "action": {
+            "type": "Gain",
+            "target": "Stone",
+            "value": 1
+          },
+          "next": "N99"
         }
       }
     },
@@ -13182,13 +13563,13 @@
         },
         "O1_TEST": {
           "type": "Test",
-          "prompt": "Join the Work: Test 8+",
+          "prompt": "Join the Work: Test 6+",
           "branches": [
             {
               "label": "Pass",
               "input": "StandardTest",
               "operator": "GTE",
-              "value": 8,
+              "value": 6,
               "next": "O1_PASS_A1",
               "flags": [
                 {
@@ -13206,7 +13587,7 @@
               "label": "Fail",
               "input": "StandardTest",
               "operator": "LT",
-              "value": 8,
+              "value": 6,
               "next": "N99",
               "flags": [
                 {
@@ -13230,7 +13611,8 @@
             "value": 1
           },
           "next": "O1_TEST",
-          "player_text": "Pay 1 Wood."
+          "player_text": "Pay 1 Wood.",
+          "prompt": ""
         },
         "O2_PASS_C1_A2": {
           "type": "Action",
@@ -13490,7 +13872,7 @@
           "prompt": "Choose an approach",
           "branches": [
             {
-              "label": "Join the Work (8+)",
+              "label": "Join the Work (6+)",
               "input": "Player.Wood",
               "operator": "GTE",
               "value": 1,
@@ -13688,7 +14070,7 @@
             "target": "Food",
             "value": 1
           },
-          "next": "O3_PASS_A2"
+          "next": "O3_PASS_COIN"
         },
         "O3_FAIL_A1": {
           "type": "Action",
@@ -13701,13 +14083,13 @@
         },
         "O3_TEST": {
           "type": "Test",
-          "prompt": "Take the Hidden Route: Test 7+",
+          "prompt": "Take the Hidden Route: Test 6+",
           "branches": [
             {
               "label": "Pass",
               "input": "StandardTest",
               "operator": "GTE",
-              "value": 7,
+              "value": 6,
               "next": "O3_PASS_A1",
               "flags": [
                 {
@@ -13725,7 +14107,7 @@
               "label": "Fail",
               "input": "StandardTest",
               "operator": "LT",
-              "value": 7,
+              "value": 6,
               "next": "O3_FAIL_A1",
               "flags": [
                 {
@@ -13845,12 +14227,12 @@
               "notes": "Cost: 1 Coin. Pass: Gain 1 Rapport and 1 Leadership. Fail: No additional effect."
             },
             {
-              "label": "Take the Hidden Route (7+)",
+              "label": "Take the Hidden Route (6+)",
               "input": null,
               "operator": null,
               "value": null,
               "next": "O3_TEST",
-              "notes": "Pass: Gain 1 Food and 1 Coin. Fail: Lose 1 Morale."
+              "notes": "Pass: Gain 1 Food and 2 Coin. Fail: Lose 1 Morale."
             },
             {
               "label": "Attack",
@@ -13894,6 +14276,15 @@
         },
         "N99": {
           "type": "End"
+        },
+        "O3_PASS_COIN": {
+          "type": "Action",
+          "action": {
+            "type": "Gain",
+            "target": "Coin",
+            "value": 2
+          },
+          "next": "N99"
         }
       }
     },
@@ -14079,13 +14470,13 @@
         },
         "O3_TEST": {
           "type": "Test",
-          "prompt": "Buy Their Goodwill: Test 7+",
+          "prompt": "Buy Their Goodwill: Test 6+",
           "branches": [
             {
               "label": "Pass",
               "input": "StandardTest",
               "operator": "GTE",
-              "value": 7,
+              "value": 6,
               "next": "O3_PASS_A1",
               "flags": [
                 {
@@ -14103,7 +14494,7 @@
               "label": "Fail",
               "input": "StandardTest",
               "operator": "LT",
-              "value": 7,
+              "value": 6,
               "next": "O3_FAIL_A1",
               "flags": [
                 {
@@ -14223,7 +14614,7 @@
               "notes": "Pass: Gain 2 Food and 1 Coin. Fail: Lose 1 Coin."
             },
             {
-              "label": "Buy Their Goodwill (7+)",
+              "label": "Buy Their Goodwill (6+)",
               "input": null,
               "operator": null,
               "value": null,
@@ -15107,13 +15498,13 @@
         },
         "O3_TEST": {
           "type": "Test",
-          "prompt": "Open the Casket: Test 7+",
+          "prompt": "Open the Casket: Test 6+",
           "branches": [
             {
               "label": "Pass",
               "input": "StandardTest",
               "operator": "GTE",
-              "value": 7,
+              "value": 6,
               "next": "O3_PASS_A1",
               "flags": [
                 {
@@ -15131,7 +15522,7 @@
               "label": "Fail",
               "input": "StandardTest",
               "operator": "LT",
-              "value": 7,
+              "value": 6,
               "next": "O3_FAIL_A1",
               "flags": [
                 {
@@ -15251,7 +15642,7 @@
               "notes": "Pass: Gain 1 Research and 1 Food. Fail: Lose 1 Coin."
             },
             {
-              "label": "Open the Casket (7+)",
+              "label": "Open the Casket (6+)",
               "input": null,
               "operator": null,
               "value": null,
@@ -16933,9 +17324,9 @@
         "O2_PASS_A3": {
           "type": "Action",
           "action": {
-            "type": "Lose",
+            "type": "Ignore",
             "target": "Morale",
-            "value": 1
+            "value": 0
           },
           "next": "N99"
         },
@@ -16946,7 +17337,7 @@
             "target": "CurrentTribe",
             "value": 1
           },
-          "next": "O2_PASS_A3"
+          "next": "N99"
         },
         "O2_PASS_A1": {
           "type": "Action",
@@ -17034,13 +17425,13 @@
         },
         "O3_TEST": {
           "type": "Test",
-          "prompt": "Take the Forbidden Entry: Test 7+",
+          "prompt": "Take the Forbidden Entry: Test 6+",
           "branches": [
             {
               "label": "Pass",
               "input": "StandardTest",
               "operator": "GTE",
-              "value": 7,
+              "value": 6,
               "next": "O3_PASS_A1",
               "flags": [
                 {
@@ -17058,7 +17449,7 @@
               "label": "Fail",
               "input": "StandardTest",
               "operator": "LT",
-              "value": 7,
+              "value": 6,
               "next": "O3_FAIL_A1",
               "flags": [
                 {
@@ -17175,10 +17566,10 @@
               "operator": null,
               "value": null,
               "next": "O2_TEST",
-              "notes": "Pass: Gain 1 Research and 1 Rapport, then lose 1 Morale. Fail: Lose 1 Coin."
+              "notes": "Pass: Gain 1 Research and 1 Rapport. Fail: Lose 1 Coin."
             },
             {
-              "label": "Take the Forbidden Entry (7+)",
+              "label": "Take the Forbidden Entry (6+)",
               "input": null,
               "operator": null,
               "value": null,
@@ -18197,7 +18588,7 @@
             "target": "Food",
             "value": 2
           },
-          "next": "N99"
+          "next": "O3_PASS_COIN"
         },
         "O3_FAIL_A1_DAMAGE": {
           "type": "Action",
@@ -18372,7 +18763,7 @@
               "operator": null,
               "value": null,
               "next": "O3_TEST",
-              "notes": "Pass: Gain 2 Food. Fail: Damage 1 Baggage Train space."
+              "notes": "Pass: Gain 2 Food and 2 Coin. Fail: Damage 1 Baggage Train space."
             },
             {
               "label": "Attack",
@@ -18386,6 +18777,15 @@
         },
         "N99": {
           "type": "End"
+        },
+        "O3_PASS_COIN": {
+          "type": "Action",
+          "action": {
+            "type": "Gain",
+            "target": "Coin",
+            "value": 2
+          },
+          "next": "N99"
         }
       }
     },
@@ -19922,6 +20322,849 @@
           "type": "End"
         }
       }
+    },
+    "EF-EXPLORE-033": {
+      "source": {
+        "type": "Explore",
+        "id": "EXPLORE-033"
+      },
+      "trigger": "OnResolve",
+      "start_node": "N01",
+      "nodes": {
+        "N01": {
+          "type": "Choice",
+          "prompt": "Pay the toll or refuse?",
+          "branches": [
+            {
+              "label": "Pay the Toll",
+              "input": "Player.Coin",
+              "operator": "GTE",
+              "value": 2,
+              "next": "N10",
+              "notes": "Spend 2 Coin."
+            },
+            {
+              "label": "Refuse",
+              "input": null,
+              "operator": null,
+              "value": null,
+              "next": "N20",
+              "notes": "Seed 1 random BG Echo."
+            }
+          ]
+        },
+        "N10": {
+          "type": "Action",
+          "action": {
+            "type": "Spend",
+            "target": "Coin",
+            "value": 2
+          },
+          "next": "N99"
+        },
+        "N20": {
+          "type": "Action",
+          "action": {
+            "type": "SeedRandomEcho",
+            "target": "EchoPool",
+            "value": "BG"
+          },
+          "next": "N99",
+          "player_text": "The Host refuses the demand. The brigands do not forget."
+        },
+        "N99": {
+          "type": "End"
+        }
+      }
+    },
+    "EF-EXPLORE-034": {
+      "source": {
+        "type": "Explore",
+        "id": "EXPLORE-034"
+      },
+      "trigger": "OnResolve",
+      "start_node": "N01",
+      "nodes": {
+        "N01": {
+          "type": "Choice",
+          "prompt": "Pay the toll or refuse?",
+          "branches": [
+            {
+              "label": "Pay the Toll",
+              "input": "Player.Coin",
+              "operator": "GTE",
+              "value": 3,
+              "next": "N10",
+              "notes": "Spend 3 Coin."
+            },
+            {
+              "label": "Refuse",
+              "input": null,
+              "operator": null,
+              "value": null,
+              "next": "N20",
+              "notes": "Seed 1 random BG Echo."
+            }
+          ]
+        },
+        "N10": {
+          "type": "Action",
+          "action": {
+            "type": "Spend",
+            "target": "Coin",
+            "value": 3
+          },
+          "next": "N99"
+        },
+        "N20": {
+          "type": "Action",
+          "action": {
+            "type": "SeedRandomEcho",
+            "target": "EchoPool",
+            "value": "BG"
+          },
+          "next": "N99",
+          "player_text": "The Host refuses the demand. The brigands do not forget."
+        },
+        "N99": {
+          "type": "End"
+        }
+      }
+    },
+    "EF-EXPLORE-035": {
+      "source": {
+        "type": "Explore",
+        "id": "EXPLORE-035"
+      },
+      "trigger": "OnResolve",
+      "start_node": "N01",
+      "nodes": {
+        "N01": {
+          "type": "Choice",
+          "prompt": "Pay the toll or refuse?",
+          "branches": [
+            {
+              "label": "Pay the Toll",
+              "input": "Player.Coin",
+              "operator": "GTE",
+              "value": 4,
+              "next": "N10",
+              "notes": "Spend 4 Coin."
+            },
+            {
+              "label": "Refuse",
+              "input": null,
+              "operator": null,
+              "value": null,
+              "next": "N20",
+              "notes": "Seed 1 random BG Echo."
+            }
+          ]
+        },
+        "N10": {
+          "type": "Action",
+          "action": {
+            "type": "Spend",
+            "target": "Coin",
+            "value": 4
+          },
+          "next": "N99"
+        },
+        "N20": {
+          "type": "Action",
+          "action": {
+            "type": "SeedRandomEcho",
+            "target": "EchoPool",
+            "value": "BG"
+          },
+          "next": "N99",
+          "player_text": "The Host refuses the demand. The brigands do not forget."
+        },
+        "N99": {
+          "type": "End"
+        }
+      }
+    },
+    "EF-ECHO-BG-01": {
+      "source": {
+        "type": "Echo",
+        "id": "ECHO-BG-01"
+      },
+      "trigger": "OnResolve",
+      "start_node": "N01",
+      "nodes": {
+        "N01": {
+          "type": "Roll",
+          "branches": [
+            {
+              "label": "1-4",
+              "input": "1d6",
+              "operator": "BETWEEN",
+              "value": "1..4",
+              "next": "N10"
+            },
+            {
+              "label": "5-6",
+              "input": "1d6",
+              "operator": "BETWEEN",
+              "value": "5..6",
+              "next": "N99",
+              "player_text": "The threat passes without finding a vulnerable target. No effect."
+            }
+          ]
+        },
+        "N10": {
+          "type": "Check",
+          "prompt": "Check the Host’s holdings",
+          "branches": [
+            {
+              "label": "Present",
+              "input": "Player.Buildings",
+              "operator": "HAS",
+              "value": "Market",
+              "next": "N11"
+            },
+            {
+              "label": "Absent",
+              "input": "Player.Buildings",
+              "operator": "NOT_HAS",
+              "value": "Market",
+              "next": "N20"
+            }
+          ]
+        },
+        "N11": {
+          "type": "Action",
+          "action": {
+            "type": "DestroyBuilding",
+            "target": "Market",
+            "value": 1
+          },
+          "next": "N99",
+          "player_text": "The raid finds its mark. The Host’s Market is destroyed."
+        },
+        "N20": {
+          "type": "Action",
+          "action": {
+            "type": "Lose",
+            "target": "Morale",
+            "value": 1
+          },
+          "next": "N99",
+          "player_text": "The loss cannot reach the intended holding, but the alarm and humiliation cost the Host 1 Morale."
+        },
+        "N99": {
+          "type": "End"
+        }
+      }
+    },
+    "EF-ECHO-BG-02": {
+      "source": {
+        "type": "Echo",
+        "id": "ECHO-BG-02"
+      },
+      "trigger": "OnResolve",
+      "start_node": "N01",
+      "nodes": {
+        "N01": {
+          "type": "Roll",
+          "branches": [
+            {
+              "label": "1-4",
+              "input": "1d6",
+              "operator": "BETWEEN",
+              "value": "1..4",
+              "next": "N10"
+            },
+            {
+              "label": "5-6",
+              "input": "1d6",
+              "operator": "BETWEEN",
+              "value": "5..6",
+              "next": "N99",
+              "player_text": "The threat passes without finding a vulnerable target. No effect."
+            }
+          ]
+        },
+        "N10": {
+          "type": "Check",
+          "prompt": "Check the Host’s holdings",
+          "branches": [
+            {
+              "label": "Present",
+              "input": "Player.Buildings",
+              "operator": "HAS",
+              "value": "Academy",
+              "next": "N11"
+            },
+            {
+              "label": "Absent",
+              "input": "Player.Buildings",
+              "operator": "NOT_HAS",
+              "value": "Academy",
+              "next": "N20"
+            }
+          ]
+        },
+        "N11": {
+          "type": "Action",
+          "action": {
+            "type": "DestroyBuilding",
+            "target": "Academy",
+            "value": 1
+          },
+          "next": "N99",
+          "player_text": "The raiders reach the Academy and leave it ruined."
+        },
+        "N20": {
+          "type": "Action",
+          "action": {
+            "type": "Lose",
+            "target": "Morale",
+            "value": 1
+          },
+          "next": "N99",
+          "player_text": "The loss cannot reach the intended holding, but the alarm and humiliation cost the Host 1 Morale."
+        },
+        "N99": {
+          "type": "End"
+        }
+      }
+    },
+    "EF-ECHO-BG-03": {
+      "source": {
+        "type": "Echo",
+        "id": "ECHO-BG-03"
+      },
+      "trigger": "OnResolve",
+      "start_node": "N01",
+      "nodes": {
+        "N01": {
+          "type": "Roll",
+          "branches": [
+            {
+              "label": "1-4",
+              "input": "1d6",
+              "operator": "BETWEEN",
+              "value": "1..4",
+              "next": "N10"
+            },
+            {
+              "label": "5-6",
+              "input": "1d6",
+              "operator": "BETWEEN",
+              "value": "5..6",
+              "next": "N99",
+              "player_text": "The threat passes without finding a vulnerable target. No effect."
+            }
+          ]
+        },
+        "N10": {
+          "type": "Check",
+          "prompt": "Check the Host’s holdings",
+          "branches": [
+            {
+              "label": "Present",
+              "input": "Player.Buildings",
+              "operator": "HAS",
+              "value": "Chapel",
+              "next": "N11"
+            },
+            {
+              "label": "Absent",
+              "input": "Player.Buildings",
+              "operator": "NOT_HAS",
+              "value": "Chapel",
+              "next": "N20"
+            }
+          ]
+        },
+        "N11": {
+          "type": "Action",
+          "action": {
+            "type": "DestroyBuilding",
+            "target": "Chapel",
+            "value": 1
+          },
+          "next": "N99",
+          "player_text": "The reprisal reaches the Host’s sacred foundation. The Chapel is destroyed and the Priest is lost."
+        },
+        "N20": {
+          "type": "Action",
+          "action": {
+            "type": "Lose",
+            "target": "Morale",
+            "value": 1
+          },
+          "next": "N99",
+          "player_text": "The loss cannot reach the intended holding, but the alarm and humiliation cost the Host 1 Morale."
+        },
+        "N99": {
+          "type": "End"
+        }
+      }
+    },
+    "EF-SCENE-029": {
+      "source": {
+        "type": "Scene",
+        "id": "SCENE-029"
+      },
+      "trigger": "OnResolve",
+      "start_node": "N01",
+      "nodes": {
+        "N01": {
+          "type": "Select",
+          "prompt": "Choose the tribe with the highest Rapport",
+          "branches": [
+            {
+              "label": "SelectedTribe",
+              "input": "TribesHighestRapport",
+              "operator": null,
+              "value": null,
+              "next": "N02"
+            }
+          ]
+        },
+        "N02": {
+          "type": "Choice",
+          "prompt": "How will the Host answer the plea?",
+          "branches": [
+            {
+              "label": "Answer the Call",
+              "input": null,
+              "operator": null,
+              "value": null,
+              "next": "N10",
+              "notes": "Spend 2 Food or 2 Coin. Gain 1 Morale."
+            },
+            {
+              "label": "Send Protection",
+              "input": null,
+              "operator": null,
+              "value": null,
+              "next": "N20",
+              "notes": "Lose 1 Infantry or 1 Archer. Gain 1 Morale."
+            },
+            {
+              "label": "Turn Them Away",
+              "input": null,
+              "operator": null,
+              "value": null,
+              "next": "N30",
+              "notes": "Lose 1 Rapport with that tribe."
+            }
+          ]
+        },
+        "N10": {
+          "type": "Choice",
+          "prompt": "How will the Host provide aid?",
+          "branches": [
+            {
+              "label": "Spend 2 Food",
+              "input": "Player.Food",
+              "operator": "GTE",
+              "value": 2,
+              "next": "N11",
+              "notes": "Spend 2 Food. Gain 1 Morale."
+            },
+            {
+              "label": "Spend 2 Coin",
+              "input": "Player.Coin",
+              "operator": "GTE",
+              "value": 2,
+              "next": "N12",
+              "notes": "Spend 2 Coin. Gain 1 Morale."
+            }
+          ]
+        },
+        "N11": {
+          "type": "Action",
+          "action": {
+            "type": "Spend",
+            "target": "Food",
+            "value": 2
+          },
+          "next": "N13"
+        },
+        "N12": {
+          "type": "Action",
+          "action": {
+            "type": "Spend",
+            "target": "Coin",
+            "value": 2
+          },
+          "next": "N13"
+        },
+        "N13": {
+          "type": "Action",
+          "action": {
+            "type": "Gain",
+            "target": "Morale",
+            "value": 1
+          },
+          "next": "N99"
+        },
+        "N20": {
+          "type": "Select",
+          "prompt": "Choose 1 Infantry or Archer to send",
+          "branches": [
+            {
+              "label": "SelectedMilitaryUnit",
+              "input": "Host.ArcherOrInfantry",
+              "operator": null,
+              "value": null,
+              "next": "N21"
+            }
+          ]
+        },
+        "N21": {
+          "type": "Action",
+          "action": {
+            "type": "Lose",
+            "target": "SelectedMilitaryUnit",
+            "value": 1
+          },
+          "next": "N22"
+        },
+        "N22": {
+          "type": "Action",
+          "action": {
+            "type": "Gain",
+            "target": "Morale",
+            "value": 1
+          },
+          "next": "N99"
+        },
+        "N30": {
+          "type": "Action",
+          "action": {
+            "type": "AdjustRapport",
+            "target": "SelectedTribe",
+            "value": -1
+          },
+          "next": "N31"
+        },
+        "N31": {
+          "type": "Action",
+          "action": {
+            "type": "SeedRandomEcho",
+            "target": "EchoPool",
+            "value": "SS"
+          },
+          "next": "N99"
+        },
+        "N99": {
+          "type": "End"
+        }
+      }
+    },
+    "EF-ECHO-SS-01": {
+      "source": {
+        "type": "Echo",
+        "id": "ECHO-SS-01"
+      },
+      "trigger": "OnResolve",
+      "start_node": "N01",
+      "nodes": {
+        "N01": {
+          "type": "Roll",
+          "branches": [
+            {
+              "label": "1-4",
+              "input": "1d6",
+              "operator": "BETWEEN",
+              "value": "1..4",
+              "next": "N10",
+              "player_text": "The rumor takes hold. Until the damage fades, the next opportunity to improve relations will be lost."
+            },
+            {
+              "label": "5-6",
+              "input": "1d6",
+              "operator": "BETWEEN",
+              "value": "5..6",
+              "next": "N99",
+              "player_text": "The rumor travels, but finds little purchase. Those who hear it have heard worse tales, and the Host’s reputation suffers no further. No effect."
+            }
+          ]
+        },
+        "N10": {
+          "type": "Action",
+          "action": {
+            "type": "GainToken",
+            "target": "BadReputation",
+            "value": 1
+          },
+          "next": "N99"
+        },
+        "N99": {
+          "type": "End"
+        }
+      }
+    },
+    "EF-ECHO-SS-02": {
+      "source": {
+        "type": "Echo",
+        "id": "ECHO-SS-02"
+      },
+      "trigger": "OnResolve",
+      "start_node": "N01",
+      "nodes": {
+        "N01": {
+          "type": "Roll",
+          "branches": [
+            {
+              "label": "1-4",
+              "input": "1d6",
+              "operator": "BETWEEN",
+              "value": "1..4",
+              "next": "N10"
+            },
+            {
+              "label": "5-6",
+              "input": "1d6",
+              "operator": "BETWEEN",
+              "value": "5..6",
+              "next": "N99",
+              "player_text": "The bitterness fades before it can do further harm. No effect."
+            }
+          ]
+        },
+        "N10": {
+          "type": "Select",
+          "prompt": "Choose the tribe with the highest Rapport",
+          "branches": [
+            {
+              "label": "SelectedTribe",
+              "input": "TribesHighestRapport",
+              "operator": null,
+              "value": null,
+              "next": "N11"
+            }
+          ]
+        },
+        "N11": {
+          "type": "Action",
+          "action": {
+            "type": "AdjustRapport",
+            "target": "SelectedTribe",
+            "value": -1
+          },
+          "next": "N99"
+        },
+        "N99": {
+          "type": "End"
+        }
+      }
+    },
+    "EF-ECHO-SS-03": {
+      "source": {
+        "type": "Echo",
+        "id": "ECHO-SS-03"
+      },
+      "trigger": "OnResolve",
+      "start_node": "N01",
+      "nodes": {
+        "N01": {
+          "type": "Roll",
+          "branches": [
+            {
+              "label": "1-4",
+              "input": "1d6",
+              "operator": "BETWEEN",
+              "value": "1..4",
+              "next": "N10"
+            },
+            {
+              "label": "5-6",
+              "input": "1d6",
+              "operator": "BETWEEN",
+              "value": "5..6",
+              "next": "N99",
+              "player_text": "The story hurts, but does not spread far enough to shake the Host. No effect."
+            }
+          ]
+        },
+        "N10": {
+          "type": "Check",
+          "prompt": "Are any tribes Hostile?",
+          "branches": [
+            {
+              "label": "Yes",
+              "input": "Tribes.AnyHostile",
+              "operator": "EQ",
+              "value": true,
+              "next": "N11"
+            },
+            {
+              "label": "No",
+              "input": "Tribes.AnyHostile",
+              "operator": "EQ",
+              "value": false,
+              "next": "N12"
+            }
+          ]
+        },
+        "N11": {
+          "type": "Action",
+          "action": {
+            "type": "Lose",
+            "target": "Morale",
+            "value": 2
+          },
+          "next": "N99"
+        },
+        "N12": {
+          "type": "Action",
+          "action": {
+            "type": "Lose",
+            "target": "Morale",
+            "value": 1
+          },
+          "next": "N99"
+        },
+        "N99": {
+          "type": "End"
+        }
+      }
+    },
+    "EF-SCENE-030": {
+      "source": {
+        "type": "Scene",
+        "id": "SCENE-030"
+      },
+      "trigger": "OnResolve",
+      "start_node": "N01",
+      "nodes": {
+        "N01": {
+          "type": "Roll",
+          "branches": [
+            {
+              "label": "Rolled",
+              "input": "1d10",
+              "operator": "ALWAYS",
+              "value": null,
+              "next": "N02"
+            }
+          ]
+        },
+        "N02": {
+          "type": "Check",
+          "prompt": "Resolve the Morale test",
+          "branches": [
+            {
+              "label": "Pass",
+              "input": "Player.Morale",
+              "operator": "GTE",
+              "value": "LastRoll",
+              "next": "N99",
+              "player_text": "The Host finds its rhythm again. The march continues without further consequence."
+            },
+            {
+              "label": "Fail",
+              "input": "Player.Morale",
+              "operator": "LT",
+              "value": "LastRoll",
+              "next": "N10",
+              "player_text": "Weariness settles into the column. The Host begins to lose ground to every mile."
+            }
+          ]
+        },
+        "N10": {
+          "type": "Action",
+          "action": {
+            "type": "GainToken",
+            "target": "SlowMarch",
+            "value": 1
+          },
+          "next": "N11"
+        },
+        "N11": {
+          "type": "Action",
+          "action": {
+            "type": "SeedEcho",
+            "target": "CardID",
+            "value": "ECHO-BT-01"
+          },
+          "next": "N99"
+        },
+        "N99": {
+          "type": "End"
+        }
+      }
+    },
+    "EF-ECHO-BT-01": {
+      "source": {
+        "type": "Echo",
+        "id": "ECHO-BT-01"
+      },
+      "trigger": "OnResolve",
+      "start_node": "N01",
+      "nodes": {
+        "N01": {
+          "type": "Roll",
+          "branches": [
+            {
+              "label": "Rolled",
+              "input": "1d10",
+              "operator": "ALWAYS",
+              "value": null,
+              "next": "N02"
+            }
+          ]
+        },
+        "N02": {
+          "type": "Check",
+          "prompt": "Resolve the Morale test",
+          "branches": [
+            {
+              "label": "Pass",
+              "input": "Player.Morale",
+              "operator": "GTE",
+              "value": "LastRoll",
+              "next": "N10",
+              "player_text": "The Host recovers its pace. Whatever had weighed on the march finally breaks."
+            },
+            {
+              "label": "Fail",
+              "input": "Player.Morale",
+              "operator": "LT",
+              "value": "LastRoll",
+              "next": "N20",
+              "player_text": "The Host still cannot shake the weary cadence. The slow march continues."
+            }
+          ]
+        },
+        "N10": {
+          "type": "Action",
+          "action": {
+            "type": "RemoveToken",
+            "target": "SlowMarch",
+            "value": 1
+          },
+          "next": "N11"
+        },
+        "N11": {
+          "type": "Action",
+          "action": {
+            "type": "Remove",
+            "target": "Self",
+            "value": 1
+          },
+          "next": "N99"
+        },
+        "N20": {
+          "type": "Action",
+          "action": {
+            "type": "Discard",
+            "target": "Self",
+            "value": 1
+          },
+          "next": "N99"
+        },
+        "N99": {
+          "type": "End"
+        }
+      }
     }
   },
   "source_index": {
@@ -21026,6 +22269,102 @@
           "EF-ECHO-RR-04"
         ]
       }
+    },
+    "EXPLORE-033": {
+      "source_type": "Explore",
+      "triggers": {
+        "OnResolve": [
+          "EF-EXPLORE-033"
+        ]
+      }
+    },
+    "EXPLORE-034": {
+      "source_type": "Explore",
+      "triggers": {
+        "OnResolve": [
+          "EF-EXPLORE-034"
+        ]
+      }
+    },
+    "EXPLORE-035": {
+      "source_type": "Explore",
+      "triggers": {
+        "OnResolve": [
+          "EF-EXPLORE-035"
+        ]
+      }
+    },
+    "ECHO-BG-01": {
+      "source_type": "Echo",
+      "triggers": {
+        "OnResolve": [
+          "EF-ECHO-BG-01"
+        ]
+      }
+    },
+    "ECHO-BG-02": {
+      "source_type": "Echo",
+      "triggers": {
+        "OnResolve": [
+          "EF-ECHO-BG-02"
+        ]
+      }
+    },
+    "ECHO-BG-03": {
+      "source_type": "Echo",
+      "triggers": {
+        "OnResolve": [
+          "EF-ECHO-BG-03"
+        ]
+      }
+    },
+    "SCENE-029": {
+      "source_type": "Scene",
+      "triggers": {
+        "OnResolve": [
+          "EF-SCENE-029"
+        ]
+      }
+    },
+    "ECHO-SS-01": {
+      "source_type": "Echo",
+      "triggers": {
+        "OnResolve": [
+          "EF-ECHO-SS-01"
+        ]
+      }
+    },
+    "ECHO-SS-02": {
+      "source_type": "Echo",
+      "triggers": {
+        "OnResolve": [
+          "EF-ECHO-SS-02"
+        ]
+      }
+    },
+    "ECHO-SS-03": {
+      "source_type": "Echo",
+      "triggers": {
+        "OnResolve": [
+          "EF-ECHO-SS-03"
+        ]
+      }
+    },
+    "SCENE-030": {
+      "source_type": "Scene",
+      "triggers": {
+        "OnResolve": [
+          "EF-SCENE-030"
+        ]
+      }
+    },
+    "ECHO-BT-01": {
+      "source_type": "Echo",
+      "triggers": {
+        "OnResolve": [
+          "EF-ECHO-BT-01"
+        ]
+      }
     }
   },
   "external_sources": [
@@ -21350,7 +22689,8 @@
       "SeedRemainingEcho",
       "SetCost",
       "SetRapport",
-      "Spend"
+      "Spend",
+      "DestroyBuilding"
     ],
     "operators": [
       "ALWAYS",

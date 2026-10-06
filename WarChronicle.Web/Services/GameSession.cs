@@ -35,6 +35,31 @@ public sealed partial class GameSession
 
     private sealed record HarvestUndoAction(HarvestUndoKind Kind, int Position, string Resource, int CoinAmount = 0);
 
+    public sealed class CampOfferCardLog
+    {
+        public string Id { get; set; } = string.Empty;
+        public string Title { get; set; } = string.Empty;
+        public string CardType { get; set; } = string.Empty;
+    }
+
+    public sealed class CampOfferLog
+    {
+        public string Calendar { get; set; } = string.Empty;
+        public List<CampOfferCardLog> Drawn { get; set; } = [];
+        public string? SelectedCardId { get; set; }
+        public string? SelectedCardTitle { get; set; }
+    }
+
+    public sealed class ExploreDrawLog
+    {
+        public string Calendar { get; set; } = string.Empty;
+        public string CardId { get; set; } = string.Empty;
+        public string Title { get; set; } = string.Empty;
+        public string Terrain { get; set; } = string.Empty;
+        public bool MatchedTerrain { get; set; }
+        public string Outcome { get; set; } = string.Empty;
+    }
+
     private sealed record RefitUndoSnapshot(
         int ChronicleCount,
         int Morale,
@@ -71,6 +96,9 @@ public sealed partial class GameSession
     private readonly HashSet<string> _enabledContentSets = new(StringComparer.OrdinalIgnoreCase) { "Base" };
     private readonly List<CampCardState> _viewedCampCards = [];
     private readonly List<(string Resource, int Amount)> _pendingResourceGains = [];
+    private readonly List<CampOfferLog> _campOffers = [];
+    private readonly List<ExploreDrawLog> _exploreDraws = [];
+    private int _activeCampOfferIndex = -1;
 
     private WcDataCatalog? _catalog;
     private JsonElement? _activeFlow;
@@ -175,7 +203,7 @@ public sealed partial class GameSession
             }
 
             var choices = value.Options
-                .Select(o => new ChronicleChoice(o.Id, o.Label, o.Detail, o.Disabled))
+                .Select(o => new ChronicleChoice(o.Id, o.Label, o.Detail, o.Disabled, o.EchoIndicator))
                 .ToArray();
             Chronicle.Add(new(
                 CalendarStamp,
@@ -241,7 +269,8 @@ public sealed partial class GameSession
         {
             if (string.Equals(set, "SitA", StringComparison.OrdinalIgnoreCase)
                 || string.Equals(set, "SiaSL", StringComparison.OrdinalIgnoreCase)
-                || string.Equals(set, "PackC", StringComparison.OrdinalIgnoreCase))
+                || string.Equals(set, "PackC", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(set, "No Quarter", StringComparison.OrdinalIgnoreCase))
                 _enabledContentSets.Add(set);
         }
 
@@ -386,6 +415,18 @@ public sealed partial class GameSession
                 CampHand.Add(card);
         }
 
+        _campOffers.Add(new CampOfferLog
+        {
+            Calendar = CalendarStamp,
+            Drawn = CampHand.Select(c => new CampOfferCardLog
+            {
+                Id = c.Id,
+                Title = c.Title,
+                CardType = c.CardType
+            }).ToList()
+        });
+        _activeCampOfferIndex = _campOffers.Count - 1;
+
         // A Hostile Echo interrupts the whole hand. The first one drawn is
         // resolved and everything else drawn this Camp is discarded.
         var hostileEcho = CampHand.FirstOrDefault(IsHostileEcho);
@@ -439,6 +480,8 @@ public sealed partial class GameSession
             return false;
         if (card.Id == "CAMP-012" && !((!HasScouting && ResourceValue("Research") >= 1) || (!HasToken("CampSteward") && ResourceValue("Coin") >= 2)))
             return false;
+        if (card.Id == "CAMP-006" && ResourceValue("Coin") < 1)
+            return false;
         return true;
     }
 
@@ -460,6 +503,8 @@ public sealed partial class GameSession
             return "No unbuilt option can be afforded.";
         if (card.Id == "CAMP-012" && !((!HasScouting && ResourceValue("Research") >= 1) || (!HasToken("CampSteward") && ResourceValue("Coin") >= 2)))
             return "No available role can be afforded.";
+        if (card.Id == "CAMP-006" && ResourceValue("Coin") < 1)
+            return "You need at least 1 Coin to hire a Mercenary.";
         return string.Empty;
     }
 
@@ -471,6 +516,12 @@ public sealed partial class GameSession
         var card = CampActionChoices.FirstOrDefault(c => string.Equals(c.Id, cardId, StringComparison.OrdinalIgnoreCase));
         if (card is null || !CanChooseCampCard(card))
             return;
+
+        if (_activeCampOfferIndex >= 0 && _activeCampOfferIndex < _campOffers.Count)
+        {
+            _campOffers[_activeCampOfferIndex].SelectedCardId = card.Id;
+            _campOffers[_activeCampOfferIndex].SelectedCardTitle = card.Title;
+        }
 
         AddNarrativeText($"The Host turns its attention to {card.Title}.");
         CampStep = CampStep.ResolvingAction;
@@ -1360,8 +1411,8 @@ public sealed partial class GameSession
         {
             options.Add(new(
                 "winter-attrition:leadership",
-                "Commit 1 Leadership",
-                $"Spend 1 Leadership and roll 2d10. Lower is better: choose one result; {Morale} or less causes no losses."));
+                "Spend 1 Leadership",
+                $"Before making the Morale d10 roll, spend 1 Leadership to roll 2d10 and choose 1 result. Lower is better; {Morale} or less causes no losses."));
         }
 
         FlowPrompt = new(
@@ -2108,9 +2159,9 @@ public sealed partial class GameSession
         if (!forced && MobilizationStep != MobilizationStep.ExploreReady)
             return;
 
-        var cost = HasToken("ForcedMarch") || HasToken("Forced March") ? 1 : 2;
-        if (HasToken("HighOverlookClearRoad"))
-            cost = Math.Max(1, cost - 1);
+        var cost = HasToken("SlowMarch") || HasToken("Slow March")
+            ? 3
+            : HasToken("ForcedMarch") || HasToken("Forced March") ? 1 : 2;
 
         var riffRaffShortcut = HasToken("RiffRaffShortcut");
         if (riffRaffShortcut)
@@ -2195,6 +2246,12 @@ public sealed partial class GameSession
         if (_specialPrompt == "BaggageOverflow")
         {
             ResolveBaggageOverflowPrompt(optionId);
+            return;
+        }
+
+        if (_specialPrompt == "FirepotsPurge")
+        {
+            ResolveFirepotsPurgePrompt(optionId);
             return;
         }
 
@@ -2306,6 +2363,21 @@ public sealed partial class GameSession
             PrepareTestNarrative(branch, next);
             RecordChoiceNarrative(branch);
             AddPlayerText(branch);
+
+            var isFirepotsChoice = _activeFlowContext == FlowContext.Camp
+                && string.Equals(PendingCampCard?.Id, "SCENE-022", StringComparison.OrdinalIgnoreCase)
+                && (GetString(branch, "label") ?? string.Empty).StartsWith("Take the Firepots", StringComparison.OrdinalIgnoreCase);
+            if (isFirepotsChoice
+                && !Baggage.Any(b => !b.Damaged && string.IsNullOrWhiteSpace(b.Contents))
+                && Baggage.Any(b => !b.Damaged && !string.IsNullOrWhiteSpace(b.Contents) && IsPhysicalResource(b.Contents!)))
+            {
+                _flowVars["Firepots.PurgeNextNode"] = next;
+                FlowPrompt = null;
+                PresentFirepotsPurgePrompt();
+                Changed?.Invoke();
+                return;
+            }
+
             FlowPrompt = null;
             _activeNodeId = next;
             AdvanceFlow();
@@ -2381,6 +2453,9 @@ public sealed partial class GameSession
         _campMarketTradesRemaining = 0;
         _pendingCampActionNextNode = null;
         _pendingResourceGains.Clear();
+        _campOffers.Clear();
+        _exploreDraws.Clear();
+        _activeCampOfferIndex = -1;
         _pendingResourceGainResume = ResourceGainResume.None;
         _pendingResourceGainNextNode = null;
         _pendingResourceGainOpenStaging = false;
@@ -2582,15 +2657,23 @@ public sealed partial class GameSession
         var card = _exploreDeck[0];
         _exploreDeck.RemoveAt(0);
         var matches = card.TerrainKeywords.Any(k =>
-            string.Equals(k, CurrentExploreTerrain.ToString(), StringComparison.OrdinalIgnoreCase));
+            string.Equals(k, "Any", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(k, CurrentExploreTerrain.ToString(), StringComparison.OrdinalIgnoreCase));
+
+        _exploreDraws.Add(new ExploreDrawLog
+        {
+            Calendar = CalendarStamp,
+            CardId = card.Id,
+            Title = card.Title,
+            Terrain = CurrentExploreTerrain.ToString(),
+            MatchedTerrain = matches,
+            Outcome = matches ? "Triggered" : "TerrainMismatch"
+        });
 
         var clearRoadActive = HasToken("HighOverlookClearRoad");
 
         if (!matches)
         {
-            if (clearRoadActive)
-                ActiveTokens.Remove("HighOverlookClearRoad");
-
             PendingExploreCard = null;
             AddUneventfulExploreNarrative();
             MobilizationStep = MobilizationStep.ArrivalReady;
@@ -2616,10 +2699,10 @@ public sealed partial class GameSession
             FlowPrompt = new(
                 FlowPromptKind.Choice,
                 "High Overlook",
-                "The marked clear road lets you ignore this Explore card. Resolve it or pass it by?",
+                "Clear Road can cancel this triggered Explore event before any part of it is resolved.",
                 [
-                    new("high-overlook:resolve", "Resolve the Explore card"),
-                    new("high-overlook:ignore", "Ignore the Explore card")
+                    new("high-overlook:resolve", "Resolve the Explore event", "Keep Clear Road for a future Explore event"),
+                    new("high-overlook:ignore", "Discard Clear Road and ignore this event")
                 ]);
             Changed?.Invoke();
             return;
@@ -2630,12 +2713,16 @@ public sealed partial class GameSession
 
     private void ResolveHighOverlookPrompt(string optionId)
     {
-        ActiveTokens.Remove("HighOverlookClearRoad");
         _specialPrompt = null;
         FlowPrompt = null;
 
         if (optionId == "high-overlook:ignore")
         {
+            ActiveTokens.Remove("HighOverlookClearRoad");
+            if (_exploreDraws.Count > 0 && PendingExploreCard is not null
+                && string.Equals(_exploreDraws[^1].CardId, PendingExploreCard.Id, StringComparison.OrdinalIgnoreCase))
+                _exploreDraws[^1].Outcome = "IgnoredByHighOverlook";
+
             _logger.LogInformation("High Overlook ignored Explore card {CardId}.", PendingExploreCard?.Id);
             AddNarrativeText("The Host follows the marked clear road and leaves the encounter behind.");
             CompleteExploreEncounter();
@@ -2947,17 +3034,11 @@ public sealed partial class GameSession
         var fallback = TributeFallbackCoinCost(resource, amount);
         if (fallback is int fallbackCost && ResourceValue("Coin") >= fallbackCost)
         {
-            _pendingTributeFallbackCost = fallbackCost;
-            _pendingTributeFallbackResource = resource;
-            _specialPrompt = "ArrivalTributeFallback";
-            FlowPrompt = new(
-                FlowPromptKind.Choice,
-                "Tribute",
-                $"The Host cannot provide {amount} {resource}. Pay Coin instead?",
-                [
-                    new("tribute:pay-fallback", $"Pay {fallbackCost} Coin", "Pay the full fallback and continue."),
-                    new("tribute:decline", "Do not pay", "Attempt passage without the tribute.")
-                ]);
+            // Printed Resource Tribute uses a mandatory Coin fallback when the
+            // requested Resource is unavailable and the Host can afford it.
+            AdjustResource("Coin", -fallbackCost);
+            AddNarrativeText($"With no {resource} to offer, the Host must pay {fallbackCost} Coin instead.");
+            AfterTributePaid();
             return;
         }
 
@@ -3029,20 +3110,21 @@ public sealed partial class GameSession
 
     private void ResolveTributeFallbackPrompt(string optionId)
     {
+        // Compatibility for saves created before v0.5.0.33 while a fallback
+        // prompt was open. The fallback is mandatory if it can still be paid.
         FlowPrompt = null;
         _specialPrompt = null;
 
-        if (optionId == "tribute:pay-fallback" && ResourceValue("Coin") >= _pendingTributeFallbackCost)
+        if (_pendingTributeFallbackCost > 0 && ResourceValue("Coin") >= _pendingTributeFallbackCost)
         {
             AdjustResource("Coin", -_pendingTributeFallbackCost);
-            AddNarrativeText($"With no {_pendingTributeFallbackResource} to offer, the Host pays {_pendingTributeFallbackCost} Coin instead.");
+            AddNarrativeText($"With no {_pendingTributeFallbackResource} to offer, the Host must pay {_pendingTributeFallbackCost} Coin instead.");
             _pendingTributeFallbackCost = 0;
             _pendingTributeFallbackResource = null;
             AfterTributePaid();
         }
         else
         {
-            AddNarrativeText("The Host declines the Coin fallback.");
             _pendingTributeFallbackCost = 0;
             _pendingTributeFallbackResource = null;
             ContinueAfterUnpaidTribute();
@@ -3417,9 +3499,13 @@ public sealed partial class GameSession
                 && label.StartsWith("Armor Development", StringComparison.OrdinalIgnoreCase)
                 && _armorSupply.Count == 0;
             var branchAllowed = BranchConditionAllowed(branch) && !drillArmorUnavailable;
+            var noQuarterTollChoice = _activeFlowContext == FlowContext.Explore
+                && PendingExploreCard?.Id is "EXPLORE-033" or "EXPLORE-034" or "EXPLORE-035";
             if (firepotsBaggageChoice)
-                branchAllowed = branchAllowed && Baggage.Any(b => !b.Damaged && string.IsNullOrWhiteSpace(b.Contents));
-            if (!branchAllowed && !hostileEchoParley && !firepotsBaggageChoice && !drillArmorUnavailable)
+                branchAllowed = branchAllowed && Baggage.Any(b =>
+                    !b.Damaged
+                    && (string.IsNullOrWhiteSpace(b.Contents) || IsPhysicalResource(b.Contents!)));
+            if (!branchAllowed && !hostileEchoParley && !firepotsBaggageChoice && !drillArmorUnavailable && !noQuarterTollChoice)
                 continue;
 
             if (_activeFlowContext == FlowContext.Camp && !CampBranchAllowed(label) && !drillArmorUnavailable)
@@ -3502,9 +3588,12 @@ public sealed partial class GameSession
             }
             else if (firepotsBaggageChoice)
             {
+                var hasEmptyBaggageSpace = Baggage.Any(b => !b.Damaged && string.IsNullOrWhiteSpace(b.Contents));
                 detail = branchAllowed
-                    ? "Uses 1 empty Baggage Train space. Gain Firepots. Before the first Combat round, you may remove Firepots and roll 3d6; each 4+ inflicts 1 casualty as if from a Cavalry attack."
-                    : "Unavailable: requires 1 empty, undamaged Baggage Train space.";
+                    ? hasEmptyBaggageSpace
+                        ? "Uses 1 empty Baggage Train space. Gain Firepots. Before the first Combat round, you may remove Firepots and roll 3d6; each 4+ inflicts 1 casualty as if from a Cavalry attack."
+                        : "The Baggage Train is full. Choose 1 occupied Resource space to purge, then place Firepots there. Before the first Combat round, you may remove Firepots and roll 3d6; each 4+ inflicts 1 casualty as if from a Cavalry attack."
+                    : "Unavailable: requires 1 undamaged Baggage Train space that is empty or contains a Resource you can purge.";
             }
             else if (string.Equals(label, "Attack", StringComparison.OrdinalIgnoreCase) && PendingArrivalCard is not null)
             {
@@ -3512,8 +3601,32 @@ public sealed partial class GameSession
                 detail = string.IsNullOrWhiteSpace(detail) ? $"Enemy Host: {enemy}" : $"{detail} Enemy Host: {enemy}";
             }
 
+            if (noQuarterTollChoice)
+            {
+                var toll = PendingExploreCard?.Id switch
+                {
+                    "EXPLORE-033" => 2,
+                    "EXPLORE-034" => 3,
+                    "EXPLORE-035" => 4,
+                    _ => 0
+                };
+                if (label.Equals("Pay the Toll", StringComparison.OrdinalIgnoreCase))
+                {
+                    label = $"Give Them the {toll} Coins";
+                    var have = ResourceValue("Coin");
+                    detail = branchAllowed
+                        ? $"Give them {toll} Coin and continue."
+                        : $"Unavailable: requires {toll} Coin; you have {have}.";
+                }
+                else if (label.Equals("Refuse", StringComparison.OrdinalIgnoreCase))
+                {
+                    detail = "Refuse their demand.";
+                }
+            }
+
             detail = DoNotChooseBlindDetail(label, detail);
-            options.Add(new($"branch:{i}", label, string.IsNullOrWhiteSpace(detail) ? null : detail, !branchAllowed));
+            var echoIndicator = BranchSeedsEcho(branch);
+            options.Add(new($"branch:{i}", label, string.IsNullOrWhiteSpace(detail) ? null : detail, !branchAllowed, echoIndicator));
         }
 
         if (options.Count == 0)
@@ -3538,6 +3651,43 @@ public sealed partial class GameSession
             options);
     }
 
+    private bool BranchSeedsEcho(JsonElement branch)
+    {
+        if (_activeFlow is null || !_activeFlow.Value.TryGetProperty("nodes", out var nodes))
+            return false;
+
+        var next = GetString(branch, "next");
+        var visited = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        while (!string.IsNullOrWhiteSpace(next) && visited.Add(next))
+        {
+            if (!nodes.TryGetProperty(next, out var node))
+                return false;
+
+            var nodeType = GetString(node, "type") ?? string.Empty;
+            if (string.Equals(nodeType, "Action", StringComparison.OrdinalIgnoreCase))
+            {
+                if (node.TryGetProperty("action", out var action))
+                {
+                    var actionType = GetString(action, "type") ?? string.Empty;
+                    if (string.Equals(actionType, "SeedEcho", StringComparison.OrdinalIgnoreCase)
+                        || string.Equals(actionType, "SeedRandomEcho", StringComparison.OrdinalIgnoreCase))
+                        return true;
+                }
+                next = GetString(node, "next");
+                continue;
+            }
+
+            if (string.Equals(nodeType, "End", StringComparison.OrdinalIgnoreCase))
+                return false;
+
+            // A later Choice, Select, Roll, Test, or Check means Echo seeding is
+            // not guaranteed by the choice currently on screen.
+            return false;
+        }
+
+        return false;
+    }
+
     /// <summary>
     /// Supplies player-visible immediate consequences for story-labelled
     /// choices while deliberately omitting hidden downstream information.
@@ -3546,6 +3696,14 @@ public sealed partial class GameSession
     {
         if (currentDetail.StartsWith("Unavailable:", StringComparison.OrdinalIgnoreCase))
             return currentDetail;
+
+        // Echo plumbing is intentionally concealed. The UI uses the Echo icon
+        // to signal a future consequence without naming a pool or seeded card.
+        currentDetail = Regex.Replace(
+            currentDetail,
+            @"\s*(?:and\s+)?Seed\s+[^.]*Echo(?:es)?\.?",
+            string.Empty,
+            RegexOptions.IgnoreCase).Trim();
 
         var sourceId = _activeFlowContext switch
         {
@@ -3606,28 +3764,41 @@ public sealed partial class GameSession
             ("CAMP-010", "Purchase Advancement/Armor") =>
                 "Purchase an Advancement or Armor Development for 1 less Research, to a minimum Research cost of 1. Pay all other printed costs. After Drill resolves, regain 1 Leadership.",
             ("CAMP-010", "Gain Research") =>
-                "Gain 1 Research. You may then discard the top Tactics card for free. After Drill resolves, regain 1 Leadership.",
+                "Gain 1 Research. You may then discard the top Advancement card for free. After Drill resolves, regain 1 Leadership.",
             ("CAMP-010", "Top Advancement card") =>
                 "Purchase the top Advancement card for 1 less Research, to a minimum Research cost of 1. Pay all other printed costs.",
             ("CAMP-010", "Armor Development from R&R Offer") =>
                 "Purchase an Armor Development from the R&R offer for 1 less Research, to a minimum Research cost of 1. Pay all other printed costs.",
             ("CAMP-010", "Yes") =>
-                "Discard the top Tactics card for free, then reveal the next card.",
+                "Discard the top Advancement card for free, then reveal the next Advancement.",
             ("CAMP-010", "No") =>
-                "Keep the current top Tactics card.",
+                "Keep the current top Advancement card.",
 
             ("CAMP-012", "Train Scouts") =>
                 "Spend 1 Research. Gain Scouting: when Exploring, draw 2 Terrain cards and choose 1.",
             ("CAMP-012", "Appoint Camp Steward") =>
                 "Spend 2 Coin. Gain Camp Steward: during Work, you may instead gain 1 Resource matching the adjacent Terrain or buy 1 Resource for 1 Coin less than its Market Buy value.",
 
+            ("SCENE-014", "Yes") =>
+                "Spend 1 Coin and roll 1d6. 1: lose 1 Morale; 2: no effect; 3: gain 1 Coin; 4: gain 1 Coin and 1 Leadership; 5: gain 2 Coin and 1 Leadership; 6: gain 3 Coin and 1 Leadership. On 4–6, you may pay 1 Coin to roll again.",
+            ("SCENE-014", "No") =>
+                "Leave the wager alone. No effect.",
+
+            ("SCENE-017", "Yes") =>
+                "Gain 2 Food and 5 Coin.",
+            ("SCENE-017", "No") =>
+                "No immediate effect.",
+
             ("SCENE-020", "Send in a Fighter") =>
-                "Choose 1 Military Unit, then roll 1d6. 1: lose that Unit; 2–3: lose 1 Morale; 4–5: gain 2 Coin; 6: gain 3 Coin and 1 Morale.",
+                "Choose 1 Archer, Cavalry, Infantry, Mercenary, or Hedge Knight, then roll 1d6. 1: lose that Unit; 2–3: lose 1 Morale; 4–5: gain 2 Coin; 6: gain 3 Coin and 1 Morale.",
             ("SCENE-020", "Refuse the Challenge") =>
                 "Lose 1 Morale.",
 
+            ("ARRIVAL-015", "Preserve the Tablets (9+)") =>
+                "Pass: Gain 1 Research and 1 Rapport. Fail: Lose 1 Coin.",
+
             ("SCENE-022", "Take the Firepots") =>
-                "Requires 1 empty, undamaged Baggage Train space. Gain Firepots. Before the first Combat round, you may remove it and roll 3d6; each 4+ assigns 1 casualty as if from a Cavalry attack.",
+                currentDetail,
             ("SCENE-022", "Condemn the Stockpile") =>
                 "Gain 1 Leadership and lose 1 Morale.",
 
@@ -3705,7 +3876,7 @@ public sealed partial class GameSession
                 "Test 8+ using the combined Rapport DRM from all tribes. Pass: gain 6 Coin. Fail: lose 1 Rapport with every tribe; unmet tribes become Hostile.",
 
             ("EXPLORE-023", "Mark the Clear Road") =>
-                "Your next Explore costs 1 less Time, to a minimum of 1. When its Explore card is revealed, you may ignore that card's effect; then remove this reminder.",
+                "Gain the Clear Road token. When an Explore event triggers, before resolving any part of it, you may discard Clear Road to ignore that event.",
             ("EXPLORE-023", "Scout the Approach") =>
                 "The next time you reveal a Clearing, gain 1 Leadership if it has a Barbarian icon; otherwise gain 1 Morale.",
 
@@ -3807,12 +3978,41 @@ public sealed partial class GameSession
         {
             var cap = int.Parse(integerRange.Groups[1].Value);
             var max = Math.Min(cap, ResourceValue("Coin"));
-            for (var i = 0; i <= max; i++)
+            var min = _activeFlowContext == FlowContext.Camp
+                && string.Equals(PendingCampCard?.Id, "CAMP-006", StringComparison.OrdinalIgnoreCase)
+                    ? 1
+                    : 0;
+            for (var i = min; i <= max; i++)
             {
                 var detail = i == 0
                     ? "Recruit no Mercenaries."
                     : $"Spend {i} Coin. Add {i} Mercenar{(i == 1 ? "y" : "ies")} to your Host.";
                 options.Add(new($"select:{i}", i == 0 ? "Recruit none" : $"Recruit {i}", detail));
+            }
+            return options;
+        }
+
+        if (string.Equals(input, "TribesHighestRapport", StringComparison.OrdinalIgnoreCase))
+        {
+            var encountered = Tribes
+                .Where(t => !string.Equals(t.Rapport, "Unmet", StringComparison.OrdinalIgnoreCase))
+                .ToList();
+            if (encountered.Count > 0)
+            {
+                var best = encountered.Max(t => RapportDrm(t.Rapport));
+                foreach (var tribe in encountered.Where(t => RapportDrm(t.Rapport) == best))
+                    options.Add(new($"select:{tribe.Name}", tribe.Name, tribe.Rapport));
+            }
+            return options;
+        }
+
+        if (string.Equals(input, "Host.ArcherOrInfantry", StringComparison.OrdinalIgnoreCase))
+        {
+            foreach (var type in new[] { "Archers", "Infantry" })
+            {
+                var count = HostCount(type);
+                if (count > 0)
+                    options.Add(new($"select:{type}", type, $"{count} in Host"));
             }
             return options;
         }
@@ -3850,7 +4050,7 @@ public sealed partial class GameSession
 
         if (string.Equals(input, "Host.MilitaryUnits", StringComparison.OrdinalIgnoreCase))
         {
-            foreach (var unit in Host.Where(u => u.Count > 0 && u.Type is "Archers" or "Cavalry" or "Infantry"))
+            foreach (var unit in Host.Where(u => u.Count > 0 && u.Type is "Archers" or "Cavalry" or "Infantry" or "Mercenaries" or "Hedge Knights"))
                 options.Add(new($"select:{unit.Type}", unit.Type, $"{unit.Count} in Host"));
             return options;
         }
@@ -4125,6 +4325,9 @@ public sealed partial class GameSession
             case "1d3":
                 _lastRollResults.Add(Random.Shared.Next(1, 4));
                 break;
+            case "1d10":
+                _lastRollResults.Add(Random.Shared.Next(1, 11));
+                break;
             case "1d6PerHostInfantry":
                 for (var i = 0; i < HostCount("Infantry"); i++)
                     _lastRollResults.Add(Random.Shared.Next(1, 7));
@@ -4275,6 +4478,10 @@ public sealed partial class GameSession
         {
             AddSystemText($"D3 roll: {_lastRollResults[0]}.");
         }
+        else if (input == "1d10" && _lastRollResults.Count == 1)
+        {
+            AddSystemText($"Morale roll (d10): {_lastRollResults[0]}.");
+        }
         else if (_lastRollResults.Count == 1)
         {
             AddSystemText($"Roll: {_lastRollResults[0]}.");
@@ -4297,6 +4504,7 @@ public sealed partial class GameSession
         {
             if (BranchConditionAllowed(branch))
             {
+                AddPlayerText(branch);
                 _activeNodeId = GetString(branch, "next");
                 return;
             }
@@ -4663,6 +4871,9 @@ public sealed partial class GameSession
             case "AddBuilding":
                 AddBuilding(target);
                 break;
+            case "DestroyBuilding":
+                DestroyBuilding(target);
+                break;
             case "AddUpgrade":
                 AddUpgrade(target);
                 break;
@@ -4703,7 +4914,8 @@ public sealed partial class GameSession
                 SeedEchoInternal(type, target, Convert.ToString(value));
                 break;
             case "Discard":
-                if (string.Equals(target, "DeckTop:Tactics", StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(target, "DeckTop:Tactics", StringComparison.OrdinalIgnoreCase)
+                    || string.Equals(target, "DeckTop:Advancement", StringComparison.OrdinalIgnoreCase))
                     DiscardTopTacticsCard();
                 else
                     HandleCampCardDisposition(target, "Discard", flags);
@@ -4724,7 +4936,8 @@ public sealed partial class GameSession
                 ReturnViewedCampCardsToTop();
                 break;
             case "Reveal":
-                if (string.Equals(target, "DeckTop:Tactics", StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(target, "DeckTop:Tactics", StringComparison.OrdinalIgnoreCase)
+                    || string.Equals(target, "DeckTop:Advancement", StringComparison.OrdinalIgnoreCase))
                     RevealTopTacticsCard(flags);
                 else
                     _logger.LogInformation("EventFlow action {Type} {Target} handled as platform/no-op at this stage.", type, target);
@@ -4739,6 +4952,13 @@ public sealed partial class GameSession
                 break;
         }
 
+        // EventFlow effects can remove the last Unit outside Combat (for example,
+        // Plague Pit). Check immediately after every action so a destroyed Host
+        // cannot continue into another node, Arrival, or Camp. Winter and Combat
+        // use their own defeat timing.
+        if (CheckForHostDestroyedDefeat())
+            return false;
+
         _activeNodeId = next;
         return true;
     }
@@ -4751,23 +4971,12 @@ public sealed partial class GameSession
             return;
         }
 
-        // Drill the Host's data target is DeckTop:Tactics. In the physical game,
-        // Tactics and Developments share the Advancement deck, so this action
-        // discards the currently revealed top Advancement when it is a Tactic.
+        // Drill the Host discards the revealed top Advancement regardless of
+        // whether that card is a Tactic or a Development.
         var top = _advancementDeck[0];
-        var isTactic = top.Id.StartsWith("ADV-", StringComparison.OrdinalIgnoreCase)
-            && int.TryParse(top.Id.AsSpan(4), out var number)
-            && number is >= 7 and <= 15;
-
-        if (!isTactic)
-        {
-            AddNarrativeText($"{top.Name} is not a Tactic, so it is not discarded.");
-            return;
-        }
-
         _advancementDeck.RemoveAt(0);
         RefreshAdvancementOffer();
-        _flowVars["Drill.DiscardedTactic"] = top.Name;
+        _flowVars["Drill.DiscardedAdvancement"] = top.Name;
         AddNarrativeText($"Discard {top.Name} from the top of the Advancement deck for free.");
     }
 
@@ -4782,8 +4991,9 @@ public sealed partial class GameSession
 
         var top = _advancementDeck[0];
         var suffix = HasFlag(flags, "CannotPurchaseRevealedTacticThisPhase")
-            ? " It cannot be purchased during this Camp phase."
-            : string.Empty;
+            || HasFlag(flags, "CannotPurchaseRevealedAdvancementThisPhase")
+                ? " It cannot be purchased during this Camp phase."
+                : string.Empty;
         AddNarrativeText($"Reveal {top.Name} as the next Advancement.{suffix}");
     }
 
@@ -4875,6 +5085,19 @@ public sealed partial class GameSession
             return;
         }
 
+        if (string.Equals(target, "SlowMarch", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(target, "Slow March", StringComparison.OrdinalIgnoreCase))
+        {
+            ActiveTokens.Remove("ForcedMarch");
+            ActiveTokens.Remove("Forced March");
+        }
+        else if (string.Equals(target, "ForcedMarch", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(target, "Forced March", StringComparison.OrdinalIgnoreCase))
+        {
+            ActiveTokens.Remove("SlowMarch");
+            ActiveTokens.Remove("Slow March");
+        }
+
         ActiveTokens.Add(target);
         if (string.Equals(target, "Scouting", StringComparison.OrdinalIgnoreCase) && !PersistentItems.Any(p => p.Name == "Scouting"))
             PersistentItems.Add(new("Scouting"));
@@ -4890,7 +5113,7 @@ public sealed partial class GameSession
         var tokenNarrative = target switch
         {
             "AncientPathway" => "The ancient pathway points toward the next settlement. If the next Clearing is vacant, gain 1 Leadership.",
-            "HighOverlookClearRoad" => "The scouts mark a clearer route ahead. The next march should be quicker and easier to navigate.",
+            "HighOverlookClearRoad" => "The scouts mark a clear road through danger ahead. Clear Road may be discarded before resolving a triggered Explore event to ignore that event.",
             "HighOverlookScoutApproach" => "Scouts are sent ahead to study the next approach and prepare the Host for what waits there.",
             _ when !string.IsNullOrWhiteSpace(tokenRules) => $"Gain {DisplayTokenName(target)}. {DisplayTokenName(target)}: {tokenRules}",
             _ => $"Gain {DisplayTokenName(target)}."
@@ -4938,6 +5161,17 @@ public sealed partial class GameSession
 
     private bool HasBuilding(string target)
         => PersistentItems.Any(p => string.Equals(p.Name, target, StringComparison.OrdinalIgnoreCase));
+
+    private void DestroyBuilding(string target)
+    {
+        PersistentItems.RemoveAll(p => string.Equals(p.Name, target, StringComparison.OrdinalIgnoreCase));
+        if (string.Equals(target, "Chapel", StringComparison.OrdinalIgnoreCase))
+        {
+            _hasPriest = false;
+            _priestSource = null;
+        }
+        _logger.LogInformation("Building destroyed: {Building}", target);
+    }
 
     private void AddUpgrade(string target)
     {
@@ -5622,6 +5856,70 @@ public sealed partial class GameSession
         Changed?.Invoke();
     }
 
+    private void PresentFirepotsPurgePrompt()
+    {
+        var options = new List<FlowPromptOption>();
+        foreach (var slot in Baggage.Where(b =>
+                     !b.Damaged
+                     && !string.IsNullOrWhiteSpace(b.Contents)
+                     && IsPhysicalResource(b.Contents!)))
+        {
+            var quantity = string.Equals(slot.Contents, "Food", StringComparison.OrdinalIgnoreCase)
+                ? Math.Max(1, slot.Quantity)
+                : 1;
+            options.Add(new(
+                $"firepots-purge:{slot.Position}",
+                $"Purge {quantity} {slot.Contents}",
+                $"Free Baggage space {slot.Position} for the Firepots."));
+        }
+
+        if (options.Count == 0)
+        {
+            _logger.LogWarning("Firepots purge prompt requested with no purgeable Baggage Train Resource space.");
+            _specialPrompt = null;
+            FlowPrompt = null;
+            return;
+        }
+
+        _specialPrompt = "FirepotsPurge";
+        FlowPrompt = new(
+            FlowPromptKind.Choice,
+            "Feuer Frei!",
+            "The Baggage Train is full. Purge the contents of 1 occupied Resource space to make room for the Firepots.",
+            options);
+    }
+
+    private void ResolveFirepotsPurgePrompt(string optionId)
+    {
+        if (!optionId.StartsWith("firepots-purge:", StringComparison.OrdinalIgnoreCase)
+            || !int.TryParse(optionId[15..], out var position))
+            return;
+
+        var index = Baggage.FindIndex(b =>
+            b.Position == position
+            && !b.Damaged
+            && !string.IsNullOrWhiteSpace(b.Contents)
+            && IsPhysicalResource(b.Contents!));
+        if (index < 0)
+            return;
+
+        var resource = Baggage[index].Contents!;
+        var quantity = string.Equals(resource, "Food", StringComparison.OrdinalIgnoreCase)
+            ? Math.Max(1, Baggage[index].Quantity)
+            : 1;
+        Baggage[index] = Baggage[index] with { Contents = null, Quantity = 1 };
+        AdjustResource(resource, -quantity);
+        AddNarrativeText($"The Host leaves {quantity} {resource} behind to make room for the Firepots.");
+
+        var next = Convert.ToString(_flowVars.TryGetValue("Firepots.PurgeNextNode", out var storedNext) ? storedNext : null);
+        _flowVars.Remove("Firepots.PurgeNextNode");
+        _specialPrompt = null;
+        FlowPrompt = null;
+        _activeNodeId = next;
+        AdvanceFlow();
+        Changed?.Invoke();
+    }
+
     private void PresentBaggageOverflowPrompt()
     {
         if (_pendingResourceGains.Count == 0)
@@ -5762,7 +6060,12 @@ public sealed partial class GameSession
         if (string.Equals(target, "Leadership", StringComparison.OrdinalIgnoreCase))
         {
             Leadership += amount;
-            AddNarrativeText($"Gain {amount} Leadership.");
+            if (_activeFlowContext == FlowContext.Camp
+                && string.Equals(PendingCampCard?.Id, "CAMP-010", StringComparison.OrdinalIgnoreCase)
+                && amount == 1)
+                AddNarrativeText("Regain the 1 Leadership committed to Drill the Host.");
+            else
+                AddNarrativeText($"Gain {amount} Leadership.");
             return;
         }
 
@@ -6132,6 +6435,14 @@ public sealed partial class GameSession
         if (delta == 0)
             return;
 
+        if (delta > 0 && (HasToken("BadReputation") || HasToken("Bad Reputation")))
+        {
+            ActiveTokens.Remove("BadReputation");
+            ActiveTokens.Remove("Bad Reputation");
+            AddNarrativeText("Bad Reputation catches up with the Host. This Rapport gain is lost, and the reminder is removed.");
+            return;
+        }
+
         var safeFlags = flags ?? Array.Empty<JsonElement>();
         var noShortfall = HasFlag(safeFlags, "IfAble") || HasFlag(safeFlags, "NoShortfall");
 
@@ -6262,6 +6573,18 @@ public sealed partial class GameSession
         AddNarrativeText($"Gain {advancement.Name}.");
     }
 
+    private void MarkLatestChronicleEntryEchoIndicator()
+    {
+        for (var i = Chronicle.Count - 1; i >= 0; i--)
+        {
+            var entry = Chronicle[i];
+            if (entry.Choices is not null)
+                continue;
+            Chronicle[i] = entry with { EchoIndicator = true };
+            return;
+        }
+    }
+
     private void SeedEchoInternal(string type, string target, string? value)
     {
         if (string.Equals(type, "SeedRandomEcho", StringComparison.OrdinalIgnoreCase))
@@ -6281,6 +6604,7 @@ public sealed partial class GameSession
         var entry = $"{type}:{target}:{value}";
         _seededEchoes.Add(entry);
         _logger.LogInformation("Internal Echo seed: {Entry}", entry);
+        MarkLatestChronicleEntryEchoIndicator();
     }
 
     private void SeedEchoByPool(string? pool, bool random)
@@ -6299,6 +6623,7 @@ public sealed partial class GameSession
         _seededEchoes.Add(card.Id);
         RecordEchoOrigin(card.Id);
         _logger.LogInformation("Internal Echo seeded into Camp discard: {CardId}", card.Id);
+        MarkLatestChronicleEntryEchoIndicator();
     }
 
     private void SeedSpecificEcho(string? cardId)
@@ -6313,6 +6638,7 @@ public sealed partial class GameSession
         _seededEchoes.Add(card.Id);
         RecordEchoOrigin(card.Id);
         _logger.LogInformation("Internal Echo seeded into Camp discard: {CardId}", card.Id);
+        MarkLatestChronicleEntryEchoIndicator();
     }
 
     private void RecordEchoOrigin(string echoId)
@@ -6377,7 +6703,9 @@ public sealed partial class GameSession
             ("CAMP-007", "Buy 1 additional Resource") => ResourceValue("Coin") >= 1 && new[] { "Food", "Wood", "Stone" }.Any(r => CanAddPhysicalResource(r, 1)),
             ("CAMP-009", "Raise Levies") => ResourceValue("Food") >= 1 && AvailableForceCount("Levy") > 0 && HostCount("Levy") < 6,
             ("CAMP-012", "Appoint Camp Steward") => !HasToken("CampSteward") && ResourceValue("Coin") >= 2,
-            ("SCENE-020", "Send in a Fighter") => Host.Any(u => u.Count > 0 && u.Type is "Archers" or "Cavalry" or "Infantry"),
+            ("SCENE-020", "Send in a Fighter") => Host.Any(u => u.Count > 0 && u.Type is "Archers" or "Cavalry" or "Infantry" or "Mercenaries" or "Hedge Knights"),
+            ("SCENE-029", "Answer the Call") => ResourceValue("Food") >= 2 || ResourceValue("Coin") >= 2,
+            ("SCENE-029", "Send Protection") => HostCount("Infantry") > 0 || HostCount("Archers") > 0,
             _ => true
         };
     }
@@ -6421,6 +6749,8 @@ public sealed partial class GameSession
         }
         if (string.Equals(input, "Player.Leadership", StringComparison.OrdinalIgnoreCase))
             return Leadership;
+        if (string.Equals(input, "Tribes.AnyHostile", StringComparison.OrdinalIgnoreCase))
+            return Tribes.Any(t => string.Equals(t.Rapport, "Hostile", StringComparison.OrdinalIgnoreCase));
         if (string.Equals(input, "Host.TotalUnits", StringComparison.OrdinalIgnoreCase))
             return TotalHostUnits();
         if (string.Equals(input, "Host.Infantry", StringComparison.OrdinalIgnoreCase))
@@ -7076,6 +7406,18 @@ public sealed partial class GameSession
 
     private int TotalHostUnits() => Host.Sum(u => u.Count);
 
+    private bool CheckForHostDestroyedDefeat()
+    {
+        if (Phase is GamePhase.GameOver or GamePhase.Winter or GamePhase.Finale)
+            return Phase == GamePhase.GameOver;
+        if (Combat is not null || TotalHostUnits() > 0)
+            return false;
+
+        _logger.LogInformation("The Host has no Units remaining outside Combat/Winter. Ending campaign in defeat.");
+        EndCampaign("Defeat", "No Units remain in the Host. The campaign ends in defeat.");
+        return true;
+    }
+
     private int AvailableForceCount(string type) =>
         AvailableForces.FirstOrDefault(f => string.Equals(f.Type, type, StringComparison.OrdinalIgnoreCase))?.Available ?? 0;
 
@@ -7226,7 +7568,10 @@ public sealed partial class GameSession
     {
         "Firepots" => "Before the first Combat round, you may remove Firepots and roll 3d6. Each 4+ inflicts 1 casualty as if from a Cavalry attack.",
         "Painkiller" => "Whenever a Military Unit or Levy would be lost from any game effect, roll 1d6 for that loss. On 5–6, prevent it.",
-        "ForcedMarch" or "Forced March" => "While active, normal Explore costs 1 Time instead of 2.",
+        "ForcedMarch" or "Forced March" => "While active, normal Explore costs 1 Time instead of 2. Gaining Slow March removes Forced March.",
+        "SlowMarch" or "Slow March" => "While active, each normal Explore costs 3 Time instead of 2. Gaining Forced March removes Slow March.",
+        "BadReputation" or "Bad Reputation" => "The next time you would gain Rapport with any tribe, gain none instead; then remove this reminder.",
+        "HighOverlookClearRoad" => "When an Explore event triggers, before resolving any part of it, you may discard Clear Road to ignore that event.",
         "RiffRaffShortcut" => "Your next Explore does not advance Time.",
         "ReignInBlood" or "Reign in Blood" => "While active, the Host may not Disengage from Combat.",
         "Scouting" => "When Exploring, draw 2 Terrain cards and choose 1.",
@@ -7249,6 +7594,8 @@ public sealed partial class GameSession
         "RiffRaffShortcut" => "Highway to Hell",
         "ReignInBlood" => "Reign in Blood",
         "ForcedMarch" => "Forced March",
+        "SlowMarch" => "Slow March",
+        "BadReputation" => "Bad Reputation",
         "CampSteward" => "Camp Steward",
         _ => token
     };

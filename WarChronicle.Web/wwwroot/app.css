@@ -2503,3 +2503,35 @@ body.wc-action-busy::after {
         flex-direction: column;
     }
 }
+
+/* Update 0534: Echo consequence indicators in Chronicle choices/results. */
+.chronicle-choice-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+}
+.chronicle-choice-label strong {
+    display: inline;
+}
+.chronicle-choice-echo-icon {
+    width: 18px;
+    height: 18px;
+    flex: 0 0 18px;
+    object-fit: contain;
+}
+.chronicle-echo-seeded {
+    display: flex;
+    align-items: flex-start;
+    gap: 7px;
+}
+.chronicle-echo-seeded > img {
+    width: 18px;
+    height: 18px;
+    flex: 0 0 18px;
+    margin-top: 2px;
+    object-fit: contain;
+}
+.chronicle-echo-seeded > span {
+    min-width: 0;
+}

@@ -127,8 +127,8 @@ public enum FlowPromptKind
     Combat
 }
 
-public sealed record FlowPromptOption(string Id, string Label, string? Detail = null, bool Disabled = false);
-public sealed record ChronicleChoice(string Id, string Label, string? Detail = null, bool Disabled = false);
+public sealed record FlowPromptOption(string Id, string Label, string? Detail = null, bool Disabled = false, bool EchoIndicator = false);
+public sealed record ChronicleChoice(string Id, string Label, string? Detail = null, bool Disabled = false, bool EchoIndicator = false);
 
 public sealed record FlowPromptState(
     FlowPromptKind Kind,
@@ -150,7 +150,8 @@ public sealed record ChronicleEntry(
     ChronicleTone Tone = ChronicleTone.Narrative,
     string? Heading = null,
     IReadOnlyList<ChronicleChoice>? Choices = null,
-    string? SelectedChoiceId = null);
+    string? SelectedChoiceId = null,
+    bool EchoIndicator = false);
 
 
 public enum FinaleStep
