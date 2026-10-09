@@ -11079,7 +11079,13 @@
             "target": "AllTribes",
             "value": -1
           },
-          "next": "N41"
+          "next": "N41",
+          "flags": [
+            {
+              "name": "NoShortfall",
+              "value": true
+            }
+          ]
         },
         "N41": {
           "type": "Action",

@@ -3873,7 +3873,7 @@ public sealed partial class GameSession
             ("EXPLORE-022", "Broker Terms (7+)") =>
                 "Test 7+ using the combined Rapport DRM from all tribes. Pass: gain 3 Coin. Fail: no effect.",
             ("EXPLORE-022", "Exploit the Discord (8+)") =>
-                "Test 8+ using the combined Rapport DRM from all tribes. Pass: gain 6 Coin. Fail: lose 1 Rapport with every tribe; unmet tribes become Hostile.",
+                "Test 8+ using the combined Rapport DRM from all tribes. Pass: gain 6 Coin. Fail: lose 1 Rapport with every encountered tribe; unmet tribes become Hostile. Global Shortfall does not apply.",
 
             ("EXPLORE-023", "Mark the Clear Road") =>
                 "Gain the Clear Road token. When an Explore event triggers, before resolving any part of it, you may discard Clear Road to ignore that event.",
