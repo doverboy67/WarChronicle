@@ -470,6 +470,8 @@ public sealed partial class GameSession
             return false;
         if (card.Id == "CAMP-011" && !Tribes.Any(t => t.Rapport == "Hostile"))
             return false;
+        if (card.Id == "CAMP-011" && !CanAffordSendTermsGift())
+            return false;
         if (card.Id == "CAMP-013" && !Tribes.Any(t => t.Rapport is "Neutral" or "Friendly"))
             return false;
         if (card.Id == "CAMP-012" && HasScouting && HasToken("CampSteward"))
@@ -485,6 +487,13 @@ public sealed partial class GameSession
         return true;
     }
 
+    private bool CanAffordSendTermsGift()
+        => ResourceValue("Coin") >= 2
+            || ResourceValue("Food") >= 1
+            || ResourceValue("Wood") >= 1
+            || ResourceValue("Stone") >= 1
+            || ResourceValue("Research") >= 1;
+
     public string CampChoiceAvailability(CampCardState card)
     {
         if (!CampLocationAllowed(card))
@@ -493,6 +502,8 @@ public sealed partial class GameSession
             return "You cannot pay the printed cost.";
         if (card.Id == "CAMP-011" && !Tribes.Any(t => t.Rapport == "Hostile"))
             return "No Hostile tribe is available.";
+        if (card.Id == "CAMP-011" && !CanAffordSendTermsGift())
+            return "You cannot afford any acceptable gift.";
         if (card.Id == "CAMP-013" && !Tribes.Any(t => t.Rapport is "Neutral" or "Friendly"))
             return "No Neutral or Friendly tribe is available.";
         if (card.Id == "CAMP-012" && HasScouting && HasToken("CampSteward"))
@@ -3484,6 +3495,9 @@ public sealed partial class GameSession
             && IsHostileEcho(PendingCampCard)
             && (GetString(node, "prompt") ?? string.Empty).Contains("Parley", StringComparison.OrdinalIgnoreCase);
         var parleyResource = hostileEchoParley ? AdjacentTerrainResource() : string.Empty;
+        var sendTermsGiftChoice = _activeFlowContext == FlowContext.Camp
+            && string.Equals(PendingCampCard?.Id, "CAMP-011", StringComparison.OrdinalIgnoreCase)
+            && (GetString(node, "prompt") ?? string.Empty).Contains("gift", StringComparison.OrdinalIgnoreCase);
 
         var options = new List<FlowPromptOption>();
         var branchArray = branches.EnumerateArray().ToArray();
@@ -3505,7 +3519,7 @@ public sealed partial class GameSession
                 branchAllowed = branchAllowed && Baggage.Any(b =>
                     !b.Damaged
                     && (string.IsNullOrWhiteSpace(b.Contents) || IsPhysicalResource(b.Contents!)));
-            if (!branchAllowed && !hostileEchoParley && !firepotsBaggageChoice && !drillArmorUnavailable && !noQuarterTollChoice)
+            if (!branchAllowed && !hostileEchoParley && !firepotsBaggageChoice && !drillArmorUnavailable && !noQuarterTollChoice && !sendTermsGiftChoice)
                 continue;
 
             if (_activeFlowContext == FlowContext.Camp && !CampBranchAllowed(label) && !drillArmorUnavailable)
@@ -3534,6 +3548,19 @@ public sealed partial class GameSession
                 else if (string.Equals(label, "Decline", StringComparison.OrdinalIgnoreCase))
                 {
                     detail = "Decline Parley. The tribe attacks.";
+                }
+            }
+            else if (sendTermsGiftChoice)
+            {
+                var match = Regex.Match(label, @"^Spend (\d+) (Coin|Food|Wood|Stone|Research)$", RegexOptions.IgnoreCase);
+                if (match.Success)
+                {
+                    var required = int.Parse(match.Groups[1].Value);
+                    var resource = match.Groups[2].Value;
+                    var have = ResourceValue(resource);
+                    detail = branchAllowed
+                        ? $"You have {have} {resource}. The gift is spent before the test."
+                        : $"Unavailable: requires {required} {resource}; you have {have}.";
                 }
             }
             else if (_activeFlowContext == FlowContext.Camp
@@ -4023,7 +4050,7 @@ public sealed partial class GameSession
             {
                 var detail = _activeFlowContext == FlowContext.Camp
                     && string.Equals(PendingCampCard?.Id, "CAMP-011", StringComparison.OrdinalIgnoreCase)
-                        ? "Test 6+ with no Hostile DRM. Leadership may not be spent. Pass: gain 1 Rapport and 1 Morale."
+                        ? "Spend a gift (2 Coin, 1 Food, 1 Wood, 1 Stone, or 1 Research), then test 6+ with no Hostile DRM. Leadership may not be spent. Pass: gain 1 Rapport and 1 Morale."
                         : null;
                 options.Add(new($"select:{tribe.Name}", tribe.Name, detail));
             }

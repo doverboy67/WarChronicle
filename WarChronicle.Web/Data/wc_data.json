@@ -1,7 +1,7 @@
 {
   "schema_version": "0.3.0",
-  "generated_at_utc": "2026-10-06T00:00:00Z",
-  "source_workbook": "War Chronicle Master(6).xlsx",
+  "generated_at_utc": "2026-10-11T00:20:00Z",
+  "source_workbook": "DEX-War Chronicle Master(1).xlsx",
   "cards": {
     "CAMP-001": {
       "id": "CAMP-001",
@@ -241,7 +241,7 @@
       "after_play": "RemoveOrDiscard",
       "text": {
         "flavor": "A gift sent ahead may cool a grudge that steel would only sharpen.",
-        "effect": "<b>Advance 2 Time. Choose 1 Hostile tribe</b> and make a 6+ test. Do not apply the Hostile Rapport DRM, and Leadership may not be spent on this test.<br><br><b>Pass:</b> Gain 1 Rapport with that tribe and 1 Morale.<br><br><b>Fail:</b> No effect."
+        "effect": "<b>Advance 2 Time. Choose 1 Hostile tribe.</b> Spend one of the following as a gift to that tribe: <b>2 Coin, 1 Food, 1 Wood, 1 Stone, or 1 Research</b>. Then make a 6+ test. Do not apply the Hostile Rapport DRM, and Leadership may not be spent on this test.<br><br><b>Pass:</b> Gain 1 Rapport with that tribe and gain 1 Morale.<br><br><b>Fail:</b> No effect."
       },
       "notes": null
     },
@@ -3908,9 +3908,105 @@
               "input": "HostileTribes",
               "operator": null,
               "value": null,
-              "next": "N02"
+              "next": "N_GIFT"
             }
           ]
+        },
+        "N_GIFT": {
+          "type": "Choice",
+          "prompt": "Choose a gift to send before making the test.",
+          "branches": [
+            {
+              "label": "Spend 2 Coin",
+              "input": "Player.Coin",
+              "operator": "GTE",
+              "value": 2,
+              "next": "GIFT_COIN",
+              "notes": "Spend 2 Coin as a gift."
+            },
+            {
+              "label": "Spend 1 Food",
+              "input": "Player.Food",
+              "operator": "GTE",
+              "value": 1,
+              "next": "GIFT_FOOD",
+              "notes": "Spend 1 Food as a gift."
+            },
+            {
+              "label": "Spend 1 Wood",
+              "input": "Player.Wood",
+              "operator": "GTE",
+              "value": 1,
+              "next": "GIFT_WOOD",
+              "notes": "Spend 1 Wood as a gift."
+            },
+            {
+              "label": "Spend 1 Stone",
+              "input": "Player.Stone",
+              "operator": "GTE",
+              "value": 1,
+              "next": "GIFT_STONE",
+              "notes": "Spend 1 Stone as a gift."
+            },
+            {
+              "label": "Spend 1 Research",
+              "input": "Player.Research",
+              "operator": "GTE",
+              "value": 1,
+              "next": "GIFT_RESEARCH",
+              "notes": "Spend 1 Research as a gift."
+            }
+          ]
+        },
+        "GIFT_COIN": {
+          "type": "Action",
+          "action": {
+            "type": "Spend",
+            "target": "Coin",
+            "value": 2
+          },
+          "next": "N02",
+          "player_text": "Spend 2 Coin as a gift."
+        },
+        "GIFT_FOOD": {
+          "type": "Action",
+          "action": {
+            "type": "Spend",
+            "target": "Food",
+            "value": 1
+          },
+          "next": "N02",
+          "player_text": "Spend 1 Food as a gift."
+        },
+        "GIFT_WOOD": {
+          "type": "Action",
+          "action": {
+            "type": "Spend",
+            "target": "Wood",
+            "value": 1
+          },
+          "next": "N02",
+          "player_text": "Spend 1 Wood as a gift."
+        },
+        "GIFT_STONE": {
+          "type": "Action",
+          "action": {
+            "type": "Spend",
+            "target": "Stone",
+            "value": 1
+          },
+          "next": "N02",
+          "player_text": "Spend 1 Stone as a gift."
+        },
+        "GIFT_RESEARCH": {
+          "type": "Action",
+          "action": {
+            "type": "Spend",
+            "target": "Research",
+            "value": 1
+          },
+          "next": "N02",
+          "player_text": "Spend 1 Research as a gift."
         },
         "N02": {
           "type": "Test",

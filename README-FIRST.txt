@@ -1,11 +1,11 @@
-War Chronicle Browser Update 0536
-=================================
+War Chronicle Browser Update 0537
 
-Update 0536 (v0.5.0.36):
-- Roadside Moot: Exploit the Discord failure no longer invokes the Global Shortfall Rule when Rapport cannot be reduced.
-- Encountered tribes still lose 1 Rapport; unmet tribes become Hostile exactly as printed.
-- The Roadside Moot choice detail now explicitly notes that Global Shortfall does not apply.
-- Retains all Update 0535 fixes and bundled Rulebook Draft 0.5.8.3.
-- Bumped CSS/helper/data cache tokens and app version to 0536. SaveVersion remains 1.
+Update 0537 (v0.5.0.37):
+- Send Terms Ahead now uses the revised card text from DEX-War Chronicle Master(1).xlsx.
+- After choosing a Hostile tribe, the Host must spend one gift before the 6+ test: 2 Coin, 1 Food, 1 Wood, 1 Stone, or 1 Research.
+- Unaffordable gift options remain visible and explain why they cannot be chosen.
+- Send Terms Ahead is unavailable when no Hostile tribe exists or when the Host cannot afford any acceptable gift.
+- The 6+ target, ignored Hostile Rapport DRM, no-Leadership restriction, +1 Rapport, and +1 Morale reward are unchanged.
+- Bumped CSS/helper/data cache tokens and app version to 0537. SaveVersion remains 1.
 
-Both WarChronicle.Web and WarChronicle.Pages are included.
+Install/deploy this package the same way as prior browser updates.
