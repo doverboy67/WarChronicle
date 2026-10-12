@@ -960,7 +960,7 @@ public sealed partial class GameSession
             Controller = raider,
             IsHostile = true
         };
-        AddNarrativeText($"{raider} raiders strike the rear-most controlled settlement and seize it for themselves.");
+        AddWarningText($"SETTLEMENT LOST: {raider} raiders strike the rear-most controlled settlement and seize it for themselves.");
     }
 
     public void BeginEndOfSeasonHarvest()
@@ -3512,18 +3512,22 @@ public sealed partial class GameSession
                 && string.Equals(PendingCampCard?.Id, "CAMP-010", StringComparison.OrdinalIgnoreCase)
                 && label.StartsWith("Armor Development", StringComparison.OrdinalIgnoreCase)
                 && _armorSupply.Count == 0;
-            var branchAllowed = BranchConditionAllowed(branch) && !drillArmorUnavailable;
+            var conditionAllowed = BranchConditionAllowed(branch);
+            var branchAllowed = conditionAllowed && !drillArmorUnavailable;
             var noQuarterTollChoice = _activeFlowContext == FlowContext.Explore
                 && PendingExploreCard?.Id is "EXPLORE-033" or "EXPLORE-034" or "EXPLORE-035";
             if (firepotsBaggageChoice)
                 branchAllowed = branchAllowed && Baggage.Any(b =>
                     !b.Damaged
                     && (string.IsNullOrWhiteSpace(b.Contents) || IsPhysicalResource(b.Contents!)));
-            if (!branchAllowed && !hostileEchoParley && !firepotsBaggageChoice && !drillArmorUnavailable && !noQuarterTollChoice && !sendTermsGiftChoice)
-                continue;
 
-            if (_activeFlowContext == FlowContext.Camp && !CampBranchAllowed(label) && !drillArmorUnavailable)
-                continue;
+            var campBranchAllowed = true;
+            if (_activeFlowContext == FlowContext.Camp && !drillArmorUnavailable)
+            {
+                campBranchAllowed = CampBranchAllowed(label);
+                branchAllowed = branchAllowed && campBranchAllowed;
+            }
+
             var detail = ReplacePlaceholders(GetString(branch, "notes") ?? string.Empty);
             if (drillArmorUnavailable)
                 detail = "Unavailable: no Armor Developments remain in the R&R offer.";
@@ -3652,6 +3656,9 @@ public sealed partial class GameSession
             }
 
             detail = DoNotChooseBlindDetail(label, detail);
+            if (!branchAllowed)
+                detail = BuildUnavailableChoiceDetail(branch, label, detail);
+
             var echoIndicator = BranchSeedsEcho(branch);
             options.Add(new($"branch:{i}", label, string.IsNullOrWhiteSpace(detail) ? null : detail, !branchAllowed, echoIndicator));
         }
@@ -3676,6 +3683,171 @@ public sealed partial class GameSession
             ActiveFlowHeading(),
             prompt,
             options);
+    }
+
+    private string BuildUnavailableChoiceDetail(JsonElement branch, string label, string currentDetail)
+    {
+        if (currentDetail.StartsWith("Unavailable:", StringComparison.OrdinalIgnoreCase))
+            return currentDetail;
+
+        var reason = ChoiceUnavailableReason(branch, label);
+        if (string.IsNullOrWhiteSpace(reason))
+            reason = "the requirements are not currently met.";
+
+        var prefix = $"Unavailable: {reason.Trim()}";
+        if (string.IsNullOrWhiteSpace(currentDetail))
+            return prefix;
+
+        return $"{prefix} {currentDetail.Trim()}";
+    }
+
+    private string? ChoiceUnavailableReason(JsonElement branch, string label)
+    {
+        if (_activeFlowContext == FlowContext.Camp)
+        {
+            var campReason = CampBranchUnavailableReason(label);
+            if (!string.IsNullOrWhiteSpace(campReason) && !CampBranchAllowed(label))
+                return campReason;
+        }
+
+        var input = GetString(branch, "input") ?? string.Empty;
+        var op = GetString(branch, "operator") ?? string.Empty;
+        var expected = branch.TryGetProperty("value", out var value) ? JsonScalar(value) : null;
+
+        if (input.StartsWith("Player.", StringComparison.OrdinalIgnoreCase)
+            && op.Equals("GTE", StringComparison.OrdinalIgnoreCase)
+            && expected is not null)
+        {
+            var resource = input[7..];
+            if (resource is "Coin" or "Food" or "Wood" or "Stone" or "Research")
+            {
+                var required = ToInt(expected);
+                return $"requires {required} {resource}; you have {ResourceValue(resource)}.";
+            }
+            if (resource.Equals("Leadership", StringComparison.OrdinalIgnoreCase))
+            {
+                var required = ToInt(expected);
+                return $"requires {required} Leadership; you have {Leadership}.";
+            }
+        }
+
+        if (input.Equals("Player.Tokens", StringComparison.OrdinalIgnoreCase)
+            && op.Equals("HAS", StringComparison.OrdinalIgnoreCase))
+        {
+            var token = Convert.ToString(expected) ?? "required token";
+            var display = DisplayTokenName(token);
+            return token.Equals("Priest", StringComparison.OrdinalIgnoreCase)
+                ? "requires a Priest."
+                : $"requires {display}.";
+        }
+
+        if (input.Equals("Host.TotalUnits", StringComparison.OrdinalIgnoreCase))
+        {
+            var required = Math.Max(1, ToInt(expected));
+            return $"requires at least {required} Unit{(required == 1 ? string.Empty : "s")} in the Host; you have {TotalHostUnits()}.";
+        }
+
+        if (input.Equals("Host.Infantry", StringComparison.OrdinalIgnoreCase))
+        {
+            var required = Math.Max(1, ToInt(expected));
+            return $"requires {required} Infantry; you have {HostCount("Infantry")}.";
+        }
+
+        if (input.Equals("Host.InfantryClass", StringComparison.OrdinalIgnoreCase))
+        {
+            var have = HostCount("Infantry") + HostCount("Mercenaries");
+            return $"requires an Infantry-class Unit (Infantry or Mercenary); you have {have}.";
+        }
+
+        if (input.Equals("MarketBuyableResources", StringComparison.OrdinalIgnoreCase))
+            return "no Resource can currently be bought with the available Coin and Baggage Train space.";
+
+        if (input.Equals("MarketSellableResources", StringComparison.OrdinalIgnoreCase))
+            return "you have no Resource available to sell.";
+
+        if (input.StartsWith("CanMarketBuy:", StringComparison.OrdinalIgnoreCase))
+        {
+            var parts = input.Split(':');
+            if (parts.Length > 1)
+            {
+                var resource = parts[1];
+                var quantity = parts.Length > 2 && int.TryParse(parts[2], out var qty) ? qty : 1;
+                var coinModifier = parts.Length > 3 && int.TryParse(parts[3], out var modifier) ? modifier : 0;
+                var market = Market.FirstOrDefault(m => string.Equals(m.Resource, resource, StringComparison.OrdinalIgnoreCase));
+                if (market is not null)
+                {
+                    var cost = Math.Max(0, (market.BuyPrice * quantity) + coinModifier);
+                    if (ResourceValue("Coin") < cost)
+                        return $"requires {cost} Coin; you have {ResourceValue("Coin")}.";
+                    if (!CanAddPhysicalResource(resource, quantity))
+                        return $"requires room in the Baggage Train for {quantity} {resource}.";
+                }
+            }
+        }
+
+        if (input.Equals("CanSpendRollResource", StringComparison.OrdinalIgnoreCase))
+        {
+            var resource = _lastRollText ?? "the rolled Resource";
+            return $"requires 1 {resource}; you have {ResourceValue(resource)}.";
+        }
+
+        if (input.Equals("CanRepairBaggageSlot", StringComparison.OrdinalIgnoreCase))
+        {
+            if (ResourceValue("Wood") < 1)
+                return $"requires 1 Wood; you have {ResourceValue("Wood")}.";
+            if (!Baggage.Any(b => b.Damaged))
+                return "there are no damaged Baggage Train spaces to repair.";
+        }
+
+        if (input.Equals("Player.ResourcesMatchingAdjacentTerrain", StringComparison.OrdinalIgnoreCase))
+        {
+            var resource = AdjacentTerrainResource();
+            var required = Math.Max(1, ToInt(expected));
+            return $"requires {required} {resource}; you have {ResourceValue(resource)}.";
+        }
+
+        return null;
+    }
+
+    private string? CampBranchUnavailableReason(string label)
+    {
+        if (PendingCampCard is null)
+            return null;
+
+        var clean = Regex.Replace(label, @"\s*\(\d+\+\)\s*$", string.Empty).Trim();
+        return (PendingCampCard.Id, clean) switch
+        {
+            ("CAMP-003", "Chapel") when HasBuilding("Chapel") => "the Chapel is already built.",
+            ("CAMP-003", "Chapel") => CostRequirementReason(("Wood", 1), ("Coin", 1)),
+            ("CAMP-003", "Academy") when HasBuilding("Academy") => "the Academy is already built.",
+            ("CAMP-003", "Academy") => CostRequirementReason(("Stone", 1), ("Coin", 1)),
+            ("CAMP-004", "Market") when HasBuilding("Market") => "the Market is already built.",
+            ("CAMP-004", "Market") => CostRequirementReason(("Wood", 1), ("Coin", 1)),
+            ("CAMP-004", "Baggage Cart") when HasBuilding("Baggage Cart") => "the Baggage Cart is already built.",
+            ("CAMP-004", "Baggage Cart") => CostRequirementReason(("Wood", 1)),
+            ("CAMP-012", "Train Scouts") when HasScouting => "Scouting is already in place.",
+            ("CAMP-012", "Train Scouts") => $"requires 1 Research; you have {ResourceValue("Research")}.",
+            ("CAMP-012", "Appoint Camp Steward") when HasToken("CampSteward") => "the Camp Steward is already in place.",
+            ("CAMP-012", "Appoint Camp Steward") => $"requires 2 Coin; you have {ResourceValue("Coin")}.",
+            ("CAMP-007", "Provision") when ResourceValue("Coin") < 2 => $"requires 2 Coin; you have {ResourceValue("Coin")}.",
+            ("CAMP-007", "Provision") => "there is no room in the Baggage Train for Food, Wood, or Stone.",
+            ("CAMP-007", "Buy 1 additional Resource") when ResourceValue("Coin") < 1 => $"requires 1 Coin; you have {ResourceValue("Coin")}.",
+            ("CAMP-007", "Buy 1 additional Resource") => "there is no room in the Baggage Train for Food, Wood, or Stone.",
+            ("CAMP-009", "Raise Levies") when ResourceValue("Food") < 1 => $"requires 1 Food; you have {ResourceValue("Food")}.",
+            ("CAMP-009", "Raise Levies") when AvailableForceCount("Levy") <= 0 => "no Levy remain in the available force.",
+            ("CAMP-009", "Raise Levies") when HostCount("Levy") >= 6 => "the Host already has the maximum 6 Levy.",
+            ("SCENE-020", "Send in a Fighter") => "requires an Archer, Cavalry, Infantry, Mercenary, or Hedge Knight in the Host.",
+            ("SCENE-029", "Answer the Call") => $"requires 2 Food or 2 Coin; you have {ResourceValue("Food")} Food and {ResourceValue("Coin")} Coin.",
+            ("SCENE-029", "Send Protection") => "requires at least 1 Infantry or Archer in the Host.",
+            _ => null
+        };
+    }
+
+    private string CostRequirementReason(params (string Resource, int Required)[] costs)
+    {
+        var requiredText = string.Join(" + ", costs.Select(c => $"{c.Required} {c.Resource}"));
+        var haveText = string.Join(" and ", costs.Select(c => $"{ResourceValue(c.Resource)} {c.Resource}"));
+        return $"requires {requiredText}; you have {haveText}.";
     }
 
     private bool BranchSeedsEcho(JsonElement branch)
@@ -5197,6 +5369,7 @@ public sealed partial class GameSession
             _hasPriest = false;
             _priestSource = null;
         }
+        AddWarningText($"BUILDING DESTROYED: {target.ToUpperInvariant()}");
         _logger.LogInformation("Building destroyed: {Building}", target);
     }
 
@@ -7218,6 +7391,13 @@ public sealed partial class GameSession
         Chronicle.Add(new(CalendarStamp, text.Trim(), ChronicleTone.Result));
     }
 
+    private void AddWarningText(string text)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+            return;
+        Chronicle.Add(new(CalendarStamp, text.Trim(), ChronicleTone.Warning));
+    }
+
     private void AddSystemText(string text)
     {
         if (string.IsNullOrWhiteSpace(text))
@@ -7687,7 +7867,7 @@ public sealed partial class GameSession
         if (index < 0)
             return;
         Baggage[index] = Baggage[index] with { Damaged = true };
-        AddNarrativeText($"Baggage Train space {position} is damaged.");
+        AddWarningText($"BAGGAGE TRAIN DAMAGED: space {position} is unusable until repaired.");
     }
 
     private void RepairBaggageSlot(int position)

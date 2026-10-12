@@ -2535,3 +2535,19 @@ body.wc-action-busy::after {
 .chronicle-echo-seeded > span {
     min-width: 0;
 }
+
+/* Update 0538: persistent setbacks should stand out in the Chronicle without
+   interrupting play with a modal. */
+.chronicle-entry.warning {
+    margin-bottom: 16px;
+    padding: 10px 14px;
+    border-left-width: 4px;
+    background: rgba(126, 50, 42, .07);
+}
+.chronicle-entry.warning p {
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: .84rem;
+    font-weight: 700;
+    line-height: 1.45;
+    letter-spacing: .025em;
+}
