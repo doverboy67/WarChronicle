@@ -1,7 +1,14 @@
-War Chronicle Browser Update 0540 (v0.5.0.40)
+War Chronicle Browser Update 0541 (v0.5.0.41)
 =====================================================
 
 Base: WarChronicleBrowser_Update_0538.zip (v0.5.0.38); fixes 0539 Pages-data packaging defect
+
+0541 GitHub Pages startup correction
+-----------------------------------
+- Removed an erroneous `@rendermode InteractiveServer` from `WarChronicle.Pages/Components/Pages/Home.razor` introduced in update 0539. The standalone GitHub Pages application runs via Blazor WebAssembly and must not request server interactivity; the server-hosted WarChronicle.Web version retains its directive.
+- Added a GitHub Actions guard to reject the server-only render mode in the Pages app before publish.
+- Bumped displayed version to v0.5.0.41 and cache-query markers to 0541.
+- This fixes a concrete source regression compared with working v0.5.0.38, but cannot be live-tested here without a .NET SDK and browser deployment.
 
 0540 correction
 ---------------

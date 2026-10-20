@@ -29,6 +29,14 @@ jobs:
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
 
+      - name: Reject server render modes in WebAssembly project
+        shell: bash
+        run: |
+          if grep -R -n -E '@rendermode[[:space:]]+InteractiveServer' WarChronicle.Pages/Components; then
+            echo '::error::InteractiveServer render mode is not supported by the standalone Pages WebAssembly app.'
+            exit 1
+          fi
+
       - name: Publish Blazor WebAssembly
         run: dotnet publish WarChronicle.Pages/WarChronicle.Pages.csproj -c Release -o release
 
