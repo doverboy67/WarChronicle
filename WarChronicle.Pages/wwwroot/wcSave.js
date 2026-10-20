@@ -134,13 +134,102 @@ window.wcActionLock = (function () {
     };
 })();
 
-// Update 0539: focus the FIRST new Chronicle entry, not the final one.
-window.wcChronicle = {
-    scrollToFirstNew: function (index) {
-        const scroller = document.querySelector('.chronicle-scroll');
-        const entry = scroller && scroller.querySelector('.chronicle-entry[data-chronicle-index="' + index + '"]');
-        if (!scroller || !entry) return;
-        const offset = entry.getBoundingClientRect().top - scroller.getBoundingClientRect().top;
-        scroller.scrollTo({ top: scroller.scrollTop + offset - 16, behavior: 'instant' });
+// Update 0544: preserve the original position of completed decisions;
+// animate only the Chronicle panel, decelerating into the first new entry.
+// The scroll target is naturally clamped by the browser. No blank spacer.
+window.wcChronicle = (function () {
+    let animationId = null;
+    let anchor = null;
+    const scroller = () => document.querySelector('.chronicle-scroll');
+
+    function cancel() {
+        if (animationId !== null) {
+            cancelAnimationFrame(animationId);
+            animationId = null;
+        }
     }
-};
+
+    function capture() {
+        const panel = scroller();
+        if (!panel) return;
+        cancel();
+        const outer = panel.getBoundingClientRect();
+        const entries = panel.querySelectorAll('.chronicle-entry[data-chronicle-index]');
+        for (const entry of entries) {
+            const rect = entry.getBoundingClientRect();
+            if (rect.bottom > outer.top + 4 && rect.top < outer.bottom) {
+                anchor = {
+                    index: entry.getAttribute('data-chronicle-index'),
+                    offset: rect.top - outer.top
+                };
+                return;
+            }
+        }
+        anchor = null;
+    }
+
+    // Capture the visible text BEFORE Blazor re-renders or prunes old history.
+    document.addEventListener('click', event => {
+        const target = event.target instanceof Element ? event.target : null;
+        if (target && target.closest('.game-screen button')) capture();
+    }, true);
+
+    for (const eventName of ['wheel', 'touchstart', 'pointerdown']) {
+        document.addEventListener(eventName, event => {
+            const target = event.target instanceof Element ? event.target : null;
+            if (target && target.closest('.chronicle-scroll')) cancel();
+        }, { passive: true, capture: true });
+    }
+    document.addEventListener('keydown', event => {
+        if (['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Home', 'End', ' '].includes(event.key))
+            cancel();
+    }, true);
+
+    function restoreAndScrollToFirstNew(index) {
+        const panel = scroller();
+        if (!panel) { anchor = null; return; }
+
+        // Compensate for discarded offscreen entries without jumping the
+        // reader's current viewport. Browser scroll anchoring alone may vary.
+        if (anchor) {
+            const retained = panel.querySelector('.chronicle-entry[data-chronicle-index="' + anchor.index + '"]');
+            if (retained) {
+                const now = retained.getBoundingClientRect().top - panel.getBoundingClientRect().top;
+                if (Math.abs(now - anchor.offset) > 1)
+                    panel.scrollTop += now - anchor.offset;
+            }
+            anchor = null;
+        }
+
+        if (!Number.isInteger(index) || index < 0) return;
+        const entry = panel.querySelector('.chronicle-entry[data-chronicle-index="' + index + '"]');
+        if (!entry) return;
+
+        const offset = entry.getBoundingClientRect().top - panel.getBoundingClientRect().top;
+        const maximum = Math.max(0, panel.scrollHeight - panel.clientHeight);
+        const destination = Math.max(0, Math.min(maximum, panel.scrollTop + offset - 16));
+        const start = panel.scrollTop;
+        const distance = destination - start;
+        if (Math.abs(distance) < 2) return;
+
+        cancel();
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            panel.scrollTop = destination;
+            return;
+        }
+
+        const duration = Math.min(470, Math.max(210, Math.abs(distance) * .345));
+        let started = null;
+        function frame(timestamp) {
+            if (started === null) started = timestamp;
+            const progress = Math.min(1, (timestamp - started) / duration);
+            const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+            panel.scrollTop = start + distance * eased;
+            if (progress < 1) animationId = requestAnimationFrame(frame);
+            else animationId = null;
+        }
+        animationId = requestAnimationFrame(frame);
+    }
+
+    return { restoreAndScrollToFirstNew };
+})();

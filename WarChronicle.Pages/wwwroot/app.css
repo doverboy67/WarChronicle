@@ -2551,3 +2551,124 @@ body.wc-action-busy::after {
     line-height: 1.45;
     letter-spacing: .025em;
 }
+
+
+/* 0544: persistent Chronicle decisions, phase gates, playlist */
+.state-header { align-items: flex-start; }
+.state-header .dev-test-tools { flex-wrap: wrap; justify-content: flex-end; }
+.soundtrack-link { white-space: nowrap; }
+.chronicle-scroll { scroll-behavior: auto; } /* custom easing in wcSave.js */
+.chronicle-entry.explore-event,
+.chronicle-entry.arrival-event,
+.chronicle-entry.camp-event {
+    padding-top: 12px;
+    border-top: 1px solid #d8cfbd;
+}
+.chronicle-entry.explore-event { border-left-color: #6e866b; }
+.chronicle-entry.arrival-event { border-left-color: #a2875b; }
+.chronicle-entry.camp-event { border-left-color: #998567; }
+.chronicle-entry.explore-event .chronicle-stamp,
+.chronicle-entry.arrival-event .chronicle-stamp,
+.chronicle-entry.camp-event .chronicle-stamp { font-weight: 650; letter-spacing: .12em; }
+.chronicle-entry.explore-event .chronicle-title,
+.chronicle-entry.arrival-event .chronicle-title,
+.chronicle-entry.camp-event .chronicle-title { font-size: 1.15rem; }
+.chronicle-choice { position: relative; }
+.chronicle-choice.is-selected:disabled::after {
+    content: '✓';
+    position: absolute; right: 8px; top: 6px;
+    font: 700 .78rem 'Segoe UI', Arial, sans-serif;
+    color: #645233;
+}
+.chronicle-camp-offers { margin-top: 16px; }
+.chronicle-camp-offers .camp-choice-card.is-selected {
+    border-color: #92805e;
+    box-shadow: inset 4px 0 0 #897047;
+    background: #f2e8d3;
+}
+.chronicle-camp-offers .camp-choice-select:disabled { cursor: default; opacity: .64; }
+.chronicle-camp-offers .camp-choice-select.is-selected:disabled {
+    opacity: 1; border-color: #85704e; background: #e0d4bc; color: #483b27;
+}
+
+.chronicle-camp-offers .camp-choice-select { position: relative; }
+.chronicle-camp-offers .camp-choice-select.is-selected:disabled::after {
+    content: '✓'; position: absolute; right: 10px; top: 50%;
+    transform: translateY(-50%); font-weight: 800;
+}
+
+/* Phase gates are real, permanent Chronicle decisions. Make the entire
+   Explore / Arrival / Camp control conspicuous before and after selection. */
+.chronicle-entry.phase-gate-event {
+    margin: 20px 0 22px;
+    padding: 17px 18px 19px;
+    background: #ede3d0;
+    border: 1px solid #c8b99e;
+    border-left: 4px solid #9e8866;
+    border-radius: 9px;
+}
+.chronicle-entry.phase-gate-event .chronicle-stamp {
+    display: block;
+    margin-bottom: 7px;
+    font-weight: 700;
+    letter-spacing: .11em;
+}
+.chronicle-entry.phase-gate-event .chronicle-title {
+    font-size: 1.18rem;
+}
+.chronicle-entry.phase-gate-event .chronicle-choice {
+    background: #faf5e9;
+    padding: 12px 14px;
+}
+.chronicle-entry.phase-gate-event .chronicle-choice.is-selected:disabled {
+    opacity: 1;
+    background: #d9c9a9;
+    border-color: #947750;
+    box-shadow: inset 4px 0 0 #816337;
+}
+
+/* 0545: restrained transaction highlighting in the permanent Chronicle. */
+.chronicle-entry.chronicle-transfer-spend:not(.phase-gate-event) {
+    border-left: 3px solid #a8543d;
+}
+.chronicle-entry.chronicle-transfer-receive:not(.phase-gate-event) {
+    border-left: 3px solid #357f79;
+}
+.chronicle-entry.chronicle-transfer-mixed:not(.phase-gate-event) {
+    border-left: 3px solid transparent;
+    border-image: linear-gradient(to bottom, #357f79 0 50%, #a8543d 50% 100%) 1;
+}
+.chronicle-mech-amount { font-weight: 700; }
+.chronicle-mech-word {
+    display: inline !important;
+    margin: 0 !important;
+    color: #574b3d !important;
+    font-size: .74em !important;
+    font-weight: 600;
+    letter-spacing: .005em;
+}
+.chronicle-choice .chronicle-mech-word { color: inherit !important; }
+/* Difficulty choice is selected when the new Chronicle begins, not after
+   seeing Middelalderen's randomly equipped Host. */
+.finale-difficulty-setup {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 12px 14px;
+    margin: 14px 0 17px;
+    background: #ede5d6;
+    border: 1px solid #cdbfa7;
+    border-radius: 7px;
+}
+.finale-difficulty-setup label { font-weight: 700; font-size: .88rem; }
+.finale-difficulty-setup select {
+    min-width: 220px;
+    padding: 8px 10px;
+    background: #fffaf0;
+    border: 1px solid #b3a184;
+    color: #3d362d;
+    border-radius: 4px;
+    font-size: .9rem;
+}
+.finale-difficulty-setup small { font-size: .73rem; color: #685f51; }

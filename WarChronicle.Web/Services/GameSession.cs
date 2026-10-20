@@ -188,6 +188,18 @@ public sealed partial class GameSession
     public CampStep CampStep { get; private set; } = CampStep.Ready;
     public EndOfSeasonStep EndOfSeasonStep { get; private set; } = EndOfSeasonStep.Ready;
     public WinterStep WinterStep { get; private set; } = WinterStep.Ready;
+
+    // Finale-only difficulty lever: change the size of the weighted Middelalderen
+    // Advancement draw, never the composition of the enemy Host itself.
+    public int MiddelalderenAdvancementCount { get; private set; } = 4;
+
+    public void SetMiddelalderenAdvancementCount(int count)
+    {
+        if (count is < 3 or > 5 || Finale is not null)
+            return;
+        MiddelalderenAdvancementCount = count;
+        Changed?.Invoke();
+    }
     public List<CampCardState> CampHand { get; } = [];
     public IReadOnlyList<ChronicleEntry> DebugSimulationChronicle => _debugSimulationChronicle;
     public FlowPromptState? FlowPrompt
@@ -528,6 +540,12 @@ public sealed partial class GameSession
         if (card is null || !CanChooseCampCard(card))
             return;
 
+        // The Camp offer remains visible in the Chronicle at its original
+        // size; selection only marks it and disables its buttons.
+        var chronicleOfferIndex = Chronicle.FindLastIndex(entry => entry.CampOffers is not null && entry.SelectedChoiceId is null);
+        if (chronicleOfferIndex >= 0)
+            Chronicle[chronicleOfferIndex] = Chronicle[chronicleOfferIndex] with { SelectedChoiceId = card.Id };
+
         if (_activeCampOfferIndex >= 0 && _activeCampOfferIndex < _campOffers.Count)
         {
             _campOffers[_activeCampOfferIndex].SelectedCardId = card.Id;
@@ -583,6 +601,20 @@ public sealed partial class GameSession
         CampStep = CampStep.ChoosingAction;
         PendingCampCard = null;
         _activeChronicleEntryIndex = null;
+
+        var offers = CampActionChoices.Select(card => new ChronicleCampOffer(
+            card.Id, card.Title, card.Flavor, card.Effect, card.Keyword, card.Location,
+            Disabled: !CanChooseCampCard(card),
+            UnavailableReason: CampChoiceAvailability(card),
+            ShowCampStewardNote: card.Id == "CAMP-001" && HasCampSteward,
+            ShowFieldStaffNote: card.Id == "CAMP-012")).ToArray();
+
+        Chronicle.Add(new(
+            CalendarPhaseStamp("Camp"),
+            "Choose one standard Camp card from the Camp hand, or Work.",
+            ChronicleTone.Narrative,
+            "Choose Camp Action",
+            CampOffers: offers));
     }
 
     private void StartCampCard(CampCardState card, bool special)
@@ -1427,12 +1459,6 @@ public sealed partial class GameSession
         if (Phase != GamePhase.Winter || WinterStep != WinterStep.Ready)
             return;
 
-        Chronicle.Add(new(
-            CalendarStamp,
-            "The campaigning year gives way to winter. The Host settles in, contracts expire, and the cold begins its own accounting.",
-            ChronicleTone.Narrative,
-            "Winter"));
-
         DisbandWinterMercenaries();
         WinterStep = WinterStep.Attrition;
         PresentWinterAttritionMethod();
@@ -2204,6 +2230,127 @@ public sealed partial class GameSession
     private bool IsHostileEcho(CampCardState card)
         => card.CardType == "Echo" && string.Equals(card.Keyword, "Hostile", StringComparison.OrdinalIgnoreCase);
 
+    // Phase transition prompts belong to the Chronicle, not transient wizard
+    // panels. This makes the entire button and its selected state persist after
+    // the phase moves on, including through a save/restore cycle.
+    private const string ExploreGateId = "phase-gate:explore";
+    private const string ArrivalGateId = "phase-gate:arrival";
+    private const string CampGateId = "phase-gate:camp";
+    private const string EndSeasonGateId = "phase-gate:end-season";
+    private const string VulnerabilityGateId = "phase-gate:vulnerability";
+    private const string HarvestGateId = "phase-gate:harvest";
+    private const string ConsolidationGateId = "phase-gate:consolidation";
+    private const string WinterGateId = "phase-gate:winter";
+
+    private string? CurrentPhaseGateId()
+    {
+        if (!_catalogInitialized || HasPendingCombat || FlowPrompt is not null)
+            return null;
+        if (Phase == GamePhase.Mobilization)
+        {
+            if (MobilizationStep == MobilizationStep.ExploreReady)
+                return ExploreGateId;
+            if (MobilizationStep == MobilizationStep.ArrivalReady)
+                return ArrivalGateId;
+        }
+        if (Phase == GamePhase.Camp && CampStep == CampStep.Ready && _campInitialized)
+            return CampGateId;
+        if (Phase == GamePhase.EndOfSeason)
+            return EndOfSeasonStep switch
+            {
+                EndOfSeasonStep.Ready => EndSeasonGateId,
+                EndOfSeasonStep.VulnerabilityReady => VulnerabilityGateId,
+                EndOfSeasonStep.HarvestReady => HarvestGateId,
+                EndOfSeasonStep.ConsolidationReady => ConsolidationGateId,
+                _ => null // Packing and R&R remain interactive workspaces.
+            };
+        if (Phase == GamePhase.Winter && WinterStep == WinterStep.Ready)
+            return WinterGateId;
+        return null;
+    }
+
+    public void EnsurePhaseGateChronicle()
+    {
+        var id = CurrentPhaseGateId();
+        if (id is null || Chronicle.Count == 0)
+            return;
+        // Only the newest instance of each gate may be clicked; historical
+        // panels stay frozen, with the player's selection checked.
+        var last = Chronicle[^1];
+        if (last.SelectedChoiceId is null && last.Choices?.Any(c => c.Id == id) == true)
+            return;
+
+        var (heading, prompt, label, detail, stamp) = id switch
+        {
+            ExploreGateId => (
+                "Explore Step",
+                PlayArea.Count <= 1 ? "The Host is ready to leave the Starting Clearing." : "The Host is ready to continue the march.",
+                "Explore", "Advance along the road.", "Mobilization Phase"),
+            ArrivalGateId => (
+                "Arrival Step", "The Explore Step is complete. When you are ready, reveal what waits at the end of the road.",
+                "Proceed to Arrival", "Reveal the next Clearing.", "Mobilization Phase"),
+            CampGateId => (
+                "Make Camp", "The Host pauses after the march. Draw the Camp hand and see what the road has brought with it.",
+                "Begin Camp", "Draw the Camp hand.", "Camp Phase"),
+            EndSeasonGateId => (
+                $"End of {EndOfSeasonName}", "The Host must reckon with the season before the march continues.",
+                $"Begin End of {EndOfSeasonName}", "Vulnerability, Harvest, and consolidation follow.", "End of Season"),
+            VulnerabilityGateId => (
+                "Vulnerability", "The Market shifts, and Hostile tribes may raid the road behind you.",
+                "Resolve Vulnerability", "Roll Market Vulnerability and Barbarian Activation.", $"End of {EndOfSeasonName}"),
+            HarvestGateId => (
+                "Harvest", "Eligible Terrain produces Food, Wood, and Stone. The supplies will be staged for packing.",
+                "Gather the Harvest", "Then prepare and pack the Baggage Train.", $"End of {EndOfSeasonName}"),
+            ConsolidationGateId => (
+                "Supply Line Consolidation", "The first two Clearings behind the Host remain. Older parts of the route fall away.",
+                "Consolidate the Route", "Trim the active route.", $"End of {EndOfSeasonName}"),
+            _ => (
+                "Winter Phase", "Mercenaries depart, the Host faces Attrition, and Refit & Reform prepares the next year.",
+                "Begin Winter", "Resolve Winter Attrition.", "Winter Phase")
+        };
+
+        Chronicle.Add(new(
+            CalendarPhaseStamp(stamp),
+            prompt, ChronicleTone.Narrative, heading,
+            [new ChronicleChoice(id, label, detail)]));
+    }
+
+    public bool IsChroniclePhaseGateActive(int index)
+    {
+        if (index < 0 || index != Chronicle.Count - 1)
+            return false;
+        var id = CurrentPhaseGateId();
+        var entry = Chronicle[index];
+        return id is not null && entry.SelectedChoiceId is null
+            && entry.Choices?.Any(c => c.Id == id) == true;
+    }
+
+    public void ResolveChronicleChoice(int chronicleIndex, string choiceId)
+    {
+        if (IsChroniclePhaseGateActive(chronicleIndex))
+        {
+            var entry = Chronicle[chronicleIndex];
+            if (entry.Choices?.Any(c => c.Id == choiceId) != true)
+                return;
+            Chronicle[chronicleIndex] = entry with { SelectedChoiceId = choiceId };
+            switch (choiceId)
+            {
+                case ExploreGateId: BeginExplore(); break;
+                case ArrivalGateId: ProceedToArrival(); break;
+                case CampGateId: BeginCamp(); break;
+                case EndSeasonGateId: BeginEndOfSeason(); break;
+                case VulnerabilityGateId: ResolveEndOfSeasonVulnerability(); break;
+                case HarvestGateId: BeginEndOfSeasonHarvest(); break;
+                case ConsolidationGateId: ResolveEndOfSeasonConsolidation(); break;
+                case WinterGateId: BeginWinter(); break;
+            }
+            return;
+        }
+
+        if (IsChronicleDecisionActive(chronicleIndex))
+            ResolveFlowPrompt(choiceId);
+    }
+
     public void BeginExplore()
         => BeginExploreInternal(false);
 
@@ -2552,6 +2699,7 @@ public sealed partial class GameSession
         Combat = null;
         CombatVisible = false;
         Finale = null;
+        MiddelalderenAdvancementCount = 4;
         CampaignOutcome = null;
         CampaignEndReason = null;
         GameLogId = Guid.NewGuid();
@@ -7478,6 +7626,14 @@ public sealed partial class GameSession
     public bool IsChronicleDecisionActive(int index)
         => _activeChronicleDecisionIndex == index && FlowPrompt is not null;
 
+    public bool IsChronicleCampOfferActive(int index)
+        => CampStep == CampStep.ChoosingAction
+            && index >= 0
+            && index < Chronicle.Count
+            && Chronicle[index].CampOffers is not null
+            && Chronicle[index].SelectedChoiceId is null
+            && !Chronicle.Skip(index + 1).Any(entry => entry.CampOffers is not null);
+
     private void RecordChronicleDecisionSelection(string optionId)
     {
         if (_activeChronicleDecisionIndex is not int index || index < 0 || index >= Chronicle.Count)
@@ -8137,7 +8293,15 @@ public sealed partial class GameSession
         PendingExploreCard = null;
         _specialPrompt = null;
         _activeChronicleEntryIndex = null;
+        // A decision-bearing Explore already stopped the player to read and act.
+        // If Explore resolved automatically, retain the explicit Arrival gate so
+        // the result isn't lost under immediately revealed Arrival content.
+        var lastExploreGate = Chronicle.FindLastIndex(e => e.Choices?.Any(c => c.Id == ExploreGateId) == true);
+        var hadExploreChoices = Chronicle.Skip(Math.Max(0, lastExploreGate + 1))
+            .Any(e => e.Choices?.Any(c => !c.Id.StartsWith("phase-gate:", StringComparison.OrdinalIgnoreCase)) == true);
         MobilizationStep = MobilizationStep.ArrivalReady;
+        if (hadExploreChoices && Phase == GamePhase.Mobilization)
+            BeginArrival();
         Changed?.Invoke();
     }
 

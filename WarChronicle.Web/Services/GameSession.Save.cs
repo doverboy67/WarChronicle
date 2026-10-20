@@ -26,6 +26,7 @@ public sealed partial class GameSession
         public CampStep CampStep { get; set; }
         public EndOfSeasonStep EndOfSeasonStep { get; set; }
         public WinterStep WinterStep { get; set; }
+        public int MiddelalderenAdvancementCount { get; set; } = 4;
 
         public int TerrainSerial { get; set; }
         public int ClearingSerial { get; set; }
@@ -154,6 +155,7 @@ public sealed partial class GameSession
             CampStep = CampStep,
             EndOfSeasonStep = EndOfSeasonStep,
             WinterStep = WinterStep,
+            MiddelalderenAdvancementCount = MiddelalderenAdvancementCount,
             TerrainSerial = _terrainSerial,
             ClearingSerial = _clearingSerial,
             NextMapSequence = _nextMapSequence,
@@ -253,6 +255,7 @@ public sealed partial class GameSession
             outcome = CampaignOutcome,
             endReason = CampaignEndReason,
             contentSets = _enabledContentSets.OrderBy(x => x).ToArray(),
+            finaleAdvancementCount = MiddelalderenAdvancementCount,
             finalState = new
             {
                 year = Year,
@@ -299,6 +302,7 @@ public sealed partial class GameSession
             outcome = CampaignOutcome,
             endReason = CampaignEndReason,
             contentSets = _enabledContentSets.OrderBy(x => x).ToArray(),
+            finaleAdvancementCount = MiddelalderenAdvancementCount,
             finalState = new
             {
                 year = Year,
@@ -425,6 +429,8 @@ public sealed partial class GameSession
             CampStep = save.CampStep;
             EndOfSeasonStep = save.EndOfSeasonStep;
             WinterStep = save.WinterStep;
+            MiddelalderenAdvancementCount = save.MiddelalderenAdvancementCount is >= 3 and <= 5
+                ? save.MiddelalderenAdvancementCount : 4;
             _terrainSerial = save.TerrainSerial;
             _clearingSerial = save.ClearingSerial;
             _nextMapSequence = save.NextMapSequence;

@@ -130,6 +130,21 @@ public enum FlowPromptKind
 public sealed record FlowPromptOption(string Id, string Label, string? Detail = null, bool Disabled = false, bool EchoIndicator = false);
 public sealed record ChronicleChoice(string Id, string Label, string? Detail = null, bool Disabled = false, bool EchoIndicator = false);
 
+// Snapshot of the complete Camp hand at the moment the player chooses an action.
+// Retain every offered card in the Chronicle, even after it is chosen and the
+// live CampHand advances to a different state. This is saved with history.
+public sealed record ChronicleCampOffer(
+    string Id,
+    string Title,
+    string? Flavor,
+    string Effect,
+    string Keyword,
+    string Location,
+    bool Disabled = false,
+    string? UnavailableReason = null,
+    bool ShowCampStewardNote = false,
+    bool ShowFieldStaffNote = false);
+
 public sealed record FlowPromptState(
     FlowPromptKind Kind,
     string Heading,
@@ -151,7 +166,8 @@ public sealed record ChronicleEntry(
     string? Heading = null,
     IReadOnlyList<ChronicleChoice>? Choices = null,
     string? SelectedChoiceId = null,
-    bool EchoIndicator = false);
+    bool EchoIndicator = false,
+    IReadOnlyList<ChronicleCampOffer>? CampOffers = null);
 
 
 public enum FinaleStep

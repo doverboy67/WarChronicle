@@ -257,7 +257,7 @@ public sealed partial class GameSession
             return;
 
         finale.MiddelalderenAdvancements.Clear();
-        foreach (var advancement in _catalog.GetMiddelalderenAdvancements().OrderBy(_ => _finaleRandom.Next()).Take(3))
+        foreach (var advancement in _catalog.GetMiddelalderenAdvancements().OrderBy(_ => _finaleRandom.Next()).Take(MiddelalderenAdvancementCount))
             finale.MiddelalderenAdvancements.Add(advancement.Id);
 
         finale.MiddelalderenUnits.Clear();
@@ -273,7 +273,7 @@ public sealed partial class GameSession
         }
 
         var names = finale.MiddelalderenAdvancements.Select(CombatTacticName).ToArray();
-        finale.Log.Add($"Middelalderen reveals 3 Advancements: {string.Join(", ", names)}.");
+        finale.Log.Add($"Middelalderen reveals {MiddelalderenAdvancementCount} Advancements: {string.Join(", ", names)}.");
         finale.Log.Add($"Middelalderen Host: {FormatCombatHost(finale.MiddelalderenUnits)}.");
         finale.Step = FinaleStep.RevealMiddelalderen;
         Changed?.Invoke();

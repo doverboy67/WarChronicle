@@ -68,6 +68,15 @@
                     <span><strong>No Quarter</strong><small>Hard-mode Scene, Echo, and Explore content</small></span>
                 </label>
             </div>
+            <div class="finale-difficulty-setup">
+                <label for="finale-difficulty">Middelalderen Finale difficulty</label>
+                <select id="finale-difficulty" @bind="_finaleDifficultyAdvancements">
+                    <option value="3">Easy · 3 Advancements</option>
+                    <option value="4">Standard · 4 Advancements</option>
+                    <option value="5">Hard · 5 Advancements</option>
+                </select>
+                <small>Changes only Middelalderen's Advancement draw. Its Host size and all other rules stay the same.</small>
+            </div>
             <div class="save-resume-actions">
                 <button class="primary-save-action" @onclick="BeginNewChronicleAsync">Begin Chronicle</button>
                 @if (_preserveExistingSaveForNewGame)
@@ -89,6 +98,7 @@
             <div class="dev-test-tools">
                 <button class="save-game" disabled="@(!Session.CanSaveGame)" title="@SaveButtonTitle" @onclick="SaveGameAsync">Save Game</button>
                 <a class="header-action-link" href="War_Chronicle_Rulebook.pdf" target="_blank" rel="noopener" title="Open the War Chronicle rulebook in a new browser tab">Rulebook</a>
+                <a class="header-action-link soundtrack-link" href="https://www.youtube.com/playlist?list=PLaMc6s463sdE" target="_blank" rel="noopener noreferrer" title="Open the War Chronicle song references playlist in a new tab">♫ Soundtrack</a>
                 <button class="header-action-link" title="Download a diagnostic snapshot of the current campaign" @onclick="DownloadDiagnosticLogAsync">Download Log</button>
                 @if (Session.Finale is { Step: FinaleStep.Complete } && _finaleSummaryDismissed)
                 {
@@ -465,16 +475,26 @@
             @for (var chronicleIndex = ChronicleRenderStart; chronicleIndex < Session.Chronicle.Count; chronicleIndex++)
             {
                 var entry = Session.Chronicle[chronicleIndex];
-                var decisionActive = Session.IsChronicleDecisionActive(chronicleIndex);
+                var entryIndex = chronicleIndex; // Capture a stable index for each click handler.
+                var decisionActive = Session.IsChronicleDecisionActive(chronicleIndex) || Session.IsChroniclePhaseGateActive(chronicleIndex);
+                var campOfferActive = Session.IsChronicleCampOfferActive(chronicleIndex);
                 var chronicleTypeClass = entry.Calendar.Contains("• Scene", StringComparison.OrdinalIgnoreCase)
                     ? "scene-event"
                     : entry.Calendar.Contains("• Echo", StringComparison.OrdinalIgnoreCase)
                         ? "echo-event"
                         : entry.Calendar.Contains("• Chronicle", StringComparison.OrdinalIgnoreCase)
                             ? "browser-flavor"
-                            : string.Empty;
+                            : !string.IsNullOrWhiteSpace(entry.Heading) && entry.Calendar.Contains("• Explore", StringComparison.OrdinalIgnoreCase)
+                                ? "explore-event"
+                                : !string.IsNullOrWhiteSpace(entry.Heading) && entry.Calendar.Contains("• Arrival", StringComparison.OrdinalIgnoreCase)
+                                    ? "arrival-event"
+                                    : !string.IsNullOrWhiteSpace(entry.Heading) && entry.Calendar.Contains("• Camp", StringComparison.OrdinalIgnoreCase)
+                                        ? "camp-event"
+                                        : string.Empty;
+                var isPhaseGate = entry.Choices?.Any(c => c.Id.StartsWith("phase-gate:", StringComparison.OrdinalIgnoreCase)) == true;
+                var transactionClass = ChronicleTransactionClass(entry);
                 var chronicleIconPath = ChronicleIconPath(entry);
-                <article data-chronicle-index="@chronicleIndex" class="chronicle-entry @(entry.Tone.ToString().ToLowerInvariant()) @(entry.Choices is not null ? "chronicle-decision" : string.Empty) @(string.IsNullOrWhiteSpace(entry.Heading) ? "follow-on" : string.Empty) @chronicleTypeClass">
+                <article @key="chronicleIndex" data-chronicle-index="@chronicleIndex" class="chronicle-entry @(entry.Tone.ToString().ToLowerInvariant()) @(entry.Choices is not null || entry.CampOffers is not null ? "chronicle-decision" : string.Empty) @(string.IsNullOrWhiteSpace(entry.Heading) ? "follow-on" : string.Empty) @chronicleTypeClass @transactionClass @(isPhaseGate ? "phase-gate-event" : string.Empty)">
                     <div class="chronicle-stamp">
                         <span>@entry.Calendar</span>
                     </div>
@@ -513,9 +533,9 @@
                             @foreach (var choice in entry.Choices)
                             {
                                 var selected = string.Equals(entry.SelectedChoiceId, choice.Id, StringComparison.OrdinalIgnoreCase);
-                                <button class="chronicle-choice @(selected ? "is-selected" : string.Empty) @(choice.Disabled ? "is-unavailable" : string.Empty)"
+                                <button aria-pressed="@(selected ? "true" : "false")" class="chronicle-choice @(selected ? "is-selected" : string.Empty) @(choice.Disabled ? "is-unavailable" : string.Empty)"
                                         disabled="@(!decisionActive || choice.Disabled)"
-                                        @onclick="() => Session.ResolveFlowPrompt(choice.Id)">
+                                        @onclick="() => Session.ResolveChronicleChoice(entryIndex, choice.Id)">
                                     <div class="chronicle-choice-label">
                                         <strong>@ChronicleChoiceText(choice.Label)</strong>
                                         @if (choice.EchoIndicator)
@@ -528,6 +548,57 @@
                                         <span>@ChronicleChoiceText(choice.Detail)</span>
                                     }
                                 </button>
+                            }
+                        </div>
+                    }
+                    @if (entry.CampOffers is not null)
+                    {
+                        <div class="camp-choice-list chronicle-camp-offers">
+                            @foreach (var card in entry.CampOffers)
+                            {
+                                var selected = string.Equals(entry.SelectedChoiceId, card.Id, StringComparison.OrdinalIgnoreCase);
+                                var locationIcon = CampLocationIconPath(card.Location);
+                                <article class="camp-choice-card @(card.Disabled ? "is-unavailable" : string.Empty) @(selected ? "is-selected" : string.Empty)">
+                                    <div class="camp-choice-heading">
+                                        <strong>@card.Title</strong>
+                                        <span class="camp-card-meta">
+                                            @if (locationIcon is not null)
+                                            {
+                                                <span class="camp-meta-item" title="@($"{card.Location} location")"><img src="@locationIcon" alt="" />@card.Location</span>
+                                            }
+                                        </span>
+                                    </div>
+                                    @if (!string.IsNullOrWhiteSpace(card.Flavor))
+                                    {
+                                        <p class="camp-choice-flavor">@card.Flavor</p>
+                                    }
+                                    <div class="camp-choice-effect">@((MarkupString)card.Effect)</div>
+                                    @if (card.ShowCampStewardNote)
+                                    {
+                                        <div class="camp-card-rules-note">
+                                            <strong>Camp Steward active</strong>
+                                            <span>After resolving normal Work, you may also spend 1 Coin for 1 adjacent Terrain Resource, or buy 1 Resource at Market Buy value -1 Coin (minimum 1 Coin).</span>
+                                        </div>
+                                    }
+                                    @if (card.ShowFieldStaffNote)
+                                    {
+                                        <div class="camp-card-rules-note">
+                                            <strong>Role effects</strong>
+                                            <span><b>Scouting:</b> When Exploring, draw 2 Terrain cards and choose 1.</span>
+                                            <span><b>Camp Steward:</b> After normal Work, you may also spend 1 Coin for 1 adjacent Terrain Resource, or buy 1 Resource at Market Buy value -1 Coin (minimum 1 Coin).</span>
+                                        </div>
+                                    }
+                                    @if (card.Disabled && !string.IsNullOrWhiteSpace(card.UnavailableReason))
+                                    {
+                                        <div class="camp-choice-unavailable">@card.UnavailableReason</div>
+                                    }
+                                    <button class="camp-choice-select @(selected ? "is-selected" : string.Empty)"
+                                            disabled="@(!campOfferActive || card.Disabled)"
+                                            aria-pressed="@(selected ? "true" : "false")"
+                                            @onclick="() => Session.ChooseCampCard(card.Id)">
+                                        Choose @card.Title
+                                    </button>
+                                </article>
                             }
                         </div>
                     }
@@ -610,78 +681,14 @@
             {
                 @if (Session.CampStep == CampStep.Ready)
                 {
-                    <article class="decision-block">
-                        <div class="decision-kicker">Camp Phase</div>
-                        <h3>Make Camp</h3>
-                        <p>The Host pauses after the march. Draw the Camp hand and see what the road has brought with it.</p>
-                        <div class="decision-options">
-                            <button @onclick="Session.BeginCamp">
-                                <strong>Begin Camp</strong>
-                            </button>
-                        </div>
-                    </article>
+                    @* Begin Camp is a retained phase gate in the Chronicle above. *@
                 }
                 else if (Session.CampStep is CampStep.ResolvingSpecial or CampStep.ResolvingAction)
                 {
                 }
                 else if (Session.CampStep == CampStep.ChoosingAction)
                 {
-                    <article class="decision-block camp-choice-block">
-                        <div class="decision-kicker">Camp Phase</div>
-                        <h3>Choose Camp Action</h3>
-                        <p>Choose one standard Camp card from the Camp hand, or Work.</p>
-                        <div class="camp-choice-list">
-                            @foreach (var card in Session.CampActionChoices)
-                            {
-                                var available = Session.CanChooseCampCard(card);
-                                var reason = Session.CampChoiceAvailability(card);
-                                var keywordIcon = CampKeywordIconPath(card);
-                                var locationIcon = CampLocationIconPath(card.Location);
-                                <article class="camp-choice-card @(!available ? "is-unavailable" : string.Empty)">
-                                    <div class="camp-choice-heading">
-                                        <strong>@card.Title</strong>
-                                        <span class="camp-card-meta">
-                                            @if (keywordIcon is not null)
-                                            {
-                                                <span class="camp-meta-item" title="@card.Keyword"><img src="@keywordIcon" alt="" />@card.Keyword</span>
-                                            }
-                                            @if (locationIcon is not null)
-                                            {
-                                                <span class="camp-meta-item" title="@($"{card.Location} location")"><img src="@locationIcon" alt="" />@card.Location</span>
-                                            }
-                                        </span>
-                                    </div>
-                                    @if (!string.IsNullOrWhiteSpace(card.Flavor))
-                                    {
-                                        <p class="camp-choice-flavor">@card.Flavor</p>
-                                    }
-                                    <div class="camp-choice-effect">@((MarkupString)card.Effect)</div>
-                                    @if (string.Equals(card.Id, "CAMP-001", StringComparison.OrdinalIgnoreCase) && Session.HasCampSteward)
-                                    {
-                                        <div class="camp-card-rules-note">
-                                            <strong>Camp Steward active</strong>
-                                            <span>After resolving normal Work, you may also spend 1 Coin for 1 adjacent Terrain Resource, or buy 1 Resource at Market Buy value -1 Coin (minimum 1 Coin).</span>
-                                        </div>
-                                    }
-                                    @if (string.Equals(card.Id, "CAMP-012", StringComparison.OrdinalIgnoreCase))
-                                    {
-                                        <div class="camp-card-rules-note">
-                                            <strong>Role effects</strong>
-                                            <span><b>Scouting:</b> When Exploring, draw 2 Terrain cards and choose 1.</span>
-                                            <span><b>Camp Steward:</b> After normal Work, you may also spend 1 Coin for 1 adjacent Terrain Resource, or buy 1 Resource at Market Buy value -1 Coin (minimum 1 Coin).</span>
-                                        </div>
-                                    }
-                                    @if (!available && !string.IsNullOrWhiteSpace(reason))
-                                    {
-                                        <div class="camp-choice-unavailable">@reason</div>
-                                    }
-                                    <button class="camp-choice-select" disabled="@(!available)" @onclick="() => Session.ChooseCampCard(card.Id)">
-                                        Choose @card.Title
-                                    </button>
-                                </article>
-                            }
-                        </div>
-                    </article>
+                    @* The complete Camp hand is snapshotted and offered in the Chronicle above. *@
                 }
                 else if (Session.CampStep == CampStep.Complete)
                 {
@@ -690,45 +697,11 @@
             }
             else if (Session.Phase == GamePhase.EndOfSeason)
             {
-                @if (Session.EndOfSeasonStep == EndOfSeasonStep.Ready)
+                @if (Session.EndOfSeasonStep is EndOfSeasonStep.Ready
+                    or EndOfSeasonStep.VulnerabilityReady
+                    or EndOfSeasonStep.HarvestReady)
                 {
-                    <article class="decision-block eos-block">
-                        <div class="decision-kicker">End of Season</div>
-                        <h3>End of @Session.EndOfSeasonName</h3>
-                        <p>The campaigning season has crossed its threshold. Resolve the seasonal reckoning before play continues.</p>
-                        <div class="decision-options">
-                            <button @onclick="Session.BeginEndOfSeason">
-                                <strong>Begin End of @Session.EndOfSeasonName</strong>
-                                <span>Vulnerability, Harvest, and consolidation follow.</span>
-                            </button>
-                        </div>
-                    </article>
-                }
-                else if (Session.EndOfSeasonStep == EndOfSeasonStep.VulnerabilityReady)
-                {
-                    <article class="decision-block eos-block">
-                        <div class="decision-kicker">End of @Session.EndOfSeasonName</div>
-                        <h3>Vulnerability</h3>
-                        <p>The Market shifts and Hostile tribes may raid the road behind you.</p>
-                        <div class="decision-options">
-                            <button @onclick="Session.ResolveEndOfSeasonVulnerability">
-                                <strong>Resolve Vulnerability</strong>
-                            </button>
-                        </div>
-                    </article>
-                }
-                else if (Session.EndOfSeasonStep == EndOfSeasonStep.HarvestReady)
-                {
-                    <article class="decision-block eos-block">
-                        <div class="decision-kicker">End of @Session.EndOfSeasonName</div>
-                        <h3>Harvest</h3>
-                        <p>Eligible Terrain now produces Food, Wood, or Stone. New resources are staged before the Baggage Train is repacked.</p>
-                        <div class="decision-options">
-                            <button @onclick="Session.BeginEndOfSeasonHarvest">
-                                <strong>Gather the Harvest</strong>
-                            </button>
-                        </div>
-                    </article>
+                    @* These single-use transitions now live permanently in the Chronicle. *@
                 }
                 else if (Session.EndOfSeasonStep == EndOfSeasonStep.HarvestPreparing)
                 {
@@ -840,16 +813,7 @@
                 }
                 else if (Session.EndOfSeasonStep == EndOfSeasonStep.ConsolidationReady)
                 {
-                    <article class="decision-block eos-block">
-                        <div class="decision-kicker">End of @Session.EndOfSeasonName</div>
-                        <h3>Supply Line Consolidation</h3>
-                        <p>Keep the first two Clearings behind the Host. Older Clearings and disconnected Terrain fall away from the active route.</p>
-                        <div class="decision-options">
-                            <button @onclick="Session.ResolveEndOfSeasonConsolidation">
-                                <strong>Consolidate the Route</strong>
-                            </button>
-                        </div>
-                    </article>
+                    @* Retained, checked Chronicle decision. *@
                 }
                 else if (Session.EndOfSeasonStep == EndOfSeasonStep.RefitReform)
                 {
@@ -925,17 +889,7 @@
             {
                 @if (Session.WinterStep == WinterStep.Ready)
                 {
-                    <article class="decision-block eos-block winter-block">
-                        <div class="decision-kicker">Winter • Year @Session.Year</div>
-                        <h3>Winter Phase</h3>
-                        <p>The campaigning year is over. Mercenaries depart, the Host faces Attrition, Morale resets, and one final Refit &amp; Reform prepares the march for the next year.</p>
-                        <div class="decision-options">
-                            <button @onclick="Session.BeginWinter">
-                                <strong>Begin Winter</strong>
-                                <span>Resolve the year-end reckoning.</span>
-                            </button>
-                        </div>
-                    </article>
+                    @* Begin Winter is a retained, checked Chronicle decision. *@
                 }
                 else if (Session.WinterStep == WinterStep.Attrition)
                 {
@@ -1055,17 +1009,7 @@
             }
             else if (Session.MobilizationStep == MobilizationStep.ExploreReady)
             {
-                <article class="decision-block">
-                    <div class="decision-kicker">Mobilization Phase</div>
-                    <h3>Explore Step</h3>
-                    <p>@(Session.PlayArea.Count <= 1 ? "The Host is ready to leave the Starting Clearing." : "The Host is ready to continue the march.")</p>
-                    <div class="decision-options">
-                        <button @onclick="Session.BeginExplore">
-                            <strong>Explore</strong>
-                            <span>Advance along the road.</span>
-                        </button>
-                    </div>
-                </article>
+                @* Explore is a retained phase gate in the Chronicle above. *@
             }
             else if (Session.MobilizationStep == MobilizationStep.TerrainChoice)
             {
@@ -1086,17 +1030,7 @@
             }
             else if (Session.MobilizationStep == MobilizationStep.ArrivalReady)
             {
-                <article class="decision-block arrival-gate-block">
-                    <div class="decision-kicker">Mobilization Phase</div>
-                    <h3>Arrival Step</h3>
-                    <p>The Explore Step is complete. When you are ready, reveal what waits at the end of the road.</p>
-                    <div class="decision-options">
-                        <button @onclick="Session.ProceedToArrival">
-                            <strong>Proceed to Arrival</strong>
-                            <span>Reveal the next Clearing.</span>
-                        </button>
-                    </div>
-                </article>
+                @* Proceed to Arrival is a retained phase gate above. *@
             }
             else if (Session.MobilizationStep == MobilizationStep.ArrivalEncounter)
             {
@@ -1228,7 +1162,7 @@
                     {
                         <section class="finale-step-card">
                             <div class="decision-kicker">Deploy Middelalderen's Host</div>
-                            <h3>Middelalderen reveals 3 Advancements</h3>
+                            <h3>Middelalderen reveals @Session.MiddelalderenAdvancementCount Advancements</h3>
                             <div class="finale-enemy-grid">
                                 @foreach (var id in finale.MiddelalderenAdvancements.OrderBy(id => id))
                                 {
@@ -1584,7 +1518,7 @@
 }
 
 @code {
-    private const string AppVersion = "v0.5.0.42";
+    private const string AppVersion = "v0.5.0.45";
 
     // Presentation coordinates only, expressed as fixed pixel offsets from
     // the center of the play-area panel. This keeps the physical relationship
@@ -1673,7 +1607,7 @@
         _debugTapWindowStart = DateTime.MinValue;
     }
 
-    private const int ChronicleRenderLimit = 160;
+    private const int ChronicleRenderLimit = 120;
     private static readonly TimeSpan ActiveGameLogPersistInterval = TimeSpan.FromSeconds(10);
 
     private bool _showResumePrompt;
@@ -1682,6 +1616,7 @@
     private bool _includeStrangers;
     private bool _includeRiffRaff;
     private bool _includeNoQuarter;
+    private int _finaleDifficultyAdvancements = 4;
     private int _lastChronicleCount;
     private bool _hasRenderedChronicle;
     private bool _saveCheckComplete;
@@ -1753,20 +1688,20 @@
         else if (Session.GameEndedUtc is null && _gameLogDirty && !_showResumePrompt && !_showContentSetup)
             await PersistActiveGameLogAsync();
 
-        // Position the earliest entry produced by the last action near the top;
-        // do not jump to the bottom and miss the beginning of a multi-entry result.
+        // Anchor the old viewport after DOM changes, then ease out toward the
+        // FIRST new text. The browser's natural bottom limit is respected.
         var currentChronicleCount = Session.Chronicle.Count;
-        if (_hasRenderedChronicle && currentChronicleCount > _lastChronicleCount
-            && _lastChronicleCount >= ChronicleRenderStart && !_showContentSetup && !_showResumePrompt)
+        var firstNewIndex = _hasRenderedChronicle && currentChronicleCount > _lastChronicleCount
+            && _lastChronicleCount >= ChronicleRenderStart && !_showContentSetup && !_showResumePrompt
+                ? _lastChronicleCount
+                : -1;
+        try
         {
-            try
-            {
-                await JS.InvokeVoidAsync("wcChronicle.scrollToFirstNew", _lastChronicleCount);
-            }
-            catch
-            {
-                // Scrolling is a presentation enhancement, never a gameplay dependency.
-            }
+            await JS.InvokeVoidAsync("wcChronicle.restoreAndScrollToFirstNew", firstNewIndex);
+        }
+        catch
+        {
+            // Scrolling is a presentation enhancement, never a gameplay dependency.
         }
         _lastChronicleCount = currentChronicleCount;
         _hasRenderedChronicle = true;
@@ -1894,6 +1829,7 @@
             sets.Add("No Quarter");
 
         Session.StartNewGame(Catalog, sets);
+        Session.SetMiddelalderenAdvancementCount(_finaleDifficultyAdvancements);
         await JS.InvokeVoidAsync("wcSave.clear");
         await JS.InvokeVoidAsync("wcGameLog.clearActive");
 
@@ -2036,6 +1972,9 @@
 
     private void OnSessionChanged()
     {
+        // Commit the next phase button before the new Chronicle is rendered.
+        // Never collapse the panel used to make the previous selection.
+        Session.EnsurePhaseGateChronicle();
         _saveStatus = null;
         _gameLogDirty = true;
         _showFullChronicle = false;
@@ -2140,6 +2079,38 @@
         "Kicked in the Teeth", "Down Payment Blues", "Dog Eat Dog", "Whole Lotta Rosie", "The Jack",
         "Night of the Long Knives", "This House Is on Fire", "Fly on the Wall", "Thunderstruck", "Moneytalks"
     };
+
+    // Only label completed resource/unit changes, not choices offering possible
+    // results, Time advances, die rolls, or narrative paragraphs. A transaction
+    // with both a reward and a payment receives a restrained split marker.
+    private static string ChronicleTransactionClass(ChronicleEntry entry)
+    {
+        if (entry.Choices is not null || entry.CampOffers is not null
+            || entry.Tone == ChronicleTone.System || string.IsNullOrWhiteSpace(entry.Text))
+            return string.Empty;
+
+        var text = entry.Text.Trim();
+        var spends = System.Text.RegularExpressions.Regex.IsMatch(text,
+            @"^(?:Lose|Loses|Lost|Spend|Spends|Spent|Pay|Pays|Paid|Discard|Discards|Disband|Suffer|Suffers|Remove|Removed|The Host (?:pays|paid|surrenders|offers|loses|spends|disbands)|Winter Attrition removes|\d+ (?:Coin|Food|Wood|Stone|Research) changes hands\b)",
+            System.Text.RegularExpressions.RegexOptions.IgnoreCase)
+            || System.Text.RegularExpressions.Regex.IsMatch(text,
+                @"\b(?:for|costs?)\s+\d+\s+(?:Coin|Food|Wood|Stone|Research)\b",
+                System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+        var receives = System.Text.RegularExpressions.Regex.IsMatch(text,
+            @"^(?:Gain|Gains|Gained|Regain|Regains|Recover|Receive|Receives|Collect|Collects|Recruit|Recruits|Acquire|Acquires|Add|Adds|Restore|Restores|The Host (?:packs|recruits|receives|gains))\b",
+            System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+        // A single line can contain several mechanical clauses.
+        spends |= System.Text.RegularExpressions.Regex.IsMatch(text,
+            @"\b(?:spend|pay|lose)\s+\d+\s+(?:Coin|Food|Wood|Stone|Research|Leadership|Morale|Levy|Infantry|Archers?|Cavalry)\b",
+            System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+        receives |= System.Text.RegularExpressions.Regex.IsMatch(text,
+            @"\b(?:gain|receive|recruit)\s+\d+\s+(?:Coin|Food|Wood|Stone|Research|Leadership|Morale|Levy|Infantry|Archers?|Cavalry)\b",
+            System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+        if (spends && receives) return "chronicle-transfer-mixed";
+        if (spends) return "chronicle-transfer-spend";
+        if (receives) return "chronicle-transfer-receive";
+        return string.Empty;
+    }
 
     private static MarkupString ChronicleText(ChronicleEntry entry)
         => ChronicleMarkup(entry.Text);
@@ -2277,6 +2248,22 @@
             m => m.Groups["lead"].Value + IconifyChronicleMechanicBody(m.Groups["body"].Value),
             System.Text.RegularExpressions.RegexOptions.IgnoreCase);
 
+        // Actual resource transfers may be written as immersive narration,
+        // not only as 'Spend' or 'Gain'. These still need clear iconography.
+        text = System.Text.RegularExpressions.Regex.Replace(
+            text,
+            $@"(?<lead>{actionStart}(?:The Host (?:pays|paid|offers|surrenders|recruits|packs|gains|receives)\b|Winter Attrition removes\b))(?<body>[^.!?\n]*)",
+            m => m.Groups["lead"].Value + IconifyChronicleMechanicBody(m.Groups["body"].Value),
+            System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+
+        // '1 Research changes hands' is a tribute payment, despite lacking
+        // an explicit action verb.
+        text = System.Text.RegularExpressions.Regex.Replace(
+            text,
+            @"^(?<qty>\d+)\s+(?<thing>Coin|Food|Wood|Stone|Research)\s+changes hands\b",
+            m => ChronicleMechanicAmount(m.Groups["qty"].Value, m.Groups["thing"].Value) + " changes hands",
+            System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+
         // Costs and Tributes are often shown as compact designer-facing statements
         // rather than verb sentences, but they are still mechanical information.
         text = System.Text.RegularExpressions.Regex.Replace(
@@ -2292,7 +2279,7 @@
     {
         return System.Text.RegularExpressions.Regex.Replace(
             body,
-            @"(?<qty>(?:\+|&#x2B;|&#43;)?\d+)\s+(?<thing>Coins?|Leadership|Food|Wood|Stone|Research(?:\s+Tokens?)?|Shields?|Archers?|Cavalry|Infantry|Levy|Mercenary|Mercenaries|Hedge\s+Knights?)\b",
+            @"(?<qty>(?:\+|&#x2B;|&#43;)?\d+)\s+(?<thing>Coins?|Leadership|Morale|Food|Wood|Stone|Research(?:\s+Tokens?)?|Shields?|Archers?|Cavalry|Infantry|Levy|Mercenary|Mercenaries|Hedge\s+Knights?)\b",
             m => ChronicleMechanicAmount(m.Groups["qty"].Value, m.Groups["thing"].Value),
             System.Text.RegularExpressions.RegexOptions.IgnoreCase);
     }
@@ -2333,16 +2320,20 @@
             _ => char.ToUpperInvariant(key[0]) + key[1..]
         };
 
+        // Text remains in the DOM for accessibility, plain-text selection, and
+        // copying. Icons use exactly the assets employed elsewhere by the game.
+        var amountText = $"<strong class='chronicle-mech-number'>{number}</strong>";
+        var wordText = $" <span class='chronicle-mech-word'>{label}</span>";
         if (key == "leadership")
-            return $"<span class='chronicle-mech-amount' title='Leadership' aria-label='{number} Leadership'><span class='chronicle-mech-number'>{number}</span><i class='chronicle-mech-icon chronicle-leadership-icon' aria-hidden='true'></i></span>";
+            return $"<span class='chronicle-mech-amount' title='{number} Leadership'>{amountText}<i class='chronicle-mech-icon chronicle-leadership-icon' aria-hidden='true'></i>{wordText}</span>";
 
         if (key == "levy")
-            return $"<span class='chronicle-mech-amount' title='Levy' aria-label='{number} Levy'><span class='chronicle-mech-number'>{number}</span><i class='chronicle-mech-icon chronicle-levy-icon' aria-hidden='true'></i></span>";
+            return $"<span class='chronicle-mech-amount' title='{number} Levy'>{amountText}<i class='chronicle-mech-icon chronicle-levy-icon' aria-hidden='true'></i>{wordText}</span>";
 
         if (imagePath is null)
-            return $"{number} {thing}";
+            return $"<strong class='chronicle-mech-plain'>{number} {label}</strong>";
 
-        return $"<span class='chronicle-mech-amount' title='{label}' aria-label='{number} {label}'><span class='chronicle-mech-number'>{number}</span><img class='chronicle-mech-icon' src='{imagePath}' alt='' aria-hidden='true' /></span>";
+        return $"<span class='chronicle-mech-amount' title='{number} {label}'>{amountText}<img class='chronicle-mech-icon' src='{imagePath}' alt='' />{wordText}</span>";
     }
 
     private static string NumericDieBadge(string value, bool leadership = false)
