@@ -590,6 +590,12 @@ public sealed partial class GameSession
         PendingCampCard = card;
         _campCardResolvedSuccessfully = true;
 
+        // Rulebook: a Scene with no required target is unresolvable, even if
+        // its EventFlow contains other choices. Apply the replacement BEFORE
+        // narrating the Scene or charging its printed Time.
+        if (TryResolveUnresolvableScene(card))
+            return;
+
         var echoOrigin = string.Equals(card.CardType, "Echo", StringComparison.OrdinalIgnoreCase)
             && _echoOrigins.TryGetValue(card.Id, out var recordedOrigin)
             && !string.IsNullOrWhiteSpace(recordedOrigin)
@@ -630,6 +636,52 @@ public sealed partial class GameSession
         }
 
         StartCampFlow(card);
+    }
+
+    /// <summary>
+    /// Stand Up and Shout begins by requiring a tribe with highest Rapport.
+    /// Unmet tribes do not qualify, so with no encountered tribes the Scene
+    /// cannot resolve. It must be replaced before its printed Time is spent.
+    /// The other current Scenes either have no required initial selection or
+    /// provide a legitimate alternative when a later selection is unavailable.
+    /// </summary>
+    private bool TryResolveUnresolvableScene(CampCardState card)
+    {
+        if (!string.Equals(card.Id, "SCENE-029", StringComparison.OrdinalIgnoreCase)
+            || Tribes.Any(t => !string.Equals(t.Rapport, "Unmet", StringComparison.OrdinalIgnoreCase)))
+            return false;
+
+        Chronicle.Add(new(
+            $"{CalendarStamp} • Scene",
+            "An appeal reaches the Host, but the company has yet to meet any of the tribes. There is no one whose call can be answered, and the matter passes without consequence.",
+            ChronicleTone.Narrative,
+            card.Title));
+        _activeChronicleEntryIndex = Chronicle.Count - 1;
+
+        // Replace the unresolvable Scene exactly as the Camp rules require:
+        // move one RANDOM unseeded Scene to the Camp discard, then shuffle
+        // this drawn Scene back among the remaining unseeded Scenes.
+        if (_unseededScenes.Count > 0)
+        {
+            var index = Random.Shared.Next(_unseededScenes.Count);
+            var replacement = _unseededScenes[index];
+            _unseededScenes.RemoveAt(index);
+            _campDiscard.Add(replacement);
+        }
+        else
+        {
+            _logger.LogWarning("No unseeded Scene is available to replace {CardId}.", card.Id);
+        }
+
+        _unseededScenes.Add(card);
+        Shuffle(_unseededScenes);
+        AddSystemText($"{card.Title} is unresolvable: no tribes have been met. A random unseeded Scene is added to the Camp discard and {card.Title} returns to the unseeded Scene pile. No Time is spent.");
+
+        // The original card has already been returned to the unseeded pile;
+        // prevent normal AfterPlay from discarding/removing that same card.
+        _flowVars["Camp.AfterPlayOverridden"] = true;
+        CompleteCampCard();
+        return true;
     }
 
     private void AddCampPrintedNarrative(CampCardState card)

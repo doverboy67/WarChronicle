@@ -1,7 +1,15 @@
-War Chronicle Browser Update 0541 (v0.5.0.41)
+War Chronicle Browser Update 0542 (v0.5.0.42)
 =====================================================
 
 Base: WarChronicleBrowser_Update_0538.zip (v0.5.0.38); fixes 0539 Pages-data packaging defect
+
+0542 Stand Up and Shout unresolvable Scene correction
+----------------------------------------------------
+- When Stand Up and Shout (SCENE-029) is drawn before any tribe has been met, it is unresolvable. No Rapport target exists; the Scene must not show an Answer/Turn Away choice, adjust Rapport, seed an Echo, or charge its printed 1 Time.
+- The browser now randomly moves one card from the unseeded Scene pool to Camp discard, shuffles Stand Up and Shout back into the unseeded Scene pool, and continues resolving the remaining drawn Scenes and the normal Camp choice. It adds a Chronicle explanation and mechanical note.
+- Audited all current Scene flows: Stand Up and Shout alone starts with a mandatory, unguarded Select target. A Wager of Flesh has the voluntary Refuse option if the Host has no military units; its unit selection remains conditional.
+- This is a source update to both server-hosted Web and static GitHub Pages projects. Published save-game schema remains 1. Login and automated email reporting remain outstanding.
+- Source has been statically checked but NOT compiled or exercised in .NET (SDK is unavailable here). Build and browser-test before external playtesting.
 
 0541 GitHub Pages startup correction
 -----------------------------------
