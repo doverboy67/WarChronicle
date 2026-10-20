@@ -214,7 +214,8 @@ public sealed partial class GameSession
             state.PlayerTactics.Add(tactic.Id);
         foreach (var tacticId in committedTactics ?? Enumerable.Empty<string>())
         {
-            if (state.PlayerTactics.Contains(tacticId))
+            if (state.PlayerTactics.Contains(tacticId)
+                && UnitTacticUnavailableReason(tacticId, state.PlayerUnits, !state.NoDisengage && state.MayDisengage) is null)
                 state.CommittedTactics.Add(tacticId);
         }
         foreach (var advancementId in enemyAdvancements ?? Enumerable.Empty<string>())
@@ -315,6 +316,33 @@ public sealed partial class GameSession
         return parts.Count == 0 ? "No Units" : string.Join(", ", parts);
     }
 
+    private static string? UnitTacticUnavailableReason(string id, IReadOnlyDictionary<string, int> units, bool mayDisengage)
+    {
+        var requiredType = id switch
+        {
+            "ADV-007" or "ADV-011" => "Cavalry",
+            "ADV-008" => "Levy",
+            "ADV-009" or "ADV-012" => "Archers",
+            "ADV-010" => "Infantry",
+            _ => null
+        };
+        if (id == "ADV-011" && !mayDisengage)
+            return "Disengagement is prohibited in this Combat.";
+        if (requiredType is not null && (!units.TryGetValue(requiredType, out var count) || count <= 0))
+            return $"No {requiredType} in your Host.";
+        if (id == "ADV-013" && !new[] { "Archers", "Cavalry", "Infantry" }.Any(t => units.TryGetValue(t, out var availableCount) && availableCount > 0))
+            return "No Military Units eligible for Steady Advance.";
+        return null;
+    }
+
+    public string? CombatTacticUnavailableReason(string id)
+    {
+        if (Combat is not { } combat)
+            return null;
+        return UnitTacticUnavailableReason(id, combat.PlayerUnits, !combat.NoDisengage && combat.MayDisengage)
+            ?? (combat.PlayerLeadership <= 0 && !combat.CommittedTactics.Contains(id) ? "Requires 1 Leadership." : null);
+    }
+
     public bool CanToggleCombatTactic(string id)
     {
         var combat = Combat;
@@ -325,7 +353,7 @@ public sealed partial class GameSession
             return false;
         if (combat.CommittedTactics.Contains(id))
             return true;
-        return combat.PlayerLeadership > 0;
+        return combat.PlayerLeadership > 0 && CombatTacticUnavailableReason(id) is null;
     }
 
     public void ToggleCombatTactic(string id)
@@ -535,8 +563,8 @@ public sealed partial class GameSession
         for (var i = startIndex; i < order.Length; i++)
         {
             var type = order[i];
-            var playerDice = Math.Min(6, combat.PlayerUnits[type] + CombatBonusDice(type));
-            var enemyDice = Math.Min(6, combat.EnemyUnits[type] + EnemyCombatBonusDice(type));
+            var playerDice = combat.PlayerUnits[type] > 0 ? Math.Min(6, combat.PlayerUnits[type] + CombatBonusDice(type)) : 0;
+            var enemyDice = combat.EnemyUnits[type] > 0 ? Math.Min(6, combat.EnemyUnits[type] + EnemyCombatBonusDice(type)) : 0;
             if (playerDice <= 0 && enemyDice <= 0)
             {
                 combat.Log.Add(new($"{type} phase skipped: no {type} are present."));
@@ -557,8 +585,8 @@ public sealed partial class GameSession
         combat.PlayerRoll.Clear();
         combat.EnemyRoll.Clear();
 
-        var playerDice = Math.Min(6, combat.PlayerUnits[type] + CombatBonusDice(type));
-        var enemyDice = Math.Min(6, combat.EnemyUnits[type] + EnemyCombatBonusDice(type));
+        var playerDice = combat.PlayerUnits[type] > 0 ? Math.Min(6, combat.PlayerUnits[type] + CombatBonusDice(type)) : 0;
+        var enemyDice = combat.EnemyUnits[type] > 0 ? Math.Min(6, combat.EnemyUnits[type] + EnemyCombatBonusDice(type)) : 0;
 
         for (var i = 0; i < playerDice; i++)
             combat.PlayerRoll.Add(new(_combatRandom.Next(1, 7)));

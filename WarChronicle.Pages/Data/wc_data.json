@@ -21,7 +21,7 @@
       "after_play": "Keep",
       "text": {
         "flavor": "While the road waits, the Host takes up the work at hand: hauling, mending, tending, building, and drilling for what comes next.",
-        "effect": "<b>Advance 2 Time and Choose 1:</b><br><ul><li><b>Gain 2 Coins.</b></li><li><b>Gain 1 Coin and 1 Leadership.</b></li><li><b>Repair Baggage:</b> If your Baggage Train has a damaged space, spend 1 Wood to repair 1 damaged Baggage space.</li></ul><br>If you have the <b><i>Camp Steward</i></b>, you may instead choose 1:<br><ul><li><b>Gain 1 Resource</b> matching the adjacent Terrain.</li><li><b>Buy 1 Resource</b> from the Market for 1 Coin less than its current Buy value (min 0).</li></ul>"
+        "effect": "<b>Advance 2 Time and Choose 1:</b><br><ul><li><b>Gain 2 Coin.</b></li><li><b>Gain 1 Coin and 1 Leadership.</b></li><li><b>Repair Baggage:</b> Spend 1 Wood to repair 1 damaged Baggage Train space.</li></ul><br><b>If you have Camp Steward:</b> After resolving your normal Work option, you may also choose 1:<br><ul><li>Spend <b>1 Coin</b> to collect 1 Resource matching the adjacent Terrain.</li><li>Buy 1 Resource from the Market for <b>1 Coin less</b> than its current Buy value (minimum 1 Coin).</li></ul>"
       },
       "notes": null
     },
@@ -263,7 +263,7 @@
       "after_play": "RemoveOrDiscard",
       "text": {
         "flavor": "A wise commander does not march on courage alone. Scouts find the road, and Stewards keep the Host ready to follow it.",
-        "effect": "<b>Advance 2 Time and Choose 1:</b><br><b>Train Scouts:</b> <i>Cost: 1 Research.</i> Place the Scouting token near the Explore draw deck.<br><br><b>Appoint Camp Steward:</b> <i>Cost: 2 Coin.</i> Place the Camp Steward token near the Camp draw deck."
+        "effect": "<b>Advance 2 Time and Choose 1:</b><br><b>Train Scouts:</b> <i>Cost: 1 Coin.</i> Place the Scouting token near the Explore draw deck.<br><br><b>Appoint Camp Steward:</b> <i>Cost: 1 Coin.</i> Place the Camp Steward token near the Camp draw deck."
       },
       "notes": null
     },
@@ -3031,20 +3031,6 @@
               "next": "N20"
             },
             {
-              "label": "Gain adjacent Terrain Resource",
-              "input": "Player.Tokens",
-              "operator": "HAS",
-              "value": "CampSteward",
-              "next": "N30"
-            },
-            {
-              "label": "Buy 1 Resource at Market -1 Coin",
-              "input": "Player.Tokens",
-              "operator": "HAS",
-              "value": "CampSteward",
-              "next": "N40"
-            },
-            {
               "label": "Repair 1 damaged Baggage Train space — Spend 1 Wood",
               "input": "CanRepairBaggageSlot",
               "operator": "EQ",
@@ -3060,7 +3046,7 @@
             "target": "Coin",
             "value": 2
           },
-          "next": "N99"
+          "next": "N80"
         },
         "N20": {
           "type": "Action",
@@ -3078,35 +3064,7 @@
             "target": "Leadership",
             "value": 1
           },
-          "next": "N99"
-        },
-        "N30": {
-          "type": "Action",
-          "action": {
-            "type": "Gain",
-            "target": "ResourceMatchingAdjacentTerrain",
-            "value": 1
-          },
-          "next": "N99"
-        },
-        "N40": {
-          "type": "Action",
-          "action": {
-            "type": "MarketBuy",
-            "target": "Resource",
-            "value": 1
-          },
-          "next": "N99",
-          "flags": [
-            {
-              "name": "PriceModifier",
-              "value": "-1 Coin"
-            },
-            {
-              "name": "SubjectToBaggageCapacity",
-              "value": true
-            }
-          ]
+          "next": "N80"
         },
         "N99": {
           "type": "End"
@@ -3140,7 +3098,91 @@
             "target": "BaggageSlot",
             "value": "SelectedBaggageSlot"
           },
+          "next": "N80"
+        },
+        "N80": {
+          "type": "Check",
+          "prompt": "Is Camp Steward active?",
+          "branches": [
+            {
+              "label": "Yes",
+              "input": "Player.Tokens",
+              "operator": "HAS",
+              "value": "CampSteward",
+              "next": "N81"
+            },
+            {
+              "label": "No",
+              "input": "Player.Tokens",
+              "operator": "NOT_HAS",
+              "value": "CampSteward",
+              "next": "N99"
+            }
+          ]
+        },
+        "N81": {
+          "type": "Choice",
+          "prompt": "Camp Steward: choose 1 additional benefit, or skip it.",
+          "branches": [
+            {
+              "label": "Collect 1 adjacent Terrain Resource for 1 Coin",
+              "input": null,
+              "operator": null,
+              "value": null,
+              "next": "N82"
+            },
+            {
+              "label": "Buy 1 Resource at Market -1 Coin (minimum 1)",
+              "input": null,
+              "operator": null,
+              "value": null,
+              "next": "N85"
+            },
+            {
+              "label": "Skip Camp Steward",
+              "input": null,
+              "operator": null,
+              "value": null,
+              "next": "N99"
+            }
+          ]
+        },
+        "N82": {
+          "type": "Action",
+          "action": {
+            "type": "Spend",
+            "target": "Coin",
+            "value": 1
+          },
+          "next": "N83"
+        },
+        "N83": {
+          "type": "Action",
+          "action": {
+            "type": "Gain",
+            "target": "ResourceMatchingAdjacentTerrain",
+            "value": 1
+          },
           "next": "N99"
+        },
+        "N85": {
+          "type": "Action",
+          "action": {
+            "type": "MarketBuy",
+            "target": "Resource",
+            "value": 1
+          },
+          "next": "N99",
+          "flags": [
+            {
+              "name": "PriceModifier",
+              "value": "-1 Coin"
+            },
+            {
+              "name": "SubjectToBaggageCapacity",
+              "value": true
+            }
+          ]
         }
       }
     },
@@ -4103,7 +4145,7 @@
           "type": "Action",
           "action": {
             "type": "Spend",
-            "target": "Research",
+            "target": "Coin",
             "value": 1
           },
           "next": "N11"
@@ -4128,7 +4170,7 @@
           "action": {
             "type": "Spend",
             "target": "Coin",
-            "value": 2
+            "value": 1
           },
           "next": "N21"
         },

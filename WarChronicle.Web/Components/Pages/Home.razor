@@ -475,7 +475,7 @@
                             ? "browser-flavor"
                             : string.Empty;
                 var chronicleIconPath = ChronicleIconPath(entry);
-                <article class="chronicle-entry @(entry.Tone.ToString().ToLowerInvariant()) @(entry.Choices is not null ? "chronicle-decision" : string.Empty) @(string.IsNullOrWhiteSpace(entry.Heading) ? "follow-on" : string.Empty) @chronicleTypeClass">
+                <article data-chronicle-index="@chronicleIndex" class="chronicle-entry @(entry.Tone.ToString().ToLowerInvariant()) @(entry.Choices is not null ? "chronicle-decision" : string.Empty) @(string.IsNullOrWhiteSpace(entry.Heading) ? "follow-on" : string.Empty) @chronicleTypeClass">
                     <div class="chronicle-stamp">
                         <span>@entry.Calendar</span>
                     </div>
@@ -630,7 +630,7 @@
                     <article class="decision-block camp-choice-block">
                         <div class="decision-kicker">Camp Phase</div>
                         <h3>Choose Camp Action</h3>
-                        <p>Choose one Field or Civic card from the Camp hand, or Work.</p>
+                        <p>Choose one standard Camp card from the Camp hand, or Work.</p>
                         <div class="camp-choice-list">
                             @foreach (var card in Session.CampActionChoices)
                             {
@@ -661,7 +661,7 @@
                                     {
                                         <div class="camp-card-rules-note">
                                             <strong>Camp Steward active</strong>
-                                            <span>When you Work, you may instead gain 1 Resource matching the adjacent Terrain, or buy 1 Resource from the Market for 1 Coin less than its current Buy value.</span>
+                                            <span>After resolving normal Work, you may also spend 1 Coin for 1 adjacent Terrain Resource, or buy 1 Resource at Market Buy value -1 Coin (minimum 1 Coin).</span>
                                         </div>
                                     }
                                     @if (string.Equals(card.Id, "CAMP-012", StringComparison.OrdinalIgnoreCase))
@@ -669,7 +669,7 @@
                                         <div class="camp-card-rules-note">
                                             <strong>Role effects</strong>
                                             <span><b>Scouting:</b> When Exploring, draw 2 Terrain cards and choose 1.</span>
-                                            <span><b>Camp Steward:</b> During Work, you may instead gain 1 Resource matching the adjacent Terrain or buy 1 Resource for 1 Coin less than its Market Buy value.</span>
+                                            <span><b>Camp Steward:</b> After normal Work, you may also spend 1 Coin for 1 adjacent Terrain Resource, or buy 1 Resource at Market Buy value -1 Coin (minimum 1 Coin).</span>
                                         </div>
                                     }
                                     @if (!available && !string.IsNullOrWhiteSpace(reason))
@@ -1204,7 +1204,7 @@
                                             @onclick="() => Session.ToggleFinaleTactic(tacticId)">
                                         <strong>@Session.CombatTacticName(tacticId)</strong>
                                         <span>@Session.CombatTacticEffect(tacticId)</span>
-                                        <small>@(isSpecial ? "Available when its trigger occurs" : committed ? "Committed" : "Commit: 1 Leadership")</small>
+                                        <small>@(isSpecial ? "Available when its trigger occurs" : committed ? "Committed" : (Session.FinaleTacticUnavailableReason(tacticId) is { } reason ? $"Unavailable: {reason}" : "Commit: 1 Leadership"))</small>
                                     </button>
                                 }
                             </div>
@@ -1474,7 +1474,7 @@
                                             @onclick="() => Session.ToggleCombatTactic(tacticId)">
                                         <strong>@Session.CombatTacticName(tacticId)</strong>
                                         <span>@Session.CombatTacticEffect(tacticId)</span>
-                                        <small>@(isSpecial ? "Available when its trigger occurs" : committed ? "Committed" : "Commit: 1 Leadership")</small>
+                                        <small>@(isSpecial ? "Available when its trigger occurs" : committed ? "Committed" : (Session.CombatTacticUnavailableReason(tacticId) is { } reason ? $"Unavailable: {reason}" : "Commit: 1 Leadership"))</small>
                                     </button>
                                 }
                             </div>
@@ -1585,7 +1585,7 @@
 }
 
 @code {
-    private const string AppVersion = "v0.5.0.38";
+    private const string AppVersion = "v0.5.0.40";
 
     // Presentation coordinates only, expressed as fixed pixel offsets from
     // the center of the play-area panel. This keeps the physical relationship
@@ -1683,6 +1683,8 @@
     private bool _includeStrangers;
     private bool _includeRiffRaff;
     private bool _includeNoQuarter;
+    private int _lastChronicleCount;
+    private bool _hasRenderedChronicle;
     private bool _saveCheckComplete;
     private string? _saveStatus;
     private string? _resumeError;
@@ -1752,6 +1754,24 @@
         else if (Session.GameEndedUtc is null && _gameLogDirty && !_showResumePrompt && !_showContentSetup)
             await PersistActiveGameLogAsync();
 
+        // Position the earliest entry produced by the last action near the top;
+        // do not jump to the bottom and miss the beginning of a multi-entry result.
+        var currentChronicleCount = Session.Chronicle.Count;
+        if (_hasRenderedChronicle && currentChronicleCount > _lastChronicleCount
+            && _lastChronicleCount >= ChronicleRenderStart && !_showContentSetup && !_showResumePrompt)
+        {
+            try
+            {
+                await JS.InvokeVoidAsync("wcChronicle.scrollToFirstNew", _lastChronicleCount);
+            }
+            catch
+            {
+                // Scrolling is a presentation enhancement, never a gameplay dependency.
+            }
+        }
+        _lastChronicleCount = currentChronicleCount;
+        _hasRenderedChronicle = true;
+
         try
         {
             await JS.InvokeVoidAsync("wcActionLock.release");
@@ -1798,6 +1818,7 @@
                 _showContentSetup = false;
                 _preserveExistingSaveForNewGame = false;
                 _showFullChronicle = false;
+                _lastChronicleCount = Session.Chronicle.Count; // Restored history is not newly generated text.
                 _lastActiveGameLogPersistUtc = DateTime.MinValue;
                 _saveStatus = _saveBuildMismatch ? $"Loaded {SavedBuildLabel} save" : "Save loaded";
                 return;
@@ -2029,7 +2050,7 @@
     private static string PersistentTooltip(string name) => name switch
     {
         "Scouting" => "When Exploring, draw 2 Terrain cards and choose 1.",
-        "Camp Steward" => "During Work, you may instead gain 1 Resource matching the adjacent Terrain or buy 1 Resource for 1 Coin less than its Market Buy value.",
+        "Camp Steward" => "After normal Work, you may also spend 1 Coin for 1 adjacent Terrain Resource, or buy 1 Resource at Market Buy value -1 Coin (minimum 1 Coin).",
         "Academy" => "Whenever you gain Research, roll 1d6 for each Research gained. Each 4–6 grants +1 additional Research.",
         "Market" => "During Harvest, sell up to 2 Resources purged from the Baggage Train. Market Day may also be used at a Player Controlled Settlement.",
         "Chapel" => PriestTooltip(),
@@ -2359,8 +2380,6 @@
         "Scene" => "images/card-ui/wc_icon_scene.png",
         "Echo" when string.Equals(card.Keyword, "Hostile", StringComparison.OrdinalIgnoreCase) => "images/card-ui/wc_icon_hostile.png",
         "Echo" => "images/card-ui/wc_icon_echo.png",
-        _ when string.Equals(card.Keyword, "Civic", StringComparison.OrdinalIgnoreCase) => "images/card-ui/wc_icon_civic.png",
-        _ when string.Equals(card.Keyword, "Field", StringComparison.OrdinalIgnoreCase) => "images/card-ui/wc_icon_field.png",
         _ => null
     };
 

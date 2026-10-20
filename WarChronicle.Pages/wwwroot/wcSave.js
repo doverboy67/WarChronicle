@@ -133,3 +133,14 @@ window.wcActionLock = (function () {
         isLocked: function () { return locked; }
     };
 })();
+
+// Update 0539: focus the FIRST new Chronicle entry, not the final one.
+window.wcChronicle = {
+    scrollToFirstNew: function (index) {
+        const scroller = document.querySelector('.chronicle-scroll');
+        const entry = scroller && scroller.querySelector('.chronicle-entry[data-chronicle-index="' + index + '"]');
+        if (!scroller || !entry) return;
+        const offset = entry.getBoundingClientRect().top - scroller.getBoundingClientRect().top;
+        scroller.scrollTo({ top: scroller.scrollTop + offset - 16, behavior: 'instant' });
+    }
+};

@@ -198,6 +198,14 @@ public sealed partial class GameSession
         finale.Step = FinaleStep.DeployHost;
     }
 
+    public string? FinaleTacticUnavailableReason(string id)
+    {
+        if (Finale is not { } finale)
+            return null;
+        return UnitTacticUnavailableReason(id, finale.PlayerUnits, mayDisengage: false)
+            ?? (finale.Leadership <= 0 && !finale.CommittedTactics.Contains(id) ? "Requires 1 Leadership." : null);
+    }
+
     public bool CanToggleFinaleTactic(string id)
     {
         var finale = Finale;
@@ -206,7 +214,7 @@ public sealed partial class GameSession
         var number = AdvancementNumber(id);
         if (number < 7 || number > 15 || number is 14 or 15)
             return false;
-        return finale.CommittedTactics.Contains(id) || finale.Leadership > 0;
+        return finale.CommittedTactics.Contains(id) || (finale.Leadership > 0 && FinaleTacticUnavailableReason(id) is null);
     }
 
     public void ToggleFinaleTactic(string id)

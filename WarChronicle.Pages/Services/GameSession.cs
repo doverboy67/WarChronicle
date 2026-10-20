@@ -480,7 +480,7 @@ public sealed partial class GameSession
             return false;
         if (card.Id == "CAMP-004" && !((!HasBuilding("Market") && CanPayCostBundle("1W+1C")) || (!HasBuilding("Baggage Cart") && CanPayCostBundle("1W"))))
             return false;
-        if (card.Id == "CAMP-012" && !((!HasScouting && ResourceValue("Research") >= 1) || (!HasToken("CampSteward") && ResourceValue("Coin") >= 2)))
+        if (card.Id == "CAMP-012" && !((!HasScouting && ResourceValue("Coin") >= 1) || (!HasToken("CampSteward") && ResourceValue("Coin") >= 1)))
             return false;
         if (card.Id == "CAMP-006" && ResourceValue("Coin") < 1)
             return false;
@@ -512,7 +512,7 @@ public sealed partial class GameSession
             return "No unbuilt option can be afforded.";
         if (card.Id == "CAMP-004" && !((!HasBuilding("Market") && CanPayCostBundle("1W+1C")) || (!HasBuilding("Baggage Cart") && CanPayCostBundle("1W"))))
             return "No unbuilt option can be afforded.";
-        if (card.Id == "CAMP-012" && !((!HasScouting && ResourceValue("Research") >= 1) || (!HasToken("CampSteward") && ResourceValue("Coin") >= 2)))
+        if (card.Id == "CAMP-012" && !((!HasScouting && ResourceValue("Coin") >= 1) || (!HasToken("CampSteward") && ResourceValue("Coin") >= 1)))
             return "No available role can be afforded.";
         if (card.Id == "CAMP-006" && ResourceValue("Coin") < 1)
             return "You need at least 1 Coin to hire a Mercenary.";
@@ -3572,8 +3572,8 @@ public sealed partial class GameSession
             {
                 detail = label switch
                 {
-                    "Train Scouts" => "Cost: 1 Research. Scouting: when Exploring, draw 2 Terrain cards and choose 1.",
-                    "Appoint Camp Steward" => "Cost: 2 Coin. Camp Steward: during Work, you may instead gain 1 Resource matching the adjacent Terrain or buy 1 Resource for 1 Coin less than its Market Buy value.",
+                    "Train Scouts" => "Cost: 1 Coin. Scouting: when Exploring, draw 2 Terrain cards and choose 1.",
+                    "Appoint Camp Steward" => "Cost: 1 Coin. Camp Steward: after normal Work, you may additionally spend 1 Coin for 1 adjacent Terrain Resource, or buy 1 Resource at Market Buy value -1 Coin (minimum 1 Coin).",
                     _ => detail
                 };
             }
@@ -3826,9 +3826,12 @@ public sealed partial class GameSession
             ("CAMP-004", "Baggage Cart") when HasBuilding("Baggage Cart") => "the Baggage Cart is already built.",
             ("CAMP-004", "Baggage Cart") => CostRequirementReason(("Wood", 1)),
             ("CAMP-012", "Train Scouts") when HasScouting => "Scouting is already in place.",
-            ("CAMP-012", "Train Scouts") => $"requires 1 Research; you have {ResourceValue("Research")}.",
+            ("CAMP-012", "Train Scouts") => $"requires 1 Coin; you have {ResourceValue("Coin")}.",
             ("CAMP-012", "Appoint Camp Steward") when HasToken("CampSteward") => "the Camp Steward is already in place.",
-            ("CAMP-012", "Appoint Camp Steward") => $"requires 2 Coin; you have {ResourceValue("Coin")}.",
+            ("CAMP-012", "Appoint Camp Steward") => $"requires 1 Coin; you have {ResourceValue("Coin")}.",
+            ("CAMP-001", "Collect 1 adjacent Terrain Resource for 1 Coin") when ResourceValue("Coin") < 1 => $"requires 1 Coin; you have {ResourceValue("Coin")}.",
+            ("CAMP-001", "Collect 1 adjacent Terrain Resource for 1 Coin") => $"no room for 1 {AdjacentTerrainResource()} in the Baggage Train.",
+            ("CAMP-001", "Buy 1 Resource at Market -1 Coin (minimum 1)") => "no affordable Resource fits in the Baggage Train.",
             ("CAMP-007", "Provision") when ResourceValue("Coin") < 2 => $"requires 2 Coin; you have {ResourceValue("Coin")}.",
             ("CAMP-007", "Provision") => "there is no room in the Baggage Train for Food, Wood, or Stone.",
             ("CAMP-007", "Buy 1 additional Resource") when ResourceValue("Coin") < 1 => $"requires 1 Coin; you have {ResourceValue("Coin")}.",
@@ -3974,9 +3977,9 @@ public sealed partial class GameSession
                 "Keep the current top Advancement card.",
 
             ("CAMP-012", "Train Scouts") =>
-                "Spend 1 Research. Gain Scouting: when Exploring, draw 2 Terrain cards and choose 1.",
+                "Spend 1 Coin. Gain Scouting: when Exploring, draw 2 Terrain cards and choose 1.",
             ("CAMP-012", "Appoint Camp Steward") =>
-                "Spend 2 Coin. Gain Camp Steward: during Work, you may instead gain 1 Resource matching the adjacent Terrain or buy 1 Resource for 1 Coin less than its Market Buy value.",
+                "Spend 1 Coin. Gain Camp Steward: after normal Work, you may additionally spend 1 Coin for 1 adjacent Terrain Resource, or buy 1 Resource at Market Buy value -1 Coin (minimum 1 Coin).",
 
             ("SCENE-014", "Yes") =>
                 "Spend 1 Coin and roll 1d6. 1: lose 1 Morale; 2: no effect; 3: gain 1 Coin; 4: gain 1 Coin and 1 Leadership; 5: gain 2 Coin and 1 Leadership; 6: gain 3 Coin and 1 Leadership. On 4–6, you may pay 1 Coin to roll again.",
@@ -5123,6 +5126,19 @@ public sealed partial class GameSession
                 HandleCampCardDisposition(target, "Remove", flags);
                 break;
             case "Return":
+                if (_activeFlowContext == FlowContext.Camp && _activeNodeId == "N10" && PendingCampCard is not null && IsHostileEcho(PendingCampCard))
+                {
+                    var tribeName = PendingCampCard.Id switch
+                    {
+                        "ECHO-A-01" => "Sun-Touched",
+                        "ECHO-A-02" => "Pale Hands",
+                        "ECHO-A-03" => "Nightstone Clan",
+                        "ECHO-A-04" => "Quietus",
+                        _ => "tribe"
+                    };
+                    AddNarrativeText($"Though relations with the {tribeName} have improved, old grievances are not so easily forgotten. Their representatives arrive demanding an accounting, but the peace holds. Much of the day is spent calming tempers and reaffirming agreements before they withdraw. No blood is shed, but the disruption leaves no time for the Host's planned work at Camp.");
+                    AddSystemText($"The {tribeName} are no longer Hostile. No Combat occurs. The Hostile Echo returns to the unseeded Echoes pile, and the Camp Phase ends.");
+                }
                 HandleCampCardDisposition(target, "Return", flags);
                 break;
             case "SeedRemainingEcho":
@@ -5463,7 +5479,7 @@ public sealed partial class GameSession
         var options = new List<FlowPromptOption>();
         foreach (var market in Market)
         {
-            var price = Math.Max(0, market.BuyPrice - 1);
+            var price = Math.Max(1, market.BuyPrice - 1);
             if (ResourceValue("Coin") >= price && CanAddPhysicalResource(market.Resource, 1))
                 options.Add(new($"stewardbuy:{market.Resource}", market.Resource, $"{price} Coin"));
         }
@@ -5486,7 +5502,7 @@ public sealed partial class GameSession
         var market = Market.FirstOrDefault(m => string.Equals(m.Resource, resource, StringComparison.OrdinalIgnoreCase));
         if (market is null)
             return;
-        var price = Math.Max(0, market.BuyPrice - 1);
+        var price = Math.Max(1, market.BuyPrice - 1);
         if (ResourceValue("Coin") < price || !CanAddPhysicalResource(resource, 1))
             return;
         AdjustResource("Coin", -price);
@@ -6898,11 +6914,13 @@ public sealed partial class GameSession
             ("CAMP-003", "Academy") => !HasBuilding("Academy") && CanPayCostBundle("1S+1C"),
             ("CAMP-004", "Market") => !HasBuilding("Market") && CanPayCostBundle("1W+1C"),
             ("CAMP-004", "Baggage Cart") => !HasBuilding("Baggage Cart") && CanPayCostBundle("1W"),
-            ("CAMP-012", "Train Scouts") => !HasScouting && ResourceValue("Research") >= 1,
+            ("CAMP-012", "Train Scouts") => !HasScouting && ResourceValue("Coin") >= 1,
             ("CAMP-007", "Provision") => ResourceValue("Coin") >= 2 && new[] { "Food", "Wood", "Stone" }.Any(r => CanAddPhysicalResource(r, 1)),
             ("CAMP-007", "Buy 1 additional Resource") => ResourceValue("Coin") >= 1 && new[] { "Food", "Wood", "Stone" }.Any(r => CanAddPhysicalResource(r, 1)),
             ("CAMP-009", "Raise Levies") => ResourceValue("Food") >= 1 && AvailableForceCount("Levy") > 0 && HostCount("Levy") < 6,
-            ("CAMP-012", "Appoint Camp Steward") => !HasToken("CampSteward") && ResourceValue("Coin") >= 2,
+            ("CAMP-012", "Appoint Camp Steward") => !HasToken("CampSteward") && ResourceValue("Coin") >= 1,
+            ("CAMP-001", "Collect 1 adjacent Terrain Resource for 1 Coin") => ResourceValue("Coin") >= 1 && CanAddPhysicalResource(AdjacentTerrainResource(), 1),
+            ("CAMP-001", "Buy 1 Resource at Market -1 Coin (minimum 1)") => Market.Any(m => ResourceValue("Coin") >= Math.Max(1, m.BuyPrice - 1) && CanAddPhysicalResource(m.Resource, 1)),
             ("SCENE-020", "Send in a Fighter") => Host.Any(u => u.Count > 0 && u.Type is "Archers" or "Cavalry" or "Infantry" or "Mercenaries" or "Hedge Knights"),
             ("SCENE-029", "Answer the Call") => ResourceValue("Food") >= 2 || ResourceValue("Coin") >= 2,
             ("SCENE-029", "Send Protection") => HostCount("Infantry") > 0 || HostCount("Archers") > 0,
@@ -7782,7 +7800,7 @@ public sealed partial class GameSession
         "RiffRaffShortcut" => "Your next Explore does not advance Time.",
         "ReignInBlood" or "Reign in Blood" => "While active, the Host may not Disengage from Combat.",
         "Scouting" => "When Exploring, draw 2 Terrain cards and choose 1.",
-        "CampSteward" or "Camp Steward" => "During Work, you may instead gain 1 Resource matching the adjacent Terrain or buy 1 Resource for 1 Coin less than its Market Buy value.",
+        "CampSteward" or "Camp Steward" => "After normal Work, you may additionally spend 1 Coin for 1 adjacent Terrain Resource, or buy 1 Resource at Market Buy value -1 Coin (minimum 1 Coin).",
         _ => string.Empty
     };
 
