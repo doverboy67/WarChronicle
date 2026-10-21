@@ -429,7 +429,7 @@ public sealed partial class GameSession
             CampStep = save.CampStep;
             EndOfSeasonStep = save.EndOfSeasonStep;
             WinterStep = save.WinterStep;
-            MiddelalderenAdvancementCount = save.MiddelalderenAdvancementCount is >= 3 and <= 5
+            MiddelalderenAdvancementCount = save.MiddelalderenAdvancementCount is >= 3 and <= 6
                 ? save.MiddelalderenAdvancementCount : 4;
             _terrainSerial = save.TerrainSerial;
             _clearingSerial = save.ClearingSerial;

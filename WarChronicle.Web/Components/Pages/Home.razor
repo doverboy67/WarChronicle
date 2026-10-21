@@ -75,6 +75,7 @@
                     <option value="3">Easy · 3 Advancements</option>
                     <option value="4">Standard · 4 Advancements</option>
                     <option value="5">Hard · 5 Advancements</option>
+                    <option value="6">Are You Nuts? · 6 Advancements</option>
                 </select>
                 <small>Changes only Middelalderen's Advancement draw. Its Host size and all other rules stay the same.</small>
             </div>
@@ -497,7 +498,7 @@
                 var chronicleIconPath = ChronicleIconPath(entry);
                 <article @key="chronicleIndex" data-chronicle-index="@chronicleIndex" class="chronicle-entry @(entry.Tone.ToString().ToLowerInvariant()) @(entry.Choices is not null || entry.CampOffers is not null ? "chronicle-decision" : string.Empty) @(string.IsNullOrWhiteSpace(entry.Heading) ? "follow-on" : string.Empty) @chronicleTypeClass @transactionClass @(isPhaseGate ? "phase-gate-event" : string.Empty)">
                     <div class="chronicle-stamp">
-                        <span>@entry.Calendar</span>
+                        <span>@ChronicleCalendarStamp(entry.Calendar)</span>
                     </div>
                     @if (!string.IsNullOrWhiteSpace(entry.Heading))
                     {
@@ -519,6 +520,14 @@
                                 <img class="chronicle-title-icon chronicle-title-icon-trailing" src="@chronicleIconPath" alt="" />
                             }
                         </div>
+                    }
+                    @if (ChronicleEchoOrigin(entry.Calendar) is { } echoOrigin)
+                    {
+                        <p class="chronicle-echo-origin">Seeded by: <strong>@echoOrigin</strong></p>
+                    }
+                    @if (IsWinterDisbandReminder(entry))
+                    {
+                        <p class="chronicle-winter-reminder"><em>@WinterDisbandReminder(entry)</em></p>
                     }
                     @if (entry.EchoIndicator)
                     {
@@ -620,11 +629,19 @@
                             : string.Empty;
                     <article class="chronicle-entry @(entry.Tone.ToString().ToLowerInvariant()) @(entry.Choices is not null ? "chronicle-decision" : string.Empty) @(string.IsNullOrWhiteSpace(entry.Heading) ? "follow-on" : string.Empty) @debugTypeClass">
                         <div class="chronicle-stamp">
-                            <span>DEBUG • @entry.Calendar</span>
+                            <span>DEBUG • @ChronicleCalendarStamp(entry.Calendar)</span>
                         </div>
                         @if (!string.IsNullOrWhiteSpace(entry.Heading))
                         {
                             <div class="chronicle-title"><span>@entry.Heading</span></div>
+                        }
+                        @if (ChronicleEchoOrigin(entry.Calendar) is { } debugEchoOrigin)
+                        {
+                            <p class="chronicle-echo-origin">Seeded by: <strong>@debugEchoOrigin</strong></p>
+                        }
+                        @if (IsWinterDisbandReminder(entry))
+                        {
+                            <p class="chronicle-winter-reminder"><em>@WinterDisbandReminder(entry)</em></p>
                         }
                         @if (entry.EchoIndicator)
                         {
@@ -1519,7 +1536,7 @@
 }
 
 @code {
-    private const string AppVersion = "v0.5.0.48";
+    private const string AppVersion = "v0.5.0.49";
 
     // Presentation coordinates only, expressed as fixed pixel offsets from
     // the center of the play-area panel. This keeps the physical relationship
@@ -2047,6 +2064,34 @@
 
     private readonly Dictionary<string, string?> _arrivalTribeMetaCache = new(StringComparer.OrdinalIgnoreCase);
 
+    // Keep Echo provenance in the saved Calendar value for backwards
+    // compatibility, but present it immediately BELOW the title in the UI.
+    private static string ChronicleCalendarStamp(string calendar)
+    {
+        var index = calendar.IndexOf(" • Seeded by: ", StringComparison.OrdinalIgnoreCase);
+        return index < 0 ? calendar : calendar[..index];
+    }
+
+    private static string? ChronicleEchoOrigin(string calendar)
+    {
+        if (!calendar.Contains("• Echo", StringComparison.OrdinalIgnoreCase))
+            return null;
+        const string marker = " • Seeded by: ";
+        var index = calendar.IndexOf(marker, StringComparison.OrdinalIgnoreCase);
+        return index < 0 ? null : calendar[(index + marker.Length)..];
+    }
+
+    private static bool IsWinterDisbandReminder(ChronicleEntry entry)
+        => entry.Heading == "Hedge Knights"
+            && (entry.Calendar.Contains("• Explore", StringComparison.OrdinalIgnoreCase)
+                || entry.Choices is not null)
+           || entry.Heading == "Hire Mercenaries" && entry.Choices is not null;
+
+    private static string WinterDisbandReminder(ChronicleEntry entry)
+        => entry.Heading == "Hedge Knights"
+            ? "Reminder: Hedge Knights disband in Winter."
+            : "Reminder: Mercenaries disband in Winter.";
+
     private string? ArrivalTribeMeta(ChronicleEntry entry)
     {
         if (string.IsNullOrWhiteSpace(entry.Heading) ||
@@ -2251,6 +2296,14 @@
         // behavior pulling the die boxes below the surrounding type.
         if (text.Contains("chronicle-die", StringComparison.Ordinal))
             text = $"<span class='chronicle-roll-line'>{text}</span>";
+
+        // Status uses the exact same rapport color rules as the Game State.
+        // Only explicit "are now/remain" outcomes are highlighted; ordinary
+        // narrative sentences containing a relationship word are untouched.
+        text = System.Text.RegularExpressions.Regex.Replace(text,
+            @"(?<prefix>\b(?:are now|remain) )(?<level>Hostile|Neutral|Friendly|Allied)(?=\.)",
+            m => $"{m.Groups["prefix"].Value}<strong class='rapport chronicle-rapport-level {m.Groups["level"].Value.ToLowerInvariant()}'>{m.Groups["level"].Value}</strong>",
+            System.Text.RegularExpressions.RegexOptions.IgnoreCase);
 
         var rendered = new MarkupString(text);
         if (_chronicleMarkupCache.Count >= 2500)

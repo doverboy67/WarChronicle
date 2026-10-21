@@ -2695,3 +2695,18 @@ body.wc-action-busy::after {
     letter-spacing: normal;
     text-transform: none;
 }
+
+/* 0549: Echo origin belongs immediately beneath its title, not in the date. */
+.chronicle-echo-origin {
+    margin: -2px 0 9px;
+    color: #655843;
+    font: 0.76rem/1.4 "Segoe UI", Arial, sans-serif;
+}
+.chronicle-echo-origin strong { color: #483f35; font-weight: 650; }
+.chronicle-winter-reminder {
+    margin: 4px 0 8px;
+    color: #80623c;
+    font: italic 0.78rem/1.4 "Segoe UI", Arial, sans-serif;
+}
+/* Reuse rapport.hostile/neutral/friendly/allied colors from the Game State. */
+.chronicle-rapport-level { font-size: inherit; text-transform: none; font-weight: 700; }

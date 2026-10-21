@@ -1,36 +1,49 @@
-War Chronicle Browser Update 0548 (v0.5.0.48)
+War Chronicle Browser Update 0549 (v0.5.0.49)
 ===================================================
-Source: WarChronicleBrowser_Update_0547.zip.
+Source: WarChronicleBrowser_Update_0548.zip.
 
-SCROLLING FINALIZED:
-- Every nontrivial Chronicle automatic scroll is now animated over a FIXED
-  300 milliseconds (0.3 seconds), regardless of distance scrolled.
-- Existing cubic ease-out motion, anchoring of previously visible entries,
-  targeting of the first new Chronicle entry, and panel-only scroll remain.
-- Removed the temporary New Chronicle scroll-duration input, its validation,
-  CSS styling, and its C#/JavaScript preference plumbing.
-- Previously stored experimental scroll-speed values are now IGNORED, so an
-  older browser preference cannot override the fixed 300 ms duration.
-- This is display-only, does not change saves or game mechanics, and applies
-  to both resumed and newly started campaigns.
+NEW FINALE DIFFICULTY
+- New Chronicle now offers "Are You Nuts?" with SIX Middelalderen
+  Advancements, beside Easy (3), Standard (4, default), and Hard (5).
+- Middelalderen's starting Host remains 2 Archers, 2 Cavalry,
+  6 Infantry, 6 Levy before Advancement bonus units are applied.
+- Existing Advancement bonus-unit rule and ten-card weighted enemy
+  Advancement deck stay unchanged; no special army reallocation.
+- Six-Advancement selection is saved, restored, and exported in game logs.
 
-CARRIED FORWARD FROM 0547/0546/0545:
-- Inspired acquisition costs 2 Leadership + 1 Research. Effect unchanged.
-- Plague Pit search is unavailable once all Armor Advancements are owned;
-  Cursed Battlefield dig is unavailable if both rewards are exhausted.
-- Resource icons for Research Token (RT), Coin, Leadership, Food, Wood, Stone,
-  including shorthand transaction costs and older Chronicle entries.
-- Cached Chronicle formatting/card lookups to help avoid repetitive work.
-- Middelalderen Finale difficulty: Easy 3, Standard 4, Hard 5 Advancements;
-  existing weighted Advancement deck and defender Host are unchanged.
-- Persistent choices/checkmarks, 120-entry Chronicle, Harvest/R&R workspaces,
-  sound track link, game content and mechanics otherwise remain unchanged.
-- Login, player identity, and email reporting are still deferred.
+CHRONICLE & CHOICE CLARITY
+- Echo's "Seeded by" appears directly below the Echo title and before
+  flavor text instead of in the calendar stamp, including old saves.
+- Hedge Knights' Explore event and recruitment choice show a separate,
+  italic reminder that Hedge Knights disband in Winter.
+- Hire Mercenaries' Camp card and choice show a separate, italic reminder
+  that Mercenaries disband in Winter; repeated rule bullet removed.
+- Arrival choices now name the affected tribe when offering Rapport
+  gains or losses. The Chronicle's "You choose" line also names it.
+  When a tribe is selected for a Camp action, the selected tribe is named
+  in applicable Rapport outcomes where the selection is already known.
+- World Painted Blood and other Echo test prompts with printed Pass/Fail
+  bullet outcomes now state BOTH outcomes alongside each test option
+  BEFORE the player chooses how to roll or spends Leadership.
+- Rapport losses report the actual resulting status for the tribe,
+  including cases when its status does not change, and use the same
+  Hostile/Neutral/Friendly/Allied text colors as the Game State panel.
+- Printed game effects and dice/combat mechanics are otherwise unchanged.
 
-DELIVERY AND CHECKS:
-- WarChronicle.Web (hosted) and WarChronicle.Pages (GitHub Pages) matched for
-  shared assets and source after this edit; Pages Home must remain without
-  the InteractiveServer render-mode directive.
-- JS/CSS asset cache version strings and Pages data-query version are 0548.
-- No .NET SDK in build environment: source/regression checks only, not a
-  compiled or browser-tested release.
+FIXED EXISTING DATA MISMATCH
+- Fixed the GitHub Pages public wc_data.json stale Inspired acquisition
+  cost (had 2 Coin + 1 Research). It now matches the source and hosted
+  catalog: 2 Leadership + 1 Research. Inspired's effect is unchanged.
+
+CARRIED FORWARD
+- Fixed 300ms Chronicle scroll ease-out, unchanged.
+- 0546's Plague Pit/Cursed Battlefield exhausted-reward guards, token
+  icons, and caching; 0545's persistent choices and Finale selector.
+- Hosted WarChronicle.Web and standalone WarChronicle.Pages both included.
+- Automatic game login and end-game email notifications remain deferred.
+
+VERIFICATION
+- Static source and data consistency assertions passed for both projects.
+- JS syntax validation with node passed, JSON catalogs parsed, ZIP checked.
+- .NET SDK is not installed in this environment, so the projects were NOT
+  compiled or browser-tested here. Build before production deployment.

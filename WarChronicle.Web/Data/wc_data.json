@@ -131,7 +131,7 @@
       "after_play": "RemoveOrDiscard",
       "text": {
         "flavor": "There are always swords for hire where fear is near and silver is honest.",
-        "effect": "<b>Advance 2 Time Recruit up to 2 Mercenaries</b> (Infantry class) <b>for 1 Coin each.</b><br><br><b>Mercenaries:</b><br><ul><li>May exceed Host MU limits</li><li>Use white Mercenary tokens.</li><li>Disband from your Host in the Winter season.</li></ul>"
+        "effect": "<b>Advance 2 Time Recruit up to 2 Mercenaries</b> (Infantry class) <b>for 1 Coin each.</b><br><br><b>Mercenaries:</b><br><ul><li>May exceed Host MU limits</li><li>Use white Mercenary tokens.</li></ul><br><i>Reminder: Mercenaries disband in Winter.</i>"
       },
       "notes": null
     },

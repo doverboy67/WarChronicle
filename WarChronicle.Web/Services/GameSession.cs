@@ -195,7 +195,7 @@ public sealed partial class GameSession
 
     public void SetMiddelalderenAdvancementCount(int count)
     {
-        if (count is < 3 or > 5 || Finale is not null)
+        if (count is < 3 or > 6 || Finale is not null)
             return;
         MiddelalderenAdvancementCount = count;
         Changed?.Invoke();
@@ -3885,6 +3885,17 @@ public sealed partial class GameSession
                 }
             }
 
+            // The tribe affected by an Arrival Rapport choice is known now.
+            // Name it at the decision, including when Rapport is the *failure*
+            // consequence, rather than making players scroll back to Arrival.
+            var rapportTarget = _activeFlowContext == FlowContext.Arrival
+                ? _currentArrivalTribe
+                : _flowVars.TryGetValue("SelectedTribe", out var selectedTribe)
+                    ? Convert.ToString(selectedTribe)
+                    : null;
+            label = NameRapportRecipient(label, rapportTarget);
+            detail = NameRapportRecipient(detail, rapportTarget);
+
             detail = DoNotChooseBlindDetail(label, detail);
             if (rewardExhaustedReason is not null)
                 detail = $"Unavailable: {rewardExhaustedReason}";
@@ -3915,6 +3926,17 @@ public sealed partial class GameSession
             ActiveFlowHeading(),
             prompt,
             options);
+    }
+
+    private static string NameRapportRecipient(string value, string? tribe)
+    {
+        if (string.IsNullOrWhiteSpace(value) || string.IsNullOrWhiteSpace(tribe))
+            return value;
+        // Respect explicitly named recipients and only qualify a gain/loss.
+        return Regex.Replace(value,
+            @"\b(?<action>gain|lose) (?<amount>\d+) Rapport\b(?!\s+with\b)",
+            m => $"{m.Groups["action"].Value} {m.Groups["amount"].Value} Rapport with {tribe}",
+            RegexOptions.IgnoreCase);
     }
 
     private string BuildUnavailableChoiceDetail(JsonElement branch, string label, string currentDetail)
@@ -4966,19 +4988,55 @@ public sealed partial class GameSession
             detail = $"Rapport DRM: {drmText}. Leadership may not be spent. Pass: gain 2 Coin and 1 Leadership; if Friendly, gain 1 additional Leadership, otherwise gain 1 Rapport.";
         }
 
+        // Echo cards with explicit Pass/Fail outcomes must show the stakes
+        // BEFORE Leadership is committed. Read the current printed card text;
+        // no card effects or test odds are changed.
+        var echoOutcomes = _activeFlowContext == FlowContext.Camp
+            && string.Equals(PendingCampCard?.CardType, "Echo", StringComparison.OrdinalIgnoreCase)
+                ? PrintedEchoTestOutcomes(PendingCampCard.Effect)
+                : null;
+        if (!string.IsNullOrWhiteSpace(echoOutcomes))
+            detail = string.IsNullOrWhiteSpace(detail) ? echoOutcomes : $"{detail}. {echoOutcomes}";
+
+        var selectedTribe = _flowVars.TryGetValue("SelectedTribe", out var tribeValue)
+            ? Convert.ToString(tribeValue) : null;
+        detail = string.IsNullOrWhiteSpace(detail) ? null : NameRapportRecipient(detail, selectedTribe);
+
         var options = new List<FlowPromptOption>
         {
             new("test:normal", "Roll 2d6", detail)
         };
 
         if (Leadership > 0 && !NodeHasFlag(node, "NoLeadership"))
-            options.Add(new("test:leadership", "Spend 1 Leadership", "Roll 3d6 and keep the best 2"));
+        {
+            var leadershipDetail = "Roll 3d6 and keep the best 2";
+            if (!string.IsNullOrWhiteSpace(echoOutcomes))
+                leadershipDetail += $". {echoOutcomes}";
+            options.Add(new("test:leadership", "Spend 1 Leadership", leadershipDetail));
+        }
 
         FlowPrompt = new(
             FlowPromptKind.Test,
             ActiveFlowHeading(),
             prompt,
             options);
+    }
+
+    private static string? PrintedEchoTestOutcomes(string effect)
+    {
+        if (string.IsNullOrWhiteSpace(effect))
+            return null;
+        // Match only explicitly labelled list outcomes on the printed Echo.
+        // A card without both labels receives no speculative text.
+        var pass = Regex.Match(effect, @"<li>\s*<b>Pass:</b>\s*(?<result>.*?)</li>", RegexOptions.IgnoreCase | RegexOptions.Singleline);
+        var fail = Regex.Match(effect, @"<li>\s*<b>Fail:</b>\s*(?<result>.*?)</li>", RegexOptions.IgnoreCase | RegexOptions.Singleline);
+        if (!pass.Success || !fail.Success)
+            return null;
+
+        static string Plain(string html) => Regex.Replace(
+            System.Net.WebUtility.HtmlDecode(Regex.Replace(html, @"<[^>]*>", " ")),
+            @"\s+", " ").Trim();
+        return $"Pass: {Plain(pass.Groups["result"].Value)} Fail: {Plain(fail.Groups["result"].Value)}";
     }
 
     private void ResolveTestPrompt(string optionId)
@@ -5089,6 +5147,11 @@ public sealed partial class GameSession
             return;
 
         label = Regex.Replace(label, @"\s*\(\d+\+\)\s*$", string.Empty).Trim();
+        var rapportTarget = _activeFlowContext == FlowContext.Arrival
+            ? _currentArrivalTribe
+            : _flowVars.TryGetValue("SelectedTribe", out var selectedTribe)
+                ? Convert.ToString(selectedTribe) : null;
+        label = NameRapportRecipient(label, rapportTarget);
         AddNarrativeText($"You choose: {label}.");
     }
 
@@ -6909,10 +6972,13 @@ public sealed partial class GameSession
                 var oldRapport = Tribes[i].Rapport;
                 var updatedRapport = ShiftRapport(oldRapport, delta);
                 Tribes[i] = Tribes[i] with { Rapport = updatedRapport };
+                if (delta < 0)
+                    RecordRapportChange(Tribes[i].Name, oldRapport, updatedRapport, delta);
                 if (delta < 0 && !noShortfall)
                     missingRapport += MissingRapportLoss(oldRapport, updatedRapport, -delta);
             }
-            AddNarrativeText(delta < 0 ? "Rapport worsens with every encountered tribe." : "Rapport improves with every encountered tribe.");
+            if (delta > 0)
+                AddNarrativeText("Rapport improves with every encountered tribe.");
             if (missingRapport > 0)
                 ApplyShortfall(missingRapport);
             SyncPlayAreaHostilityFromRapport();
@@ -6933,9 +6999,9 @@ public sealed partial class GameSession
         var old = Tribes[index].Rapport;
         var updated = ShiftRapport(old, delta);
         Tribes[index] = Tribes[index] with { Rapport = updated };
-        if (!string.Equals(old, updated, StringComparison.OrdinalIgnoreCase))
+        if (delta < 0 || !string.Equals(old, updated, StringComparison.OrdinalIgnoreCase))
         {
-            AddNarrativeText(delta > 0 ? $"Gain 1 Rapport with {Tribes[index].Name}." : $"Lose 1 Rapport with {Tribes[index].Name}.");
+            RecordRapportChange(Tribes[index].Name, old, updated, delta);
             if (!string.Equals(old, "Allied", StringComparison.OrdinalIgnoreCase)
                 && string.Equals(updated, "Allied", StringComparison.OrdinalIgnoreCase))
                 AddAlliedBenefitNarrative(Tribes[index].Name);
@@ -6950,6 +7016,24 @@ public sealed partial class GameSession
 
         SyncPlayAreaHostilityFromRapport();
         RemoveQuietusPriestIfNeeded();
+    }
+
+    private void RecordRapportChange(string tribe, string before, string after, int delta)
+    {
+        var verb = delta > 0 ? "Gain" : "Lose";
+        var amount = Math.Abs(delta);
+        var consequence = before.Equals(after, StringComparison.OrdinalIgnoreCase) ? "remain" : "are now";
+        var subject = tribe switch
+        {
+            "Quietus" => "The Quietus",
+            "Sun-Touched" => "The Sun-Touched",
+            "Pale Hands" => "The Pale Hands",
+            "Nightstone" => "The Nightstone",
+            _ => $"The {tribe}"
+        };
+        // Keep raw game-log text readable; Chronicle styling is applied only
+        // when rendering these explicit relationship-status sentences.
+        AddNarrativeText($"{verb} {amount} Rapport with {tribe}. {subject} {consequence} {after}.");
     }
 
     private static int MissingRapportLoss(string before, string after, int requestedLoss)
@@ -6991,7 +7075,9 @@ public sealed partial class GameSession
             Tribes[index] = Tribes[index] with { Rapport = value };
             if (!string.Equals(old, value, StringComparison.OrdinalIgnoreCase))
             {
-                AddNarrativeText($"{Tribes[index].Name} Rapport changes from {old} to {value}.");
+                AddNarrativeText($"{Tribes[index].Name} Rapport changes from {old} to {value}." +
+                    (RapportDrm(value) < RapportDrm(old) && !old.Equals("Unmet", StringComparison.OrdinalIgnoreCase)
+                        ? $" The {Tribes[index].Name} are now {value}." : string.Empty));
                 if (!string.Equals(old, "Allied", StringComparison.OrdinalIgnoreCase)
                     && string.Equals(value, "Allied", StringComparison.OrdinalIgnoreCase))
                     AddAlliedBenefitNarrative(Tribes[index].Name);

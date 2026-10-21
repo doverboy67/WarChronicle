@@ -131,7 +131,7 @@
       "after_play": "RemoveOrDiscard",
       "text": {
         "flavor": "There are always swords for hire where fear is near and silver is honest.",
-        "effect": "<b>Advance 2 Time Recruit up to 2 Mercenaries</b> (Infantry class) <b>for 1 Coin each.</b><br><br><b>Mercenaries:</b><br><ul><li>May exceed Host MU limits</li><li>Use white Mercenary tokens.</li><li>Disband from your Host in the Winter season.</li></ul>"
+        "effect": "<b>Advance 2 Time Recruit up to 2 Mercenaries</b> (Infantry class) <b>for 1 Coin each.</b><br><br><b>Mercenaries:</b><br><ul><li>May exceed Host MU limits</li><li>Use white Mercenary tokens.</li></ul><br><i>Reminder: Mercenaries disband in Winter.</i>"
       },
       "notes": null
     },
@@ -2694,7 +2694,7 @@
       "card_num": 14,
       "title": "Inspired",
       "keyword": "Tactic :: Special",
-      "cost": "2C, 1R",
+      "cost": "2L, 1R",
       "commit": "Special",
       "effect": "At the start of each Combat round, you may spend 1 Leadership and choose 1 unit type. That unit rolls +1 die, or +2 dice if it has 2+ units.<br><br>Once per round."
     },
