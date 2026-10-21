@@ -2043,7 +2043,10 @@ public sealed partial class GameSession
     {
         var coin = ParseCostAmount(cost, "C");
         var research = ParseCostAmount(cost, "R");
-        return ResourceValue("Coin") >= coin && ResourceValue("Research") >= research;
+        var leadership = ParseCostAmount(cost, "L");
+        return ResourceValue("Coin") >= coin
+            && ResourceValue("Research") >= research
+            && Leadership >= leadership;
     }
 
     private bool PayAdvancementCost(string cost)
@@ -2052,8 +2055,10 @@ public sealed partial class GameSession
             return false;
         var coin = ParseCostAmount(cost, "C");
         var research = ParseCostAmount(cost, "R");
+        var leadership = ParseCostAmount(cost, "L");
         if (coin > 0) AdjustResource("Coin", -coin);
         if (research > 0) AdjustResource("Research", -research);
+        if (leadership > 0) Leadership -= leadership;
         return true;
     }
 
@@ -2569,6 +2574,9 @@ public sealed partial class GameSession
                 return;
 
             var branch = branchArray[branchIndex];
+            // A stale client click must not bypass the exhausted-reward guard.
+            if (ExhaustedExploreRewardReason(GetString(branch, "label") ?? string.Empty) is not null)
+                return;
             var next = GetString(branch, "next");
             PrepareTestNarrative(branch, next);
             RecordChoiceNarrative(branch);
@@ -3682,6 +3690,26 @@ public sealed partial class GameSession
         return node;
     }
 
+    // Optional Explore risks should not be offered after their unique reward is
+    // exhausted. Keep the branch visible, with an explanation of why it is disabled.
+    private string? ExhaustedExploreRewardReason(string label)
+    {
+        if (_activeFlowContext != FlowContext.Explore)
+            return null;
+
+        if (string.Equals(PendingExploreCard?.Id, "EXPLORE-029", StringComparison.OrdinalIgnoreCase)
+            && string.Equals(label, "Search", StringComparison.OrdinalIgnoreCase)
+            && _armorSupply.Count == 0)
+            return "all 3 Armor Advancements have already been acquired.";
+
+        if (string.Equals(PendingExploreCard?.Id, "EXPLORE-028", StringComparison.OrdinalIgnoreCase)
+            && string.Equals(label, "Dig", StringComparison.OrdinalIgnoreCase)
+            && !IsAdvancementAvailable("ADV-004") && !IsAdvancementAvailable("ADV-006"))
+            return "neither Halberds nor Longbows remains available to acquire.";
+
+        return null;
+    }
+
     private void PresentChoiceNode(JsonElement node)
     {
         if (!node.TryGetProperty("branches", out var branches))
@@ -3713,7 +3741,9 @@ public sealed partial class GameSession
                 && label.StartsWith("Armor Development", StringComparison.OrdinalIgnoreCase)
                 && _armorSupply.Count == 0;
             var conditionAllowed = BranchConditionAllowed(branch);
-            var branchAllowed = conditionAllowed && !drillArmorUnavailable;
+            var rewardExhaustedReason = ExhaustedExploreRewardReason(label);
+            var branchAllowed = conditionAllowed && !drillArmorUnavailable
+                && rewardExhaustedReason is null;
             var noQuarterTollChoice = _activeFlowContext == FlowContext.Explore
                 && PendingExploreCard?.Id is "EXPLORE-033" or "EXPLORE-034" or "EXPLORE-035";
             if (firepotsBaggageChoice)
@@ -3856,6 +3886,8 @@ public sealed partial class GameSession
             }
 
             detail = DoNotChooseBlindDetail(label, detail);
+            if (rewardExhaustedReason is not null)
+                detail = $"Unavailable: {rewardExhaustedReason}";
             if (!branchAllowed)
                 detail = BuildUnavailableChoiceDetail(branch, label, detail);
 
@@ -5732,10 +5764,12 @@ public sealed partial class GameSession
 
         var researchCost = ParseResearchCost(advancement.Cost);
         var coinCost = ParseCostAmount(advancement.Cost, "C");
+        var leadershipCost = ParseCostAmount(advancement.Cost, "L");
         var discount = FlagInt(flags, "ResearchCostDiscount", 0);
         var minimum = FlagInt(flags, "MinimumResearchCost", 0);
         researchCost = Math.Max(minimum, researchCost - discount);
-        if (ResourceValue("Research") < researchCost || ResourceValue("Coin") < coinCost)
+        if (ResourceValue("Research") < researchCost || ResourceValue("Coin") < coinCost
+            || Leadership < leadershipCost)
         {
             AddNarrativeText($"The Host cannot afford {advancement.Name}.");
             _campCardResolvedSuccessfully = false;
@@ -5744,6 +5778,7 @@ public sealed partial class GameSession
 
         if (researchCost > 0) AdjustResource("Research", -researchCost);
         if (coinCost > 0) AdjustResource("Coin", -coinCost);
+        if (leadershipCost > 0) Leadership -= leadershipCost;
         AcquiredAdvancements.Add(advancement);
         _advancementDeck.RemoveAll(a => a.Id == advancement.Id);
         _armorSupply.RemoveAll(a => a.Id == advancement.Id);
@@ -5751,6 +5786,7 @@ public sealed partial class GameSession
         var paid = new List<string>();
         if (researchCost > 0) paid.Add($"{researchCost} Research");
         if (coinCost > 0) paid.Add($"{coinCost} Coin");
+        if (leadershipCost > 0) paid.Add($"{leadershipCost} Leadership");
         var paidText = paid.Count > 0 ? $" for {string.Join(" and ", paid)}" : string.Empty;
         AddNarrativeText($"Acquire {advancement.Name}{paidText}.");
     }

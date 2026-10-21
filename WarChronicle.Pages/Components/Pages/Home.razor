@@ -248,7 +248,7 @@
                                     <strong>@offer.Name</strong>
                                     @if (!string.IsNullOrWhiteSpace(offer.Cost))
                                     {
-                                        <span>@offer.Cost</span>
+                                        <span class="advancement-cost-tokens">@ChronicleCostMarkup(offer.Cost)</span>
                                     }
                                 </div>
                                 @if (!string.IsNullOrWhiteSpace(commitLabel))
@@ -856,7 +856,7 @@
                                     <article class="camp-choice-card @(!Session.CanBuyRefitAdvancement(offer.Id) ? "is-unavailable" : string.Empty)">
                                         <div class="camp-choice-heading">
                                             <strong>@offer.Name</strong>
-                                            <span>@offer.Cost</span>
+                                            <span class="advancement-cost-tokens">@ChronicleCostMarkup(offer.Cost)</span>
                                         </div>
                                         @if (!string.IsNullOrWhiteSpace(commitLabel))
                                         {
@@ -939,7 +939,7 @@
                                     <article class="camp-choice-card @(!Session.CanBuyRefitAdvancement(offer.Id) ? "is-unavailable" : string.Empty)">
                                         <div class="camp-choice-heading">
                                             <strong>@offer.Name</strong>
-                                            <span>@offer.Cost</span>
+                                            <span class="advancement-cost-tokens">@ChronicleCostMarkup(offer.Cost)</span>
                                         </div>
                                         @if (!string.IsNullOrWhiteSpace(commitLabel))
                                         {
@@ -1518,7 +1518,7 @@
 }
 
 @code {
-    private const string AppVersion = "v0.5.0.45";
+    private const string AppVersion = "v0.5.0.48";
 
     // Presentation coordinates only, expressed as fixed pixel offsets from
     // the center of the play-area panel. This keeps the physical relationship
@@ -2044,14 +2044,21 @@
         _ => name
     };
 
+    private readonly Dictionary<string, string?> _arrivalTribeMetaCache = new(StringComparer.OrdinalIgnoreCase);
+
     private string? ArrivalTribeMeta(ChronicleEntry entry)
     {
-        if (string.IsNullOrWhiteSpace(entry.Heading))
+        if (string.IsNullOrWhiteSpace(entry.Heading) ||
+            !entry.Calendar.Contains("• Arrival", StringComparison.OrdinalIgnoreCase))
             return null;
+
+        if (_arrivalTribeMetaCache.TryGetValue(entry.Heading, out var cached))
+            return cached;
 
         var arrival = Catalog.GetArrivalCards().FirstOrDefault(card =>
             string.Equals(card.Title, entry.Heading, StringComparison.OrdinalIgnoreCase));
-        return arrival is null ? null : arrival.Tribe;
+        _arrivalTribeMetaCache[entry.Heading] = arrival?.Tribe;
+        return arrival?.Tribe;
     }
 
     private static string RapportDrmLabel(string rapport) => rapport switch
@@ -2094,7 +2101,7 @@
             @"^(?:Lose|Loses|Lost|Spend|Spends|Spent|Pay|Pays|Paid|Discard|Discards|Disband|Suffer|Suffers|Remove|Removed|The Host (?:pays|paid|surrenders|offers|loses|spends|disbands)|Winter Attrition removes|\d+ (?:Coin|Food|Wood|Stone|Research) changes hands\b)",
             System.Text.RegularExpressions.RegexOptions.IgnoreCase)
             || System.Text.RegularExpressions.Regex.IsMatch(text,
-                @"\b(?:for|costs?)\s+\d+\s+(?:Coin|Food|Wood|Stone|Research)\b",
+                @"\b(?:for|costs?)\s+\d+\s*(?:Coin|Food|Wood|Stone|Research|Leadership|RT\b|C\b|L\b|R\b)",
                 System.Text.RegularExpressions.RegexOptions.IgnoreCase);
         var receives = System.Text.RegularExpressions.Regex.IsMatch(text,
             @"^(?:Gain|Gains|Gained|Regain|Regains|Recover|Receive|Receives|Collect|Collects|Recruit|Recruits|Acquire|Acquires|Add|Adds|Restore|Restores|The Host (?:packs|recruits|receives|gains))\b",
@@ -2112,15 +2119,29 @@
         return string.Empty;
     }
 
-    private static MarkupString ChronicleText(ChronicleEntry entry)
+    // Entries are immutable after recording. Cache their formatted HTML so
+    // every Blazor render needn't re-run all of the dice/icon regex passes.
+    // Per-component cache avoids cross-user state in the hosted server build.
+    private readonly Dictionary<string, MarkupString> _chronicleMarkupCache = new(StringComparer.Ordinal);
+
+    private MarkupString ChronicleText(ChronicleEntry entry)
         => ChronicleMarkup(entry.Text);
 
-    private static MarkupString ChronicleChoiceText(string text)
+    private MarkupString ChronicleChoiceText(string text)
         => ChronicleMarkup(text);
 
-    private static MarkupString ChronicleMarkup(string? rawText)
+    // Compact, designer-facing Advancement costs such as "2L, 1RT" use
+    // the same actual token icons as Chronicle transactions. All amounts
+    // remain text-readable and selectable with accessible names.
+    private static MarkupString ChronicleCostMarkup(string? cost)
+        => new(IconifyChronicleMechanicBody(
+            System.Text.Encodings.Web.HtmlEncoder.Default.Encode(cost ?? string.Empty)));
+
+    private MarkupString ChronicleMarkup(string? rawText)
     {
         var raw = rawText ?? string.Empty;
+        if (_chronicleMarkupCache.TryGetValue(raw, out var cached))
+            return cached;
         var riffRaffTitle = RiffRaffResultTitles.FirstOrDefault(title =>
             raw.StartsWith(title + " - ", StringComparison.Ordinal));
         var text = System.Text.Encodings.Web.HtmlEncoder.Default.Encode(raw);
@@ -2230,7 +2251,11 @@
         if (text.Contains("chronicle-die", StringComparison.Ordinal))
             text = $"<span class='chronicle-roll-line'>{text}</span>";
 
-        return new MarkupString(text);
+        var rendered = new MarkupString(text);
+        if (_chronicleMarkupCache.Count >= 2500)
+            _chronicleMarkupCache.Clear();
+        _chronicleMarkupCache[raw] = rendered;
+        return rendered;
     }
 
     private static string IconifyChronicleMechanics(string text)
@@ -2240,7 +2265,7 @@
         // sentence ends with "Gain 1 Coin...", only that following Gain sentence is
         // iconified.
         const string actionStart = @"(?:^|(?<=[.!?]\s)|(?<=\n))";
-        const string actionVerb = @"(?:Gain|Gains|Lose|Loses|Pay|Pays|Spend|Spends|Receive|Receives|Collect|Collects|Recruit|Recruits|Remove|Removes|Discard|Discards|Return|Returns|Add|Adds|Prevent|Prevents|Recover|Recovers|Restore|Restores|Suffer|Suffers)";
+        const string actionVerb = @"(?:Gain|Gains|Gained|Lose|Loses|Lost|Pay|Pays|Paid|Spend|Spends|Spent|Receive|Receives|Received|Collect|Collects|Recruit|Recruits|Remove|Removes|Discard|Discards|Return|Returns|Add|Adds|Prevent|Prevents|Recover|Recovers|Restore|Restores|Suffer|Suffers|Acquire|Acquires|Acquired|Purchase|Purchases|Purchased|Buy|Buys|Bought)";
 
         text = System.Text.RegularExpressions.Regex.Replace(
             text,
@@ -2279,7 +2304,7 @@
     {
         return System.Text.RegularExpressions.Regex.Replace(
             body,
-            @"(?<qty>(?:\+|&#x2B;|&#43;)?\d+)\s+(?<thing>Coins?|Leadership|Morale|Food|Wood|Stone|Research(?:\s+Tokens?)?|Shields?|Archers?|Cavalry|Infantry|Levy|Mercenary|Mercenaries|Hedge\s+Knights?)\b",
+            @"(?<qty>(?:\+|&#x2B;|&#43;)?\d+)(?:\s+(?<thing>Coins?|Leadership|Morale|Food|Wood|Stone|Research(?:\s+Tokens?)?|Shields?|Archers?|Cavalry|Infantry|Levy|Mercenary|Mercenaries|Hedge\s+Knights?)|\s*(?<thing>RT|C|L|R))\b",
             m => ChronicleMechanicAmount(m.Groups["qty"].Value, m.Groups["thing"].Value),
             System.Text.RegularExpressions.RegexOptions.IgnoreCase);
     }
@@ -2291,7 +2316,13 @@
             : quantity.StartsWith("&#43;", StringComparison.OrdinalIgnoreCase)
                 ? quantity[5..]
                 : quantity.TrimStart('+');
-        var key = thing.Trim().ToLowerInvariant();
+        var key = thing.Trim().ToLowerInvariant() switch
+        {
+            "rt" or "r" => "research",
+            "c" => "coin",
+            "l" => "leadership",
+            var other => other
+        };
 
         string? imagePath = key switch
         {
@@ -2382,6 +2413,8 @@
         _ => null
     };
 
+    private readonly Dictionary<string, string> _echoIconCache = new(StringComparer.OrdinalIgnoreCase);
+
     private string? ChronicleIconPath(ChronicleEntry entry)
     {
         if (entry.Calendar.Contains("• Scene", StringComparison.OrdinalIgnoreCase))
@@ -2389,12 +2422,18 @@
         if (!entry.Calendar.Contains("• Echo", StringComparison.OrdinalIgnoreCase))
             return null;
 
+        var title = entry.Heading ?? string.Empty;
+        if (_echoIconCache.TryGetValue(title, out var cached))
+            return cached;
+
         var echo = Catalog.GetCampCards(includeOptional: true)
             .FirstOrDefault(c => string.Equals(c.CardType, "Echo", StringComparison.OrdinalIgnoreCase)
                 && string.Equals(c.Title, entry.Heading, StringComparison.OrdinalIgnoreCase));
-        return echo is not null && string.Equals(echo.Keyword, "Hostile", StringComparison.OrdinalIgnoreCase)
+        var icon = echo is not null && string.Equals(echo.Keyword, "Hostile", StringComparison.OrdinalIgnoreCase)
             ? "images/card-ui/wc_icon_hostile.png"
             : "images/card-ui/wc_icon_echo.png";
+        _echoIconCache[title] = icon;
+        return icon;
     }
 
     private bool IsDepleted(int index)

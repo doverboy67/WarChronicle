@@ -2672,3 +2672,26 @@ body.wc-action-busy::after {
     font-size: .9rem;
 }
 .finale-difficulty-setup small { font-size: .73rem; color: #685f51; }
+
+/* 0546: compact advancement prices with actual game token art. */
+.advancement-cost-tokens .chronicle-mech-amount {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    margin: 0 1px;
+    vertical-align: middle;
+    white-space: nowrap;
+    text-transform: none;
+}
+.advancement-cost-tokens .chronicle-mech-icon { width: 14px; height: 14px; }
+.advancement-cost-tokens .chronicle-leadership-icon {
+    width: 10px; height: 10px;
+}
+.advancement-cost-tokens .chronicle-mech-number,
+.advancement-cost-tokens .chronicle-mech-word {
+    font-size: .73rem !important;
+    font-weight: 650;
+    color: #625544 !important;
+    letter-spacing: normal;
+    text-transform: none;
+}

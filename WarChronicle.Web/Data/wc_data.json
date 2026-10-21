@@ -2694,7 +2694,7 @@
       "card_num": 14,
       "title": "Inspired",
       "keyword": "Tactic :: Special",
-      "cost": "2C, 1R",
+      "cost": "2L, 1R",
       "commit": "Special",
       "effect": "At the start of each Combat round, you may spend 1 Leadership and choose 1 unit type. That unit rolls +1 die, or +2 dice if it has 2+ units.<br><br>Once per round."
     },

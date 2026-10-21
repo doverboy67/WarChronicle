@@ -140,6 +140,7 @@ window.wcActionLock = (function () {
 window.wcChronicle = (function () {
     let animationId = null;
     let anchor = null;
+    const durationMs = 300; // 0548: fixed 0.3-second animation for every nontrivial scroll.
     const scroller = () => document.querySelector('.chronicle-scroll');
 
     function cancel() {
@@ -213,12 +214,9 @@ window.wcChronicle = (function () {
         if (Math.abs(distance) < 2) return;
 
         cancel();
-        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-            panel.scrollTop = destination;
-            return;
-        }
-
-        const duration = Math.min(470, Math.max(210, Math.abs(distance) * .345));
+        // 0548: consistent 300 ms for all scroll distances.
+        // Preserve ease-out animation, anchoring, and Chronicle-only movement.
+        const duration = durationMs;
         let started = null;
         function frame(timestamp) {
             if (started === null) started = timestamp;
