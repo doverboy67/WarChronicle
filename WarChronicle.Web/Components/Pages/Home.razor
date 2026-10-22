@@ -116,6 +116,7 @@
                         <span class="debug-tools-label">Debug</span>
                         <button class="combat-demo" disabled="@(Session.IsCombatActive || Session.IsFinaleActive)" @onclick="Session.ForceTestCombat">Test Combat</button>
                         <button class="combat-demo" disabled="@(Session.IsCombatActive || Session.IsFinaleActive)" @onclick="Session.ForceTestFinale">Test Finale</button>
+                        <button class="combat-demo" disabled="@(Session.IsCombatActive || Session.IsFinaleActive)" @onclick="() => _showCustomFinaleSetup = true">Custom Finale</button>
                         <div class="debug-card-simulator">
                             <select class="debug-card-select" @bind="_debugSelectedCardId" aria-label="Scene or Echo to simulate">
                                 <option value="">Simulate Scene / Echo…</option>
@@ -1062,13 +1063,137 @@
     </section>
 </div>
 
+@if (_showCustomFinaleSetup)
+{
+    <div class="modal-backdrop custom-finale-backdrop">
+        <section class="custom-finale-modal" role="dialog" aria-modal="true" aria-label="Configure Custom Finale">
+            <header class="custom-finale-header">
+                <div>
+                    <div class="eyebrow">Debug • Post-Resolve test</div>
+                    <h2>Custom Finale</h2>
+                    <p>Set up an exact matchup. The campaign is untouched, and this uses the normal Middelalderen combat rules.</p>
+                </div>
+                <button class="combat-test-cancel" @onclick="() => _showCustomFinaleSetup = false">Cancel</button>
+            </header>
+            <div class="custom-finale-scroll">
+                <div class="custom-finale-grid">
+                    <section class="custom-finale-section">
+                        <h3>Your Host</h3>
+                        <p>Unit counts before combat. Usual maximum is 10 Military and 6 Levy; debug tests also permit unusual matchups.</p>
+                        <div class="custom-unit-grid">
+                            @foreach (var type in CustomFinaleUnitTypes)
+                            {
+                                <label><span>@type</span><input type="number" min="0" max="24" value="@_customFinale.PlayerUnits[type]" @onchange="e => SetCustomUnits(_customFinale.PlayerUnits, type, e.Value)" /></label>
+                            }
+                        </div>
+                        <p><strong>Special units</strong> (fight in their regular combat classes)</p>
+                        <div class="custom-unit-grid">
+                            @foreach (var type in new[] { "Mercenaries", "Hedge Knights" })
+                            {
+                                <label><span>@type</span><input type="number" min="0" max="24" value="@_customFinale.SpecialPlayerUnits[type]" @onchange="e => SetCustomUnits(_customFinale.SpecialPlayerUnits, type, e.Value)" /></label>
+                            }
+                        </div>
+                        <small>@(_customFinale.PlayerUnits["Archers"] + _customFinale.PlayerUnits["Cavalry"] + _customFinale.PlayerUnits["Infantry"] + _customFinale.SpecialPlayerUnits["Mercenaries"] + _customFinale.SpecialPlayerUnits["Hedge Knights"]) Military (including specialists) / @_customFinale.PlayerUnits["Levy"] Levy</small>
+                        <div class="custom-finale-fields">
+                            <label>Morale <input type="number" min="0" max="10" @bind="_customFinale.Morale" /></label>
+                            <label>Leadership (after Resolve) <input type="number" min="0" max="99" @bind="_customFinale.Leadership" /></label>
+                            <label class="custom-check"><input type="checkbox" @bind="_customFinale.HasPriest" /> Priest present</label>
+                        </div>
+                    </section>
+                    <section class="custom-finale-section">
+                        <h3>Middelalderen</h3>
+                        <p>Choose the starting Host. Selected Advancements normally add at most one Archer, Cavalry, Infantry, or Levy unit of each type (Gritty adds a Levy).</p>
+                        <div class="custom-unit-grid">
+                            @foreach (var type in CustomFinaleUnitTypes)
+                            {
+                                <label><span>@type base</span><input type="number" min="0" max="24" value="@_customFinale.MiddelalderenBaseUnits[type]" @onchange="e => SetCustomUnits(_customFinale.MiddelalderenBaseUnits, type, e.Value)" /></label>
+                            }
+                        </div>
+                        <p class="custom-final-total">With Advancement bonuses: @CustomEnemyHostSummary()</p>
+                        <label class="custom-check"><input type="checkbox" @bind="_customFinale.OverrideMiddelalderenUnits" /> Override final enemy unit counts (including bonuses)</label>
+                        @if (_customFinale.OverrideMiddelalderenUnits)
+                        {
+                            <div class="custom-unit-grid">
+                                @foreach (var type in CustomFinaleUnitTypes)
+                                {
+                                    <label><span>@type final</span><input type="number" min="0" max="24" value="@_customFinale.MiddelalderenOverrideUnits[type]" @onchange="e => SetCustomUnits(_customFinale.MiddelalderenOverrideUnits, type, e.Value)" /></label>
+                                }
+                            </div>
+                            <small>Overrides ignore automatic unit bonuses; the chosen totals are deployed verbatim.</small>
+                        }
+                    </section>
+                    <section class="custom-finale-section">
+                        <h3>Your Advancements</h3>
+                        <p>Select individual cards, including separate Armor copies.</p>
+                        <div class="custom-advancement-list">
+                            @foreach (var card in Catalog.GetBaseAdvancements())
+                            {
+                                <label title="@card.Effect"><input type="checkbox" checked="@_customFinale.PlayerAdvancements.Contains(card.Id)" @onchange="_ => ToggleCustomPlayerAdvancement(card.Id)" /><span>@card.Name <small>(@card.Id)</small></span></label>
+                            }
+                        </div>
+                    </section>
+                    <section class="custom-finale-section">
+                        <h3>Middelalderen Advancements</h3>
+                        <p>Select exactly which enemy cards appear, including each Armor copy. <strong>@_customFinale.MiddelalderenAdvancements.Count selected.</strong></p>
+                        <div class="custom-advancement-list">
+                            @foreach (var card in Catalog.GetMiddelalderenAdvancements())
+                            {
+                                <label title="@card.Effect"><input type="checkbox" checked="@_customFinale.MiddelalderenAdvancements.Contains(card.Id)" @onchange="_ => ToggleCustomSelection(_customFinale.MiddelalderenAdvancements, card.Id)" /><span>@card.Name <small>(@card.Id)</small></span></label>
+                            }
+                        </div>
+                    </section>
+                    <section class="custom-finale-section custom-span-all">
+                        <h3>Pre-committed Tactics</h3>
+                        <p>These Tactics are committed before combat at the normal cost of 1 Leadership apiece. Inspired and Loose Formation activate in battle. Feigned Withdrawal cannot be committed in a no-disengagement Finale.</p>
+                        <div class="custom-tactics-list">
+                            @foreach (var card in Catalog.GetBaseAdvancements().Where(c => CustomAdvancementNumber(c.Id) is >= 7 and <= 13 && c.Id != "ADV-011"))
+                            {
+                                <label title="@card.Effect"><input type="checkbox" disabled="@(!_customFinale.PlayerAdvancements.Contains(card.Id) || (CustomTacticIssue(card.Id) is not null && !_customFinale.CommittedTactics.Contains(card.Id)))" checked="@_customFinale.CommittedTactics.Contains(card.Id)" @onchange="_ => ToggleCustomSelection(_customFinale.CommittedTactics, card.Id)" /><span>@card.Name</span></label>
+                            }
+                        </div>
+                        @if (_customFinale.CommittedTactics.Contains("ADV-013"))
+                        {
+                            <label class="custom-steady">Steady Advance target
+                                <select @bind="_customFinale.SteadyAdvanceType">
+                                    <option value="">Choose unit type…</option>
+                                    @foreach (var type in CustomFinaleUnitTypes.Where(t => t != "Levy"))
+                                    {
+                                        <option value="@type">@type</option>
+                                    }
+                                </select>
+                            </label>
+                        }
+                        <p class="custom-final-total">Leadership entering combat: @(_customFinale.Leadership - _customFinale.CommittedTactics.Count)</p>
+                    </section>
+                    <section class="custom-finale-section custom-span-all">
+                        <h3>Replay &amp; Dice</h3>
+                        <p>Same seed replays the same random sequence. During/after combat, use <strong>New Dice</strong> to repeat this matchup with another seed.</p>
+                        <label class="custom-seed">Random seed <input type="number" min="0" max="2147483647" @bind="_customFinale.Seed" /></label>
+                    </section>
+                </div>
+            </div>
+            <footer class="custom-finale-footer">
+                @if (CustomFinaleProblem is { } problem)
+                {
+                    <span class="custom-finale-error" role="alert">@problem</span>
+                }
+                else
+                {
+                    <span>Resolve check skipped. Battle uses your chosen post-Resolve Leadership.</span>
+                }
+                <button class="combat-primary" disabled="@(CustomFinaleProblem is not null)" @onclick="LaunchCustomFinale">Stage Custom Finale</button>
+            </footer>
+        </section>
+    </div>
+}
+
 @if (Session.Finale is { } finale && Session.Combat is null && (finale.Step != FinaleStep.Complete || !_finaleSummaryDismissed))
 {
     <div class="modal-backdrop finale-backdrop">
         <section class="finale-modal" role="dialog" aria-modal="true" aria-label="Finale">
             <header>
                 <div>
-                    <div class="eyebrow">@(finale.IsTest ? "Test Finale" : "Finale")</div>
+                    <div class="eyebrow">@(finale.IsCustomTest ? "Custom Finale" : finale.IsTest ? "Test Finale" : "Finale")</div>
                     <h2>Middelalderen</h2>
                     <div class="combat-phase-label">@FinaleStepLabel(finale.Step)</div>
                 </div>
@@ -1081,6 +1206,14 @@
                             {
                                 <span>Seed @finaleSeed</span>
                                 <button class="combat-test-cancel" @onclick="Session.RestartTestFinale">Restart Seed</button>
+                            }
+                            @if (finale.IsCustomTest)
+                            {
+                                <button class="combat-test-cancel" @onclick="Session.RerollTestFinale">New Dice</button>
+                            }
+                            @if (finale.IsCustomTest)
+                            {
+                                <button class="combat-test-cancel" @onclick="DownloadCustomFinaleLogAsync">Download Test Log</button>
                             }
                             <button class="combat-test-cancel" @onclick="Session.CancelTestFinale">Cancel Test Finale</button>
                         </div>
@@ -1180,7 +1313,7 @@
                     {
                         <section class="finale-step-card">
                             <div class="decision-kicker">Deploy Middelalderen's Host</div>
-                            <h3>Middelalderen reveals @Session.MiddelalderenAdvancementCount Advancements</h3>
+                            <h3>Middelalderen reveals @finale.MiddelalderenAdvancements.Count Advancements</h3>
                             <div class="finale-enemy-grid">
                                 @foreach (var id in finale.MiddelalderenAdvancements.OrderBy(id => id))
                                 {
@@ -1210,6 +1343,14 @@
                                 @if (finale.IsTest)
                                 {
                                     <button class="combat-primary" @onclick="Session.RestartTestFinale">Restart Seed</button>
+                                    @if (finale.IsCustomTest)
+                                    {
+                                        <button class="combat-primary" @onclick="Session.RerollTestFinale">New Dice</button>
+                                    }
+                                    @if (finale.IsCustomTest)
+                                    {
+                                        <button class="combat-primary" @onclick="DownloadCustomFinaleLogAsync">Download Test Log</button>
+                                    }
                                     <button class="combat-primary" @onclick="Session.EndTestFinale">End Test Finale</button>
                                 }
                             </div>
@@ -1264,6 +1405,14 @@
                             {
                                 <span>Seed @seed</span>
                                 <button class="combat-test-cancel" @onclick="Session.RestartTestCombat">Restart Seed</button>
+                                @if (combat.IsFinale && Session.Finale?.IsCustomTest == true)
+                                {
+                                    <button class="combat-test-cancel" @onclick="Session.RerollTestFinale">New Dice</button>
+                                }
+                            }
+                            @if (combat.IsFinale && Session.Finale?.IsCustomTest == true)
+                            {
+                                <button class="combat-test-cancel" @onclick="DownloadCustomFinaleLogAsync">Download Test Log</button>
                             }
                             <button class="combat-test-cancel" @onclick="Session.CancelTestCombat">@(combat.IsFinale ? "Cancel Test Finale" : "Cancel Test Combat")</button>
                         </div>
@@ -1536,7 +1685,7 @@
 }
 
 @code {
-    private const string AppVersion = "v0.5.0.49";
+    private const string AppVersion = "v0.5.0.51";
 
     // Presentation coordinates only, expressed as fixed pixel offsets from
     // the center of the play-area panel. This keeps the physical relationship
@@ -1570,6 +1719,106 @@
         (-240, 138, 0),
         (-240, 91, 90)
     ];
+
+    private bool _showCustomFinaleSetup;
+    private CustomFinaleSetup _customFinale = new();
+    private static readonly string[] CustomFinaleUnitTypes = ["Archers", "Cavalry", "Infantry", "Levy"];
+
+    private static int CustomAdvancementNumber(string id)
+    {
+        var suffix = id.Split('-').LastOrDefault();
+        return int.TryParse(suffix, out var number) ? number : -1;
+    }
+
+    private static void ToggleCustomSelection(HashSet<string> selected, string id)
+    {
+        if (!selected.Add(id)) selected.Remove(id);
+    }
+
+    private void ToggleCustomPlayerAdvancement(string id)
+    {
+        ToggleCustomSelection(_customFinale.PlayerAdvancements, id);
+        if (!_customFinale.PlayerAdvancements.Contains(id))
+            _customFinale.CommittedTactics.Remove(id);
+    }
+
+    private static void SetCustomUnits(Dictionary<string, int> units, string type, object? value)
+    {
+        if (int.TryParse(value?.ToString(), out var number))
+            units[type] = Math.Clamp(number, 0, 24);
+    }
+
+    private int CustomEnemyCount(string type)
+    {
+        var count = _customFinale.MiddelalderenBaseUnits[type];
+        var bonus = type switch
+        {
+            "Archers" => new[] { "ADV-M6", "ADV-M9" },
+            "Cavalry" => new[] { "ADV-M5", "ADV-M7" },
+            "Infantry" => new[] { "ADV-M4", "ADV-M10" },
+            "Levy" => new[] { "ADV-M8" },
+            _ => Array.Empty<string>()
+        };
+        return count + (bonus.Any(_customFinale.MiddelalderenAdvancements.Contains) ? 1 : 0);
+    }
+
+    private string CustomEnemyHostSummary()
+        => string.Join(" / ", CustomFinaleUnitTypes.Select(t => $"{CustomEnemyCount(t)} {t}"));
+
+    private int CustomCombatUnitCount(string type) => _customFinale.PlayerUnits.GetValueOrDefault(type) +
+        (type == "Infantry" ? _customFinale.SpecialPlayerUnits.GetValueOrDefault("Mercenaries") :
+         type == "Cavalry" ? _customFinale.SpecialPlayerUnits.GetValueOrDefault("Hedge Knights") : 0);
+
+    private string? CustomTacticIssue(string id)
+    {
+        var required = id switch
+        {
+            "ADV-007" => "Cavalry",
+            "ADV-008" => "Levy",
+            "ADV-009" or "ADV-012" => "Archers",
+            "ADV-010" => "Infantry",
+            _ => null
+        };
+        if (required is not null && CustomCombatUnitCount(required) <= 0)
+            return $"{required} required to commit {Catalog.GetAdvancement(id)?.Name ?? id}.";
+        if (id == "ADV-013" && CustomFinaleUnitTypes.Take(3).All(t => CustomCombatUnitCount(t) == 0))
+            return "Steady Advance requires a Military unit.";
+        return null;
+    }
+
+    private string? CustomFinaleProblem
+    {
+        get
+        {
+            if (_customFinale.Morale is < 0 or > 10) return "Morale must be between 0 and 10.";
+            if (_customFinale.Leadership is < 0 or > 99) return "Leadership must be between 0 and 99.";
+            if (_customFinale.Seed < 0) return "Seed cannot be negative.";
+            if (_customFinale.PlayerUnits.Values.Sum() + _customFinale.SpecialPlayerUnits.Values.Sum() == 0) return "Your Host needs at least one unit.";
+            if (_customFinale.MiddelalderenAdvancements.Count is < 1 or > 10) return "Select 1 to 10 Middelalderen Advancements.";
+            if (_customFinale.CommittedTactics.Count > _customFinale.Leadership) return "Not enough Leadership to commit those Tactics.";
+            foreach (var id in _customFinale.CommittedTactics)
+                if (CustomTacticIssue(id) is { } reason) return reason;
+            if (_customFinale.CommittedTactics.Contains("ADV-013") &&
+                (string.IsNullOrWhiteSpace(_customFinale.SteadyAdvanceType) ||
+                 CustomCombatUnitCount(_customFinale.SteadyAdvanceType) == 0))
+                return "Steady Advance needs an existing Archer, Cavalry, or Infantry unit type.";
+            var enemyCount = _customFinale.OverrideMiddelalderenUnits
+                ? _customFinale.MiddelalderenOverrideUnits.Values.Sum()
+                : CustomFinaleUnitTypes.Sum(CustomEnemyCount);
+            if (enemyCount == 0) return "Middelalderen needs at least one unit.";
+            return null;
+        }
+    }
+
+    private void LaunchCustomFinale()
+    {
+        if (CustomFinaleProblem is not null) return;
+        if (Session.StartCustomFinale(_customFinale))
+        {
+            _showCustomFinaleSetup = false;
+            _finaleSummaryDismissed = false;
+        }
+    }
 
     private bool _debugMode;
     private string? _debugSelectedCardId;
@@ -1950,14 +2199,31 @@
         }
     }
 
+    private async Task DownloadCustomFinaleLogAsync()
+    {
+        try
+        {
+            var json = Session.CreateCustomFinaleTestLogJson(AppVersion);
+            await JS.InvokeVoidAsync("wcGameLog.download", json,
+                $"WC_CustomFinale_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.json");
+        }
+        catch
+        {
+            _saveStatus = "Custom Finale log download failed";
+        }
+    }
+
     private async Task DownloadGameLogAsync()
     {
         try
         {
             var json = Session.CreateGameLogJson(AppVersion);
-            if (string.IsNullOrWhiteSpace(_gameLogFilename))
-                _gameLogFilename = await JS.InvokeAsync<string>("wcGameLog.archive", json);
-            await JS.InvokeVoidAsync("wcGameLog.download", json, _gameLogFilename);
+            // Never gate an explicit download on browser storage or archive quota.
+            // Automatic archiving remains best-effort in ArchiveCompletedGameLogAsync.
+            var filename = !string.IsNullOrWhiteSpace(_gameLogFilename)
+                ? _gameLogFilename
+                : $"WC_GameLog_{(Session.GameEndedUtc ?? DateTime.UtcNow).ToLocalTime():yyyy-MM-dd_HH-mm-ss}.json";
+            await JS.InvokeVoidAsync("wcGameLog.download", json, filename);
         }
         catch
         {

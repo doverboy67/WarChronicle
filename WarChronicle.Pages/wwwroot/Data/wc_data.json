@@ -21,7 +21,7 @@
       "after_play": "Keep",
       "text": {
         "flavor": "While the road waits, the Host takes up the work at hand: hauling, mending, tending, building, and drilling for what comes next.",
-        "effect": "<b>Advance 2 Time and Choose 1:</b><br><ul><li><b>Gain 2 Coin.</b></li><li><b>Gain 1 Coin and 1 Leadership.</b></li><li><b>Repair Baggage:</b> Spend 1 Wood to repair 1 damaged Baggage Train space.</li></ul><br><b>If you have Camp Steward:</b> After resolving your normal Work option, you may also choose 1:<br><ul><li>Spend <b>1 Coin</b> to collect 1 Resource matching the adjacent Terrain.</li><li>Buy 1 Resource from the Market for <b>1 Coin less</b> than its current Buy value (minimum 1 Coin).</li></ul>"
+        "effect": "<b>Advance 2 Time and Choose 1:</b><br><ul><li><b>Gain 2 Coin.</b></li><li><b>Gain 1 Coin and 1 Leadership.</b></li><li><b>Repair Baggage:</b> Spend 1 Wood to repair 1 damaged Baggage Train space.</li></ul><br><b>If you have Camp Steward:</b> After resolving Work, you may <b>search the surrounding area for opportunities</b>. Roll 1d6:<br><ul><li><b>1–4, A Willing Trader:</b> Buy 1 Resource for 1 Coin less than Market Buy (minimum 1 Coin), or sell 1 Resource at Market Sell value.</li><li><b>5–6, A Fortunate Discovery:</b> Gain 1 Resource matching adjacent Terrain for free.</li></ul><i>You may purge Baggage contents to make room for a new Resource.</i>"
       },
       "notes": null
     },
@@ -263,7 +263,7 @@
       "after_play": "RemoveOrDiscard",
       "text": {
         "flavor": "A wise commander does not march on courage alone. Scouts find the road, and Stewards keep the Host ready to follow it.",
-        "effect": "<b>Advance 2 Time and Choose 1:</b><br><b>Train Scouts:</b> <i>Cost: 1 Coin.</i> Place the Scouting token near the Explore draw deck.<br><br><b>Appoint Camp Steward:</b> <i>Cost: 1 Coin.</i> Place the Camp Steward token near the Camp draw deck."
+        "effect": "<b>Advance 2 Time and Choose 1:</b><br><b>Train Scouts:</b> <i>Cost: 1 Coin.</i> Place the Scouting token near the Explore draw deck.<br><br><b>Appoint Camp Steward:</b> <i>Cost: 2 Coin.</i> Place the Camp Steward token near the Camp draw deck."
       },
       "notes": null
     },
@@ -3122,21 +3122,14 @@
         },
         "N81": {
           "type": "Choice",
-          "prompt": "Camp Steward: choose 1 additional benefit, or skip it.",
+          "prompt": "Have the Camp Steward search the surrounding area for opportunities?",
           "branches": [
             {
-              "label": "Collect 1 adjacent Terrain Resource for 1 Coin",
+              "label": "Search for opportunities (roll 1d6)",
               "input": null,
               "operator": null,
               "value": null,
               "next": "N82"
-            },
-            {
-              "label": "Buy 1 Resource at Market -1 Coin (minimum 1)",
-              "input": null,
-              "operator": null,
-              "value": null,
-              "next": "N85"
             },
             {
               "label": "Skip Camp Steward",
@@ -3150,39 +3143,11 @@
         "N82": {
           "type": "Action",
           "action": {
-            "type": "Spend",
-            "target": "Coin",
-            "value": 1
-          },
-          "next": "N83"
-        },
-        "N83": {
-          "type": "Action",
-          "action": {
-            "type": "Gain",
-            "target": "ResourceMatchingAdjacentTerrain",
+            "type": "CampStewardSearch",
+            "target": "SurroundingArea",
             "value": 1
           },
           "next": "N99"
-        },
-        "N85": {
-          "type": "Action",
-          "action": {
-            "type": "MarketBuy",
-            "target": "Resource",
-            "value": 1
-          },
-          "next": "N99",
-          "flags": [
-            {
-              "name": "PriceModifier",
-              "value": "-1 Coin"
-            },
-            {
-              "name": "SubjectToBaggageCapacity",
-              "value": true
-            }
-          ]
         }
       }
     },
@@ -4170,7 +4135,7 @@
           "action": {
             "type": "Spend",
             "target": "Coin",
-            "value": 1
+            "value": 2
           },
           "next": "N21"
         },

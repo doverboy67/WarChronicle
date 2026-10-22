@@ -2710,3 +2710,35 @@ body.wc-action-busy::after {
 }
 /* Reuse rapport.hostile/neutral/friendly/allied colors from the Game State. */
 .chronicle-rapport-level { font-size: inherit; text-transform: none; font-weight: 700; }
+
+
+/* Update 0550: isolated, scrollable Custom Finale debug setup. */
+.custom-finale-backdrop { z-index: 2100; padding: 16px; }
+.custom-finale-modal { width: min(1080px, 98vw); max-height: min(92vh, 1000px); overflow: hidden; display: flex; flex-direction: column; background: #f4ecd8; color: #302819; border: 2px solid #806e4d; border-radius: 14px; box-shadow: 0 15px 65px #0008; }
+.custom-finale-header { padding: 18px 22px 12px; display: flex; gap: 16px; justify-content: space-between; align-items: start; border-bottom: 1px solid #c8bba1; }
+.custom-finale-header h2 { margin: 0; }
+.custom-finale-header p { margin: 4px 0 0; font-size: .89rem; }
+.custom-finale-scroll { overflow-y: auto; flex: 1; min-height: 0; padding: 16px 20px; }
+.custom-finale-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.custom-finale-section { border: 1px solid #c9bca1; border-radius: 9px; background: #fffcf4; padding: 13px; min-width: 0; }
+.custom-finale-section h3 { margin: 0 0 6px; font-size: 1.08rem; }
+.custom-finale-section p { margin: 5px 0 10px; font-size: .86rem; }
+.custom-finale-section small { font-size: .78rem; }
+.custom-unit-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 12px 0; }
+.custom-unit-grid label { display: flex; align-items: center; justify-content: space-between; gap: 6px; font-size: .88rem; }
+.custom-finale-modal input[type=number] { width: 72px; box-sizing: border-box; padding: 6px; background: #fff; border: 1px solid #968568; border-radius: 5px; color: #24201a; }
+.custom-finale-fields { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 13px; }
+.custom-finale-fields > label { display: flex; align-items: center; gap: 8px; font-size: .87rem; }
+.custom-finale-modal .custom-check { display: inline-flex; align-items: center; gap: 6px; font-size: .87rem; margin-top: 9px; }
+.custom-finale-modal input[type=checkbox] { width: 16px; height: 16px; flex-shrink: 0; accent-color: #64512c; }
+.custom-final-total { font-weight: 650; font-size: .86rem; }
+.custom-advancement-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px 12px; }
+.custom-advancement-list label, .custom-tactics-list label { display: flex; align-items: center; gap: 7px; min-height: 28px; font-size: .85rem; cursor: pointer; }
+.custom-advancement-list label small { color: #73644b; font-size: .72rem; }
+.custom-span-all { grid-column: 1 / -1; }
+.custom-tactics-list { display: flex; flex-wrap: wrap; gap: 7px 18px; }
+.custom-finale-modal .custom-steady, .custom-finale-modal .custom-seed { display: flex; align-items: center; gap: 10px; margin-top: 12px; font-size: .9rem; }
+.custom-finale-modal select { padding: 6px; border-radius: 5px; max-width: 100%; }
+.custom-finale-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 20px; border-top: 1px solid #c8bba1; font-size: .84rem; }
+.custom-finale-error { color: #9b2525; font-weight: 700; }
+@media (max-width: 720px) { .custom-finale-grid { grid-template-columns: 1fr; } .custom-span-all { grid-column: auto; } .custom-finale-footer { flex-direction: column; align-items: stretch; } }

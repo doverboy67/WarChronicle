@@ -331,6 +331,18 @@ public sealed partial class GameSession
                 entries = activeCombat.Log.ToArray()
             } : null,
             finaleLog = Finale?.Log.ToArray() ?? Array.Empty<string>(),
+            customFinaleTest = Finale is { IsCustomTest: true } customFinale && _customFinaleReplay is not null
+                ? new
+                {
+                    setup = _customFinaleReplay.Copy(),
+                    actualSeed = customFinale.TestSeed,
+                    outcome = customFinale.Outcome,
+                    battle = LastCustomFinaleBattle,
+                    activeTestBattle = Combat is { IsFinale: true, IsTest: true } activeCustomCombat
+                        ? new { activeCustomCombat.Round, step = activeCustomCombat.Step.ToString(), activeCustomCombat.Log }
+                        : null
+                }
+                : null,
             diagnosticState = new
             {
                 phase = Phase.ToString(),

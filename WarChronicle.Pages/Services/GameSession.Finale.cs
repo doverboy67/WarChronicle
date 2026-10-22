@@ -5,6 +5,8 @@ namespace WarChronicle.Web.Services;
 public sealed partial class GameSession
 {
     private Random _finaleRandom = Random.Shared;
+    private CustomFinaleSetup? _customFinaleReplay;
+    public CompletedBattleLog? LastCustomFinaleBattle { get; private set; }
 
     public FinaleState? Finale { get; private set; }
     public bool IsFinaleActive => Finale is not null;
@@ -33,7 +35,23 @@ public sealed partial class GameSession
         CombatVisible = false;
         Finale = null;
         _combatResumeMode = CombatResumeMode.None;
-        StartTestFinale(seed.Value);
+        if (_customFinaleReplay is not null)
+            StartCustomFinaleCore(_customFinaleReplay.Copy(), seed.Value);
+        else
+            StartTestFinale(seed.Value);
+    }
+
+    public void RerollTestFinale()
+    {
+        if (_customFinaleReplay is null ||
+            (Finale is not { IsCustomTest: true } && Combat is not { IsFinale: true, IsTest: true }))
+            return;
+        var nextSeed = Random.Shared.Next(1, int.MaxValue);
+        Combat = null;
+        CombatVisible = false;
+        Finale = null;
+        _combatResumeMode = CombatResumeMode.None;
+        StartCustomFinaleCore(_customFinaleReplay.Copy(), nextSeed);
     }
 
     public void CancelTestFinale()
@@ -45,7 +63,154 @@ public sealed partial class GameSession
         CombatVisible = false;
         Finale = null;
         _combatResumeMode = CombatResumeMode.None;
+        _customFinaleReplay = null;
         Changed?.Invoke();
+    }
+
+    // Launch directly after the Resolve check, using the normal Finale combat engine.
+    public bool StartCustomFinale(CustomFinaleSetup setup)
+    {
+        if (Combat is not null || Finale is not null || _catalog is null || setup is null)
+            return false;
+        if (setup.Morale is < 0 or > 10 || setup.Leadership is < 0 or > 99 || setup.Seed < 0)
+            return false;
+        if (setup.SpecialPlayerUnits.Values.Any(x => x is < 0 or > 24) ||
+            setup.PlayerUnits.Values.Any(x => x is < 0 or > 24) ||
+            setup.MiddelalderenBaseUnits.Values.Any(x => x is < 0 or > 24) ||
+            setup.MiddelalderenOverrideUnits.Values.Any(x => x is < 0 or > 24))
+            return false;
+        if (setup.PlayerUnits.Values.Sum() + setup.SpecialPlayerUnits.Values.Sum() <= 0 || setup.MiddelalderenAdvancements.Count > 10 ||
+            setup.MiddelalderenAdvancements.Count == 0 ||
+            setup.Leadership < setup.CommittedTactics.Count)
+            return false;
+        var baseIds = _catalog.GetBaseAdvancements().Select(a => a.Id).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var enemyIds = _catalog.GetMiddelalderenAdvancements().Select(a => a.Id).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        if (!setup.PlayerAdvancements.All(baseIds.Contains) ||
+            !setup.MiddelalderenAdvancements.All(enemyIds.Contains) ||
+            !setup.CommittedTactics.All(id => setup.PlayerAdvancements.Contains(id) && AdvancementNumber(id) is >= 7 and <= 13 &&
+                UnitTacticUnavailableReason(id, CustomFinaleCombatUnits(setup), mayDisengage: false) is null))
+            return false;
+        if (setup.CommittedTactics.Contains("ADV-013") &&
+            (setup.SteadyAdvanceType is not ("Archers" or "Cavalry" or "Infantry") ||
+             CustomFinaleCombatUnits(setup).GetValueOrDefault(setup.SteadyAdvanceType) <= 0))
+            return false;
+        var bonusTypes = new[] { "Archers", "Cavalry", "Infantry", "Levy" };
+        var enemyUnits = new Dictionary<string, int>(setup.MiddelalderenBaseUnits, StringComparer.OrdinalIgnoreCase);
+        foreach (var type in bonusTypes)
+            if (setup.MiddelalderenAdvancements.Any(id => string.Equals(MiddelalderenUnitBonusType(id), type, StringComparison.OrdinalIgnoreCase)))
+                enemyUnits[type]++;
+        if (setup.OverrideMiddelalderenUnits)
+            enemyUnits = new(setup.MiddelalderenOverrideUnits, StringComparer.OrdinalIgnoreCase);
+        if (enemyUnits.Values.Sum() <= 0)
+            return false;
+        _customFinaleReplay = setup.Copy();
+        StartCustomFinaleCore(_customFinaleReplay.Copy(), setup.Seed);
+        return true;
+    }
+
+    private static Dictionary<string, int> CustomFinaleCombatUnits(CustomFinaleSetup setup)
+    {
+        var units = new Dictionary<string, int>(setup.PlayerUnits, StringComparer.OrdinalIgnoreCase);
+        units["Infantry"] = units.GetValueOrDefault("Infantry") + setup.SpecialPlayerUnits.GetValueOrDefault("Mercenaries");
+        units["Cavalry"] = units.GetValueOrDefault("Cavalry") + setup.SpecialPlayerUnits.GetValueOrDefault("Hedge Knights");
+        return units;
+    }
+
+    private void StartCustomFinaleCore(CustomFinaleSetup setup, int seed)
+    {
+        _finaleRandom = new Random(seed);
+        LastCustomFinaleBattle = null;
+        var state = new FinaleState
+        {
+            IsTest = true,
+            IsCustomTest = true,
+            TestSeed = seed,
+            Step = FinaleStep.RevealMiddelalderen,
+            Morale = setup.Morale,
+            Leadership = setup.Leadership - setup.CommittedTactics.Count,
+            HasPriest = setup.HasPriest,
+            SteadyAdvanceType = setup.CommittedTactics.Contains("ADV-013") ? setup.SteadyAdvanceType : null
+        };
+        foreach (var pair in CustomFinaleCombatUnits(setup))
+            state.PlayerUnits[pair.Key] = pair.Value;
+        state.PlayerAdvancements.UnionWith(setup.PlayerAdvancements);
+        state.CommittedTactics.UnionWith(setup.CommittedTactics);
+        state.MiddelalderenAdvancements.UnionWith(setup.MiddelalderenAdvancements);
+        foreach (var pair in setup.OverrideMiddelalderenUnits ? setup.MiddelalderenOverrideUnits : setup.MiddelalderenBaseUnits)
+            state.MiddelalderenUnits[pair.Key] = pair.Value;
+        if (!setup.OverrideMiddelalderenUnits)
+            foreach (var type in new[] { "Archers", "Cavalry", "Infantry", "Levy" })
+                if (state.MiddelalderenAdvancements.Any(id => string.Equals(MiddelalderenUnitBonusType(id), type, StringComparison.OrdinalIgnoreCase)))
+                    state.MiddelalderenUnits[type]++;
+        state.Log.Add($"CUSTOM FINALE • Seed {seed}. Debug-only battle; campaign state unchanged. Host Resolve check skipped.");
+        state.Log.Add($"Player specialists: {setup.SpecialPlayerUnits.GetValueOrDefault("Mercenaries")} Mercenaries (Infantry class), {setup.SpecialPlayerUnits.GetValueOrDefault("Hedge Knights")} Hedge Knights (Cavalry class). These counts are included in their combat class totals.");
+        state.Log.Add($"Player: {FormatCombatHost(state.PlayerUnits)}. Morale {state.Morale}, Priest {(state.HasPriest ? "yes" : "no")}. Leadership after Resolve {setup.Leadership}; {state.CommittedTactics.Count} committed Tactic(s); {state.Leadership} Leadership entering combat.");
+        state.Log.Add($"Player Advancements: {string.Join(", ", state.PlayerAdvancements.OrderBy(id => id).Select(CombatTacticName))}.");
+        state.Log.Add($"Middelalderen ({(setup.OverrideMiddelalderenUnits ? "manual final units" : "base + Advancement bonuses")}): {FormatCombatHost(state.MiddelalderenUnits)}. Advancements: {string.Join(", ", state.MiddelalderenAdvancements.OrderBy(id => id).Select(CombatTacticName))}.");
+        Finale = state;
+        Changed?.Invoke();
+    }
+
+    // Stored separately from BattleHistory, so debug results never affect campaign statistics.
+    internal void CaptureCustomFinaleBattle(CombatState combat, string outcome)
+    {
+        LastCustomFinaleBattle = new CompletedBattleLog
+        {
+            BattleNumber = 0,
+            StartedUtc = combat.StartedUtc,
+            EndedUtc = DateTime.UtcNow,
+            SourceLabel = combat.SourceLabel,
+            EnemyName = combat.EnemyName,
+            IsFinale = true,
+            Outcome = outcome,
+            InitialPlayerUnits = new(combat.InitialPlayerUnits, StringComparer.OrdinalIgnoreCase),
+            InitialEnemyUnits = new(combat.InitialEnemyUnits, StringComparer.OrdinalIgnoreCase),
+            FinalPlayerUnits = new(combat.PlayerUnits, StringComparer.OrdinalIgnoreCase),
+            FinalEnemyUnits = new(combat.EnemyUnits, StringComparer.OrdinalIgnoreCase),
+            Entries = combat.Log.ToList()
+        };
+    }
+
+    public string CreateCustomFinaleTestLogJson(string appVersion)
+    {
+        var finale = Finale;
+        if (finale is not { IsCustomTest: true } || _customFinaleReplay is null)
+            throw new InvalidOperationException("No custom Finale is active.");
+        var document = new
+        {
+            schemaVersion = 1,
+            logType = "War Chronicle Custom Finale Test Log",
+            appVersion,
+            snapshotUtc = DateTime.UtcNow,
+            randomSeed = finale.TestSeed,
+            postResolveSetup = _customFinaleReplay.Copy(),
+            deployedPlayerUnits = CustomFinaleCombatUnits(_customFinaleReplay),
+            startingPlayerUnits = _customFinaleReplay.PlayerUnits,
+            specialPlayerUnits = _customFinaleReplay.SpecialPlayerUnits,
+            deployedEnemyUnits = finale.MiddelalderenUnits,
+            remainingPlayerUnits = finale.PlayerUnits,
+            initialLeadership = _customFinaleReplay.Leadership,
+            committedTactics = finale.CommittedTactics.OrderBy(id => id).ToArray(),
+            combatLeadership = finale.Step == FinaleStep.Complete ? finale.Leadership :
+                Combat is not null ? Combat.PlayerLeadership : finale.Leadership,
+            steadyAdvanceType = finale.SteadyAdvanceType,
+            outcome = finale.Outcome,
+            finaleEvents = finale.Log.ToArray(),
+            completedBattle = LastCustomFinaleBattle,
+            activeBattle = Combat is { IsFinale: true, IsTest: true } combat ? new
+            {
+                round = combat.Round,
+                step = combat.Step.ToString(),
+                playerUnits = combat.PlayerUnits,
+                enemyUnits = combat.EnemyUnits,
+                entries = combat.Log.ToArray()
+            } : null
+        };
+        return System.Text.Json.JsonSerializer.Serialize(document, new System.Text.Json.JsonSerializerOptions
+        {
+            PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase,
+            WriteIndented = true
+        });
     }
 
     private void StartTestFinale(int seed)
@@ -53,6 +218,7 @@ public sealed partial class GameSession
         if (_catalog is null)
             return;
 
+        _customFinaleReplay = null;
         var rng = new Random(seed);
         _finaleRandom = rng;
         var state = new FinaleState
@@ -266,7 +432,7 @@ public sealed partial class GameSession
         finale.MiddelalderenUnits["Infantry"] = 6;
         finale.MiddelalderenUnits["Levy"] = 6;
 
-        foreach (var type in new[] { "Archers", "Cavalry", "Infantry" })
+        foreach (var type in new[] { "Archers", "Cavalry", "Infantry", "Levy" })
         {
             if (finale.MiddelalderenAdvancements.Any(id => string.Equals(MiddelalderenUnitBonusType(id), type, StringComparison.OrdinalIgnoreCase)))
                 finale.MiddelalderenUnits[type]++;
@@ -284,6 +450,7 @@ public sealed partial class GameSession
         "ADV-M4" or "ADV-M10" => "Infantry",
         "ADV-M5" or "ADV-M7" => "Cavalry",
         "ADV-M6" or "ADV-M9" => "Archers",
+        "ADV-M8" => "Levy",  // Gritty provides +1 Levy in addition to its combat effect.
         _ => null
     };
 
@@ -320,7 +487,7 @@ public sealed partial class GameSession
             playerInitiated: true,
             isHostileEcho: false,
             isTest: finale.IsTest,
-            sourceLabel: "Finale • Middelalderen",
+            sourceLabel: finale.IsCustomTest ? "Custom Finale • Middelalderen" : "Finale • Middelalderen",
             testSeed: finale.TestSeed,
             combatRandom: _finaleRandom,
             enemyAdvancements: finale.MiddelalderenAdvancements,
@@ -447,6 +614,7 @@ public sealed partial class GameSession
         CombatVisible = false;
         Finale = null;
         _combatResumeMode = CombatResumeMode.None;
+        _customFinaleReplay = null;
         Changed?.Invoke();
     }
 

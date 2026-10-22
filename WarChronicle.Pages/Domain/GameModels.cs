@@ -180,9 +180,75 @@ public enum FinaleStep
     Complete
 }
 
+// Debug-only, explicit post-Resolve Finale configuration. Does not alter campaign state.
+public sealed class CustomFinaleSetup
+{
+    public Dictionary<string, int> PlayerUnits { get; } = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ["Archers"] = 2, ["Cavalry"] = 3, ["Infantry"] = 5, ["Levy"] = 6
+    };
+    // Specialists have their own counts in the debug setup and log. They fight
+    // in their normal classes (Mercenaries = Infantry, Hedge Knights = Cavalry).
+    public Dictionary<string, int> SpecialPlayerUnits { get; } = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ["Mercenaries"] = 0, ["Hedge Knights"] = 0
+    };
+    public Dictionary<string, int> MiddelalderenBaseUnits { get; } = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ["Archers"] = 2, ["Cavalry"] = 2, ["Infantry"] = 6, ["Levy"] = 6
+    };
+    public Dictionary<string, int> MiddelalderenOverrideUnits { get; } = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ["Archers"] = 2, ["Cavalry"] = 2, ["Infantry"] = 6, ["Levy"] = 6
+    };
+    public bool OverrideMiddelalderenUnits { get; set; }
+    public HashSet<string> PlayerAdvancements { get; } = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "ADV-001", "ADV-005", "ADV-010", "ADV-013"
+    };
+    public HashSet<string> MiddelalderenAdvancements { get; } = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "ADV-M1", "ADV-M4", "ADV-M5", "ADV-M6"
+    };
+    public HashSet<string> CommittedTactics { get; } = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "ADV-013"
+    };
+    public string? SteadyAdvanceType { get; set; } = "Cavalry";
+    public int Morale { get; set; } = 6;
+    public int Leadership { get; set; } = 6;
+    public bool HasPriest { get; set; } = true;
+    public int Seed { get; set; } = 123456;
+    public CustomFinaleSetup Copy()
+    {
+        var copy = new CustomFinaleSetup
+        {
+            Morale = Morale, Leadership = Leadership, HasPriest = HasPriest,
+            SteadyAdvanceType = SteadyAdvanceType, Seed = Seed,
+            OverrideMiddelalderenUnits = OverrideMiddelalderenUnits
+        };
+        foreach (var type in new[] { "Archers", "Cavalry", "Infantry", "Levy" })
+        {
+            copy.PlayerUnits[type] = PlayerUnits.GetValueOrDefault(type);
+            copy.MiddelalderenBaseUnits[type] = MiddelalderenBaseUnits.GetValueOrDefault(type);
+            copy.MiddelalderenOverrideUnits[type] = MiddelalderenOverrideUnits.GetValueOrDefault(type);
+        }
+        foreach (var special in new[] { "Mercenaries", "Hedge Knights" })
+            copy.SpecialPlayerUnits[special] = SpecialPlayerUnits.GetValueOrDefault(special);
+        copy.PlayerAdvancements.Clear();
+        copy.PlayerAdvancements.UnionWith(PlayerAdvancements);
+        copy.MiddelalderenAdvancements.Clear();
+        copy.MiddelalderenAdvancements.UnionWith(MiddelalderenAdvancements);
+        copy.CommittedTactics.Clear();
+        copy.CommittedTactics.UnionWith(CommittedTactics);
+        return copy;
+    }
+}
+
 public sealed class FinaleState
 {
     public bool IsTest { get; set; }
+    public bool IsCustomTest { get; set; }
     public int? TestSeed { get; set; }
     public FinaleStep Step { get; set; } = FinaleStep.ResolveReady;
     public int Morale { get; set; }

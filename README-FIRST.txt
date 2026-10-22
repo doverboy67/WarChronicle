@@ -1,49 +1,49 @@
-War Chronicle Browser Update 0549 (v0.5.0.49)
+War Chronicle Browser Update 0551 (v0.5.0.51)
 ===================================================
-Source: WarChronicleBrowser_Update_0548.zip.
+Based on WarChronicleBrowser_Update_0550.zip.
 
-NEW FINALE DIFFICULTY
-- New Chronicle now offers "Are You Nuts?" with SIX Middelalderen
-  Advancements, beside Easy (3), Standard (4, default), and Hard (5).
-- Middelalderen's starting Host remains 2 Archers, 2 Cavalry,
-  6 Infantry, 6 Levy before Advancement bonus units are applied.
-- Existing Advancement bonus-unit rule and ten-card weighted enemy
-  Advancement deck stay unchanged; no special army reallocation.
-- Six-Advancement selection is saved, restored, and exported in game logs.
+CAMP STEWARD REVISION
+- Field Staff: Appoint Camp Steward costs 2 Coin again; Train Scouts remains 1 Coin.
+- After Work, a player with Camp Steward may choose to search the surrounding
+  area for opportunities (roll 1d6).
+    1-4: A Willing Trader. Buy one Resource at the current Market Buy price minus
+         1 Coin (minimum 1 Coin), OR sell one Resource at its Market Sell value.
+    5-6: A Fortunate Discovery. Obtain one adjacent-Terrain Resource free.
+- The player may decline to use the Steward. Free gains honor the same baggage
+  overflow and purge rules as any other physical Resource gain.
+- Work and Field Staff card text, costs, branch checks, prompts and persistent
+  token help all reflect the revised rule.
 
-CHRONICLE & CHOICE CLARITY
-- Echo's "Seeded by" appears directly below the Echo title and before
-  flavor text instead of in the calendar stamp, including old saves.
-- Hedge Knights' Explore event and recruitment choice show a separate,
-  italic reminder that Hedge Knights disband in Winter.
-- Hire Mercenaries' Camp card and choice show a separate, italic reminder
-  that Mercenaries disband in Winter; repeated rule bullet removed.
-- Arrival choices now name the affected tribe when offering Rapport
-  gains or losses. The Chronicle's "You choose" line also names it.
-  When a tribe is selected for a Camp action, the selected tribe is named
-  in applicable Rapport outcomes where the selection is already known.
-- World Painted Blood and other Echo test prompts with printed Pass/Fail
-  bullet outcomes now state BOTH outcomes alongside each test option
-  BEFORE the player chooses how to roll or spends Leadership.
-- Rapport losses report the actual resulting status for the tribe,
-  including cases when its status does not change, and use the same
-  Hostile/Neutral/Friendly/Allied text colors as the Game State panel.
-- Printed game effects and dice/combat mechanics are otherwise unchanged.
+RESOURCE PURCHASE / BAGGAGE FIX
+- Single-Resource purchases from Explore, Market Day, Supply Convoy and Camp
+  Steward no longer become unavailable solely because the Baggage Train is full.
+- When necessary, the player is offered a list of occupied undamaged Baggage
+  spaces to purge, or the option to decline and keep current cargo.
+- Purging Food discards the contents of its space (up to two Food).
+- Coin is paid only after a successful acquisition; declining a purchase does
+  not cost Coin or discard cargo.
+- Flow-based free resource gains already used the baggage overflow flow; the
+  Steward's free-resource outcome now uses that same functionality.
+- A disabled or otherwise non-purgeable Baggage slot cannot be chosen.
 
-FIXED EXISTING DATA MISMATCH
-- Fixed the GitHub Pages public wc_data.json stale Inspired acquisition
-  cost (had 2 Coin + 1 Research). It now matches the source and hosted
-  catalog: 2 Leadership + 1 Research. Inspired's effect is unchanged.
+FINALE FIXES (QUEUED FROM 0550)
+- Gritty (ADV-M8) now grants Middelalderen +1 Levy in regular and Custom Finale
+  deployments. Existing Gritty anti-rout combat effect is unchanged.
+- Custom Finale allows Mercenaries and Hedge Knights as separate input counts.
+  They add to Infantry-class and Cavalry-class combat totals respectively,
+  exactly as the existing normal Finale aggregation does. These special-unit
+  inputs are identified separately in the Custom Finale transcript/test log.
+- Both Test Finale and Custom Finale remain available only in the DEV/debug
+  toolbar; nothing was added to the normal gameplay controls.
 
-CARRIED FORWARD
-- Fixed 300ms Chronicle scroll ease-out, unchanged.
-- 0546's Plague Pit/Cursed Battlefield exhausted-reward guards, token
-  icons, and caching; 0545's persistent choices and Finale selector.
-- Hosted WarChronicle.Web and standalone WarChronicle.Pages both included.
-- Automatic game login and end-game email notifications remain deferred.
+UNCHANGED
+- Easy (3), Standard (4), Hard (5), Are You Nuts? (6) Advancement levels.
+- All other 0550 fixes, campaign rules, and hosted/static project structure.
 
 VERIFICATION
-- Static source and data consistency assertions passed for both projects.
-- JS syntax validation with node passed, JSON catalogs parsed, ZIP checked.
-- .NET SDK is not installed in this environment, so the projects were NOT
-  compiled or browser-tested here. Build before production deployment.
+- Both WarChronicle.Web and WarChronicle.Pages are included and changed source
+  files match between them except for their existing Razor platform differences.
+- Data JSON and EventFlow links validated, JavaScript syntax checked with Node,
+  and ZIP archive integrity verified.
+- The .NET SDK is unavailable in this environment; this release has NOT been
+  compiled or browser-tested. Compile and smoke-test locally before deployment.

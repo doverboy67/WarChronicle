@@ -139,6 +139,8 @@ public sealed partial class GameSession
     private ResourceGainResume _pendingResourceGainResume;
     private string? _pendingResourceGainNextNode;
     private bool _pendingResourceGainOpenStaging;
+    private sealed record PendingResourcePurchase(string Resource, int Cost, string Context, string? NextNode, string Label);
+    private PendingResourcePurchase? _pendingResourcePurchase;
 
     // Debug card simulation uses the real Camp EventFlow resolver against a
     // temporary snapshot. When the simulated card finishes, the campaign is
@@ -492,7 +494,7 @@ public sealed partial class GameSession
             return false;
         if (card.Id == "CAMP-004" && !((!HasBuilding("Market") && CanPayCostBundle("1W+1C")) || (!HasBuilding("Baggage Cart") && CanPayCostBundle("1W"))))
             return false;
-        if (card.Id == "CAMP-012" && !((!HasScouting && ResourceValue("Coin") >= 1) || (!HasToken("CampSteward") && ResourceValue("Coin") >= 1)))
+        if (card.Id == "CAMP-012" && !((!HasScouting && ResourceValue("Coin") >= 1) || (!HasToken("CampSteward") && ResourceValue("Coin") >= 2)))
             return false;
         if (card.Id == "CAMP-006" && ResourceValue("Coin") < 1)
             return false;
@@ -524,7 +526,7 @@ public sealed partial class GameSession
             return "No unbuilt option can be afforded.";
         if (card.Id == "CAMP-004" && !((!HasBuilding("Market") && CanPayCostBundle("1W+1C")) || (!HasBuilding("Baggage Cart") && CanPayCostBundle("1W"))))
             return "No unbuilt option can be afforded.";
-        if (card.Id == "CAMP-012" && !((!HasScouting && ResourceValue("Coin") >= 1) || (!HasToken("CampSteward") && ResourceValue("Coin") >= 1)))
+        if (card.Id == "CAMP-012" && !((!HasScouting && ResourceValue("Coin") >= 1) || (!HasToken("CampSteward") && ResourceValue("Coin") >= 2)))
             return "No available role can be afforded.";
         if (card.Id == "CAMP-006" && ResourceValue("Coin") < 1)
             return "You need at least 1 Coin to hire a Mercenary.";
@@ -2512,9 +2514,15 @@ public sealed partial class GameSession
             return;
         }
 
-        if (_specialPrompt == "CampStewardBuy")
+        if (_specialPrompt == "CampStewardOpportunity")
         {
-            ResolveCampStewardBuyPrompt(optionId);
+            ResolveCampStewardOpportunityPrompt(optionId);
+            return;
+        }
+
+        if (_specialPrompt == "BaggagePurchase")
+        {
+            ResolveBaggagePurchasePrompt(optionId);
             return;
         }
 
@@ -2677,6 +2685,7 @@ public sealed partial class GameSession
         _pendingResourceGainResume = ResourceGainResume.None;
         _pendingResourceGainNextNode = null;
         _pendingResourceGainOpenStaging = false;
+        _pendingResourcePurchase = null;
         _debugCampSimulation = false;
         _debugSaveSnapshot = null;
         _debugSnapshotChronicleCount = 0;
@@ -3803,7 +3812,7 @@ public sealed partial class GameSession
                 detail = label switch
                 {
                     "Train Scouts" => "Cost: 1 Coin. Scouting: when Exploring, draw 2 Terrain cards and choose 1.",
-                    "Appoint Camp Steward" => "Cost: 1 Coin. Camp Steward: after normal Work, you may additionally spend 1 Coin for 1 adjacent Terrain Resource, or buy 1 Resource at Market Buy value -1 Coin (minimum 1 Coin).",
+                    "Appoint Camp Steward" => "Cost: 2 Coin. After Work, roll 1d6 to search the surrounding area: 1–4 find a trader (buy at Market -1 Coin, or sell at Market Sell value); 5–6 find 1 free adjacent Terrain Resource.",
                     _ => detail
                 };
             }
@@ -4014,7 +4023,7 @@ public sealed partial class GameSession
         }
 
         if (input.Equals("MarketBuyableResources", StringComparison.OrdinalIgnoreCase))
-            return "no Resource can currently be bought with the available Coin and Baggage Train space.";
+            return "no affordable Resource can be carried or accommodated by purging cargo.";
 
         if (input.Equals("MarketSellableResources", StringComparison.OrdinalIgnoreCase))
             return "you have no Resource available to sell.";
@@ -4033,8 +4042,8 @@ public sealed partial class GameSession
                     var cost = Math.Max(0, (market.BuyPrice * quantity) + coinModifier);
                     if (ResourceValue("Coin") < cost)
                         return $"requires {cost} Coin; you have {ResourceValue("Coin")}.";
-                    if (!CanAddPhysicalResource(resource, quantity))
-                        return $"requires room in the Baggage Train for {quantity} {resource}.";
+                    if (!CanMakeRoomForPhysicalResource(resource, quantity))
+                        return $"requires an undamaged Baggage space for {quantity} {resource}.";
                 }
             }
         }
@@ -4082,14 +4091,11 @@ public sealed partial class GameSession
             ("CAMP-012", "Train Scouts") when HasScouting => "Scouting is already in place.",
             ("CAMP-012", "Train Scouts") => $"requires 1 Coin; you have {ResourceValue("Coin")}.",
             ("CAMP-012", "Appoint Camp Steward") when HasToken("CampSteward") => "the Camp Steward is already in place.",
-            ("CAMP-012", "Appoint Camp Steward") => $"requires 1 Coin; you have {ResourceValue("Coin")}.",
-            ("CAMP-001", "Collect 1 adjacent Terrain Resource for 1 Coin") when ResourceValue("Coin") < 1 => $"requires 1 Coin; you have {ResourceValue("Coin")}.",
-            ("CAMP-001", "Collect 1 adjacent Terrain Resource for 1 Coin") => $"no room for 1 {AdjacentTerrainResource()} in the Baggage Train.",
-            ("CAMP-001", "Buy 1 Resource at Market -1 Coin (minimum 1)") => "no affordable Resource fits in the Baggage Train.",
+            ("CAMP-012", "Appoint Camp Steward") => $"requires 2 Coin; you have {ResourceValue("Coin")}.",
             ("CAMP-007", "Provision") when ResourceValue("Coin") < 2 => $"requires 2 Coin; you have {ResourceValue("Coin")}.",
-            ("CAMP-007", "Provision") => "there is no room in the Baggage Train for Food, Wood, or Stone.",
+            ("CAMP-007", "Provision") => "no usable Baggage space is available, even after purging cargo.",
             ("CAMP-007", "Buy 1 additional Resource") when ResourceValue("Coin") < 1 => $"requires 1 Coin; you have {ResourceValue("Coin")}.",
-            ("CAMP-007", "Buy 1 additional Resource") => "there is no room in the Baggage Train for Food, Wood, or Stone.",
+            ("CAMP-007", "Buy 1 additional Resource") => "no usable Baggage space is available, even after purging cargo.",
             ("CAMP-009", "Raise Levies") when ResourceValue("Food") < 1 => $"requires 1 Food; you have {ResourceValue("Food")}.",
             ("CAMP-009", "Raise Levies") when AvailableForceCount("Levy") <= 0 => "no Levy remain in the available force.",
             ("CAMP-009", "Raise Levies") when HostCount("Levy") >= 6 => "the Host already has the maximum 6 Levy.",
@@ -4233,7 +4239,7 @@ public sealed partial class GameSession
             ("CAMP-012", "Train Scouts") =>
                 "Spend 1 Coin. Gain Scouting: when Exploring, draw 2 Terrain cards and choose 1.",
             ("CAMP-012", "Appoint Camp Steward") =>
-                "Spend 1 Coin. Gain Camp Steward: after normal Work, you may additionally spend 1 Coin for 1 adjacent Terrain Resource, or buy 1 Resource at Market Buy value -1 Coin (minimum 1 Coin).",
+                "Spend 2 Coin. Gain Camp Steward: after Work, search for opportunities (1d6): 1–4 buy at Market -1 Coin or sell at Market Sell value; 5–6 gain 1 adjacent Terrain Resource free.",
 
             ("SCENE-014", "Yes") =>
                 "Spend 1 Coin and roll 1d6. 1: lose 1 Morale; 2: no effect; 3: gain 1 Coin; 4: gain 1 Coin and 1 Leadership; 5: gain 2 Coin and 1 Leadership; 6: gain 3 Coin and 1 Leadership. On 4–6, you may pay 1 Coin to roll again.",
@@ -4599,7 +4605,7 @@ public sealed partial class GameSession
             var coinCost = string.Equals(_activeNodeId, "N20", StringComparison.OrdinalIgnoreCase) ? 1 : 2;
             foreach (var resource in new[] { "Food", "Wood", "Stone" })
             {
-                if (CanAddPhysicalResource(resource, 1))
+                if (CanMakeRoomForPhysicalResource(resource, 1))
                     options.Add(new($"select:{resource}", resource, $"Spend {coinCost} Coin. Gain 1 {resource}."));
             }
             return options;
@@ -5316,12 +5322,19 @@ public sealed partial class GameSession
                     ApplySpend(target, ToInt(value), flags);
                 break;
             case "MarketBuy":
-                if (_activeFlowContext == FlowContext.Camp && string.Equals(target, "Resource", StringComparison.OrdinalIgnoreCase))
                 {
-                    PresentCampStewardBuy(next);
-                    return false;
+                    var market = Market.FirstOrDefault(m => string.Equals(m.Resource, target, StringComparison.OrdinalIgnoreCase));
+                    var quantity = ToInt(value);
+                    var cost = market is null ? int.MaxValue : Math.Max(0, market.BuyPrice * quantity + FlagInt(flags, "CoinModifier", 0));
+                    if (quantity == 1 && market is not null && !BeginResourcePurchase(target, cost, "Flow", next, "Buy"))
+                        return false;
+                    if (quantity > 1)
+                        MarketBuy(target, quantity, FlagInt(flags, "CoinModifier", 0));
+                    break;
                 }
-                MarketBuy(target, ToInt(value), FlagInt(flags, "CoinModifier", 0));
+            case "CampStewardSearch":
+                if (!BeginCampStewardSearch(next))
+                    return false;
                 break;
             case "MarketSell":
                 MarketSell(target, ToInt(value));
@@ -5339,7 +5352,10 @@ public sealed partial class GameSession
                 Recruit(target, ToInt(value), flags);
                 break;
             case "PurchaseResource":
-                PurchaseResource(target, ToInt(value), flags);
+                if (ToInt(value) == 1 && !BeginResourcePurchase(target, FlagInt(flags, "CoinCost", 0), "Flow", next, "Purchase"))
+                    return false;
+                if (ToInt(value) > 1)
+                    PurchaseResource(target, ToInt(value), flags);
                 break;
             case "AdjustRapport":
                 AdjustRapport(target, ToInt(value), flags);
@@ -5712,6 +5728,7 @@ public sealed partial class GameSession
 
     private void BuildCampMarketTradePrompt()
     {
+        _specialPrompt = "CampMarketTrade";
         var options = new List<FlowPromptOption>();
         if (_campMarketTradesRemaining > 0)
         {
@@ -5745,12 +5762,25 @@ public sealed partial class GameSession
             return;
         var resource = parts[2];
         if (parts[1] == "buy")
-            MarketBuy(resource, 1);
+        {
+            var market = Market.FirstOrDefault(m => string.Equals(m.Resource, resource, StringComparison.OrdinalIgnoreCase));
+            if (market is null || !BeginResourcePurchase(resource, market.BuyPrice, "CampMarketTrade", null, "Buy"))
+            {
+                Changed?.Invoke();
+                return;
+            }
+        }
         else if (parts[1] == "sell")
             MarketSell(resource, 1);
         else
             return;
 
+        FinishCampMarketTrade();
+        Changed?.Invoke();
+    }
+
+    private void FinishCampMarketTrade()
+    {
         _campMarketTradesRemaining--;
         if (_campMarketTradesRemaining <= 0)
         {
@@ -5762,52 +5792,170 @@ public sealed partial class GameSession
         }
         else
         {
+            _specialPrompt = "CampMarketTrade";
             BuildCampMarketTradePrompt();
         }
-        Changed?.Invoke();
     }
 
-    private void PresentCampStewardBuy(string? next)
+    private bool BeginCampStewardSearch(string? next)
     {
         _pendingCampActionNextNode = next;
-        _specialPrompt = "CampStewardBuy";
+        var roll = Random.Shared.Next(1, 7);
+        AddNarrativeText($"Camp Steward searches the surrounding area for opportunities. Roll 1d6: {roll}.");
+        if (roll >= 5)
+        {
+            var resource = AdjacentTerrainResource();
+            AddNarrativeText($"A fortunate discovery: the Camp Steward finds 1 {resource} at no cost.");
+            _pendingCampActionNextNode = null;
+            return BeginPhysicalResourceGain(new[] { (resource, 1) }, ResourceGainResume.Flow, next);
+        }
+        PresentCampStewardOpportunityPrompt();
+        return false;
+    }
+
+    private void PresentCampStewardOpportunityPrompt()
+    {
         var options = new List<FlowPromptOption>();
         foreach (var market in Market)
         {
             var price = Math.Max(1, market.BuyPrice - 1);
-            if (ResourceValue("Coin") >= price && CanAddPhysicalResource(market.Resource, 1))
-                options.Add(new($"stewardbuy:{market.Resource}", market.Resource, $"{price} Coin"));
+            if (ResourceValue("Coin") >= price && CanMakeRoomForPhysicalResource(market.Resource, 1))
+                options.Add(new($"steward:buy:{market.Resource}", $"Buy 1 {market.Resource}", $"Pay {price} Coin; purge cargo first if needed."));
+            if (ResourceValue(market.Resource) > 0)
+                options.Add(new($"steward:sell:{market.Resource}", $"Sell 1 {market.Resource}", $"Gain {market.SellPrice} Coin."));
         }
-        if (options.Count == 0)
-        {
-            AddNarrativeText("The Camp Steward finds no purchase the Baggage Train can take.");
-            _specialPrompt = null;
-            _activeNodeId = next;
-            AdvanceFlow();
-            return;
-        }
-        FlowPrompt = new(FlowPromptKind.Select, "Camp Steward", "Choose 1 Resource to buy for 1 Coin less than Market value.", options);
+        options.Add(new("steward:skip", "No trade", "Nothing suitable is available, or decline the opportunity."));
+        _specialPrompt = "CampStewardOpportunity";
+        FlowPrompt = new(FlowPromptKind.Choice, "Camp Steward • A Willing Trader",
+            "The Steward found a willing trader nearby (roll 1–4). Choose to buy or sell 1 Resource, or decline.", options);
     }
 
-    private void ResolveCampStewardBuyPrompt(string optionId)
+    private void ResolveCampStewardOpportunityPrompt(string optionId)
     {
-        if (!optionId.StartsWith("stewardbuy:", StringComparison.OrdinalIgnoreCase))
+        if (optionId == "steward:skip")
+        {
+            FinishCampStewardOpportunity();
+            Changed?.Invoke();
             return;
-        var resource = optionId[11..];
-        var market = Market.FirstOrDefault(m => string.Equals(m.Resource, resource, StringComparison.OrdinalIgnoreCase));
-        if (market is null)
-            return;
-        var price = Math.Max(1, market.BuyPrice - 1);
-        if (ResourceValue("Coin") < price || !CanAddPhysicalResource(resource, 1))
-            return;
-        AdjustResource("Coin", -price);
-        var gained = AddPhysicalResource(resource, 1);
-        AddNarrativeText($"The Camp Steward buys {gained} {resource} for {price} Coin.");
+        }
+        var parts = optionId.Split(':');
+        if (parts.Length != 3 || !new[] { "buy", "sell" }.Contains(parts[1])) return;
+        var market = Market.FirstOrDefault(m => string.Equals(m.Resource, parts[2], StringComparison.OrdinalIgnoreCase));
+        if (market is null) return;
+        if (parts[1] == "sell")
+        {
+            if (ResourceValue(market.Resource) < 1) return;
+            MarketSell(market.Resource, 1);
+        }
+        else
+        {
+            var cost = Math.Max(1, market.BuyPrice - 1);
+            if (ResourceValue("Coin") < cost || !CanMakeRoomForPhysicalResource(market.Resource, 1)) return;
+            if (!BeginResourcePurchase(market.Resource, cost, "CampSteward", null, "Camp Steward buys"))
+            {
+                Changed?.Invoke();
+                return;
+            }
+        }
+        FinishCampStewardOpportunity();
+        Changed?.Invoke();
+    }
+
+    private void FinishCampStewardOpportunity()
+    {
         _specialPrompt = null;
         FlowPrompt = null;
         _activeNodeId = _pendingCampActionNextNode;
         _pendingCampActionNextNode = null;
         AdvanceFlow();
+    }
+
+    // All single-Resource purchases, whether at a Market, Explore encounter,
+    // Supply Convoy, or through the Steward, use this same replace-or-decline path.
+    // No Coin is spent until the newly purchased Resource can actually be packed.
+    private bool BeginResourcePurchase(string resource, int cost, string context, string? nextNode, string label)
+    {
+        if (!IsPhysicalResource(resource) || ResourceValue("Coin") < cost || cost < 0)
+        {
+            AddNarrativeText($"Cannot purchase {resource}: not enough Coin or invalid offer.");
+            return true;
+        }
+        if (CanAddPhysicalResource(resource, 1))
+        {
+            CompleteResourcePurchase(resource, cost, label);
+            return true;
+        }
+        if (!CanMakeRoomForPhysicalResource(resource, 1))
+        {
+            AddNarrativeText($"No undamaged Baggage space can hold {resource}.");
+            return true;
+        }
+        _pendingResourcePurchase = new(resource, cost, context, nextNode, label);
+        var options = new List<FlowPromptOption> { new("purchase:decline", "Decline purchase", "Keep all carried Resources and spend no Coin.") };
+        foreach (var slot in PurgeableBaggageSlots())
+        {
+            var quantity = string.Equals(slot.Contents, "Food", StringComparison.OrdinalIgnoreCase) ? Math.Max(1, slot.Quantity) : 1;
+            options.Add(new($"purchase:purge:{slot.Position}", $"Purge {quantity} {slot.Contents}",
+                $"Discard the contents of space {slot.Position} and buy 1 {resource} for {cost} Coin."));
+        }
+        _specialPrompt = "BaggagePurchase";
+        FlowPrompt = new(FlowPromptKind.Choice, "Baggage Train • Make Room",
+            $"The Baggage Train is full. Purge one carried Resource to buy 1 {resource} for {cost} Coin, or decline without paying.", options);
+        return false;
+    }
+
+    private IEnumerable<BaggageSlot> PurgeableBaggageSlots() => Baggage.Where(b =>
+        !b.Damaged && !string.IsNullOrWhiteSpace(b.Contents) && IsPhysicalResource(b.Contents!));
+
+    private bool CanMakeRoomForPhysicalResource(string resource, int quantity)
+        => CanAddPhysicalResource(resource, quantity) || (quantity == 1 && PurgeableBaggageSlots().Any());
+
+    private void CompleteResourcePurchase(string resource, int cost, string label)
+    {
+        if (ResourceValue("Coin") < cost || !CanAddPhysicalResource(resource, 1)) return;
+        var gained = AddPhysicalResource(resource, 1);
+        if (gained != 1) return;
+        AdjustResource("Coin", -cost);
+        AddNarrativeText($"{label} 1 {resource} for {cost} Coin.");
+    }
+
+    private void ResolveBaggagePurchasePrompt(string optionId)
+    {
+        var pending = _pendingResourcePurchase;
+        if (pending is null) return;
+        if (optionId == "purchase:decline")
+            AddNarrativeText($"Decline the offer to buy 1 {pending.Resource}; no Coin spent.");
+        else if (optionId.StartsWith("purchase:purge:", StringComparison.OrdinalIgnoreCase)
+                 && int.TryParse(optionId[15..], out var position))
+        {
+            var index = Baggage.FindIndex(b => b.Position == position && !b.Damaged &&
+                !string.IsNullOrWhiteSpace(b.Contents) && IsPhysicalResource(b.Contents!));
+            if (index < 0 || ResourceValue("Coin") < pending.Cost) return;
+            var removedResource = Baggage[index].Contents!;
+            var quantity = string.Equals(removedResource, "Food", StringComparison.OrdinalIgnoreCase)
+                ? Math.Max(1, Baggage[index].Quantity) : 1;
+            Baggage[index] = Baggage[index] with { Contents = null, Quantity = 1 };
+            AdjustResource(removedResource, -quantity);
+            AddNarrativeText($"Purge {quantity} {removedResource} from Baggage space {position}.");
+            CompleteResourcePurchase(pending.Resource, pending.Cost, pending.Label);
+        }
+        else return;
+
+        _pendingResourcePurchase = null;
+        _specialPrompt = null;
+        FlowPrompt = null;
+        switch (pending.Context)
+        {
+            case "Flow":
+                _activeNodeId = pending.NextNode;
+                AdvanceFlow();
+                break;
+            case "CampMarketTrade":
+                if (optionId == "purchase:decline") BuildCampMarketTradePrompt();
+                else FinishCampMarketTrade();
+                break;
+            case "CampSteward": FinishCampStewardOpportunity(); break;
+        }
         Changed?.Invoke();
     }
 
@@ -7237,12 +7385,10 @@ public sealed partial class GameSession
             ("CAMP-004", "Market") => !HasBuilding("Market") && CanPayCostBundle("1W+1C"),
             ("CAMP-004", "Baggage Cart") => !HasBuilding("Baggage Cart") && CanPayCostBundle("1W"),
             ("CAMP-012", "Train Scouts") => !HasScouting && ResourceValue("Coin") >= 1,
-            ("CAMP-007", "Provision") => ResourceValue("Coin") >= 2 && new[] { "Food", "Wood", "Stone" }.Any(r => CanAddPhysicalResource(r, 1)),
-            ("CAMP-007", "Buy 1 additional Resource") => ResourceValue("Coin") >= 1 && new[] { "Food", "Wood", "Stone" }.Any(r => CanAddPhysicalResource(r, 1)),
+            ("CAMP-007", "Provision") => ResourceValue("Coin") >= 2 && new[] { "Food", "Wood", "Stone" }.Any(r => CanMakeRoomForPhysicalResource(r, 1)),
+            ("CAMP-007", "Buy 1 additional Resource") => ResourceValue("Coin") >= 1 && new[] { "Food", "Wood", "Stone" }.Any(r => CanMakeRoomForPhysicalResource(r, 1)),
             ("CAMP-009", "Raise Levies") => ResourceValue("Food") >= 1 && AvailableForceCount("Levy") > 0 && HostCount("Levy") < 6,
-            ("CAMP-012", "Appoint Camp Steward") => !HasToken("CampSteward") && ResourceValue("Coin") >= 1,
-            ("CAMP-001", "Collect 1 adjacent Terrain Resource for 1 Coin") => ResourceValue("Coin") >= 1 && CanAddPhysicalResource(AdjacentTerrainResource(), 1),
-            ("CAMP-001", "Buy 1 Resource at Market -1 Coin (minimum 1)") => Market.Any(m => ResourceValue("Coin") >= Math.Max(1, m.BuyPrice - 1) && CanAddPhysicalResource(m.Resource, 1)),
+            ("CAMP-012", "Appoint Camp Steward") => !HasToken("CampSteward") && ResourceValue("Coin") >= 2,
             ("SCENE-020", "Send in a Fighter") => Host.Any(u => u.Count > 0 && u.Type is "Archers" or "Cavalry" or "Infantry" or "Mercenaries" or "Hedge Knights"),
             ("SCENE-029", "Answer the Call") => ResourceValue("Food") >= 2 || ResourceValue("Coin") >= 2,
             ("SCENE-029", "Send Protection") => HostCount("Infantry") > 0 || HostCount("Archers") > 0,
@@ -7321,7 +7467,7 @@ public sealed partial class GameSession
                 return false;
             var qty = int.TryParse(parts[2], out var q) ? q : 1;
             var cost = int.TryParse(parts[3], out var c) ? c : 0;
-            return ResourceValue("Coin") >= cost && CanAddPhysicalResource(parts[1], qty);
+            return ResourceValue("Coin") >= cost && CanMakeRoomForPhysicalResource(parts[1], qty);
         }
         if (string.Equals(input, "CanSpendRollResource", StringComparison.OrdinalIgnoreCase))
             return !string.IsNullOrWhiteSpace(_lastRollText) && ResourceValue(_lastRollText) >= 1;
@@ -7810,7 +7956,7 @@ public sealed partial class GameSession
         var cost = market is null ? int.MaxValue : Math.Max(0, (market.BuyPrice * quantity) + coinModifier);
         return market is not null
             && ResourceValue("Coin") >= cost
-            && CanAddPhysicalResource(resource, quantity);
+            && CanMakeRoomForPhysicalResource(resource, quantity);
     }
 
     private bool CanAddPhysicalResource(string resource, int quantity)
@@ -8130,7 +8276,7 @@ public sealed partial class GameSession
         "RiffRaffShortcut" => "Your next Explore does not advance Time.",
         "ReignInBlood" or "Reign in Blood" => "While active, the Host may not Disengage from Combat.",
         "Scouting" => "When Exploring, draw 2 Terrain cards and choose 1.",
-        "CampSteward" or "Camp Steward" => "After normal Work, you may additionally spend 1 Coin for 1 adjacent Terrain Resource, or buy 1 Resource at Market Buy value -1 Coin (minimum 1 Coin).",
+        "CampSteward" or "Camp Steward" => "After Work, you may search the surrounding area (roll 1d6). 1–4: buy 1 Resource at Market Buy -1 Coin (minimum 1), or sell 1 Resource at Market Sell. 5–6: gain 1 adjacent Terrain Resource free. Baggage purges are permitted.",
         _ => string.Empty
     };
 

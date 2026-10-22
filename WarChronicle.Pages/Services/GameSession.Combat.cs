@@ -1378,6 +1378,9 @@ public sealed partial class GameSession
             combat.Log.Add(new("Combat victory reward: gain 1 Leadership."));
         }
 
+        if (isTest && isFinale && Finale?.IsCustomTest == true)
+            CaptureCustomFinaleBattle(combat, outcome);
+
         if (!isTest)
         {
             ArchiveCompletedBattle(combat, outcome);
