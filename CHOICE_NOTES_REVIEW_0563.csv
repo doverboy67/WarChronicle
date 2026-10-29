@@ -1,0 +1,130 @@
+flow,node,branch_index,added_player_description
+EF-ARRIVAL-001,O1_PASS_CHOOSE,0,Gain 1 Leadership.
+EF-ARRIVAL-001,O1_PASS_CHOOSE,1,Gain 1 Rapport with the current tribe; Lose 1 Coin.
+EF-ARRIVAL-003,O1_PASS_CHOOSE,0,Gain 1 Leadership.
+EF-ARRIVAL-003,O1_PASS_CHOOSE,1,Gain 1 Rapport with the current tribe; Lose 1 Coin.
+EF-ARRIVAL-003,O2_PASS_CHOOSE,0,Gain 1 Leadership; Gain 1 Food.
+EF-ARRIVAL-003,O2_PASS_CHOOSE,1,Gain 1 Leadership; Gain 1 Wood.
+EF-ARRIVAL-003,O2_PASS_CHOOSE,2,Gain 1 Leadership; Gain 1 Stone.
+EF-ARRIVAL-005,O2_PASS_CHOOSE,0,Gain 1 Stone; Gain 1 Leadership.
+EF-ARRIVAL-005,O2_PASS_CHOOSE,1,Gain 1 Research.
+EF-ARRIVAL-008,O2_PASS_CHOOSE,0,Gain 1 Research.
+EF-ARRIVAL-008,O2_PASS_CHOOSE,1,Gain 2 Coin.
+EF-ARRIVAL-012,O1_PASS_CHOOSE,0,Gain 1 Morale.
+EF-ARRIVAL-012,O1_PASS_CHOOSE,1,Gain 1 Rapport with the current tribe; Lose 1 Leadership.
+EF-ARRIVAL-014,O2_PASS_CHOOSE,0,Gain 1 Research.
+EF-ARRIVAL-014,O2_PASS_CHOOSE,1,Gain 2 Coin.
+EF-ARRIVAL-017,O1_PASS_CHOOSE,0,Gain 1 Leadership.
+EF-ARRIVAL-017,O1_PASS_CHOOSE,1,Gain 1 Rapport with the current tribe; Lose 1 Food.
+EF-ARRIVAL-017,O2_FAIL_CHOOSE,0,Lose 1 Wood.
+EF-ARRIVAL-017,O2_FAIL_CHOOSE,1,Lose 1 Stone.
+EF-ARRIVAL-018,O2_PASS_CHOOSE,0,Gain 1 Food; Gain 1 Wood.
+EF-ARRIVAL-018,O2_PASS_CHOOSE,1,Gain 1 Food; Gain 1 Stone.
+EF-ARRIVAL-019,O2_PASS_CHOOSE,0,Gain 1 Research.
+EF-ARRIVAL-019,O2_PASS_CHOOSE,1,Gain 1 Leadership.
+EF-CAMP-001,N81,0,"If you have Camp Steward, roll 1d6: on 1–4 you may buy 1 Resource for 1 Coin less than Market Buy (minimum 1 Coin), or sell at Market Sell; on 5–6 gain 1 Resource matching adjacent Terrain for free. Baggage capacity applies."
+EF-CAMP-001,N81,1,Skip the optional Camp Steward search. No further effect.
+EF-ECHO-A-01,N20,0,"Pay 2 Resources matching adjacent Terrain, then test Rapport 9+. Pass: restore this tribe to Neutral and end the Echo. Fail: Combat; Camp ends."
+EF-ECHO-A-01,N20,1,"Pay 5 Coin, then test Rapport 9+. Pass: restore this tribe to Neutral and end the Echo. Fail: Combat; Camp ends."
+EF-ECHO-A-01,N20,2,Decline Parley and fight the Hostile tribe. Camp ends.
+EF-ECHO-A-02,N20,0,"Pay 2 Resources matching adjacent Terrain, then test Rapport 9+. Pass: restore this tribe to Neutral and end the Echo. Fail: Combat; Camp ends."
+EF-ECHO-A-02,N20,1,"Pay 5 Coin, then test Rapport 9+. Pass: restore this tribe to Neutral and end the Echo. Fail: Combat; Camp ends."
+EF-ECHO-A-02,N20,2,Decline Parley and fight the Hostile tribe. Camp ends.
+EF-ECHO-A-03,N20,0,"Pay 2 Resources matching adjacent Terrain, then test Rapport 9+. Pass: restore this tribe to Neutral and end the Echo. Fail: Combat; Camp ends."
+EF-ECHO-A-03,N20,1,"Pay 5 Coin, then test Rapport 9+. Pass: restore this tribe to Neutral and end the Echo. Fail: Combat; Camp ends."
+EF-ECHO-A-03,N20,2,Decline Parley and fight the Hostile tribe. Camp ends.
+EF-ECHO-A-04,N20,0,"Pay 2 Resources matching adjacent Terrain, then test Rapport 9+. Pass: restore this tribe to Neutral and end the Echo. Fail: Combat; Camp ends."
+EF-ECHO-A-04,N20,1,"Pay 5 Coin, then test Rapport 9+. Pass: restore this tribe to Neutral and end the Echo. Fail: Combat; Camp ends."
+EF-ECHO-A-04,N20,2,Decline Parley and fight the Hostile tribe. Camp ends.
+EF-ECHO-D-02,N02,0,"Recruit 1 Levy for free, subject to the normal Levy limit."
+EF-ECHO-D-02,N02,1,Do not recruit a Levy. No further effect.
+EF-ECHO-B-01,N01,0,Advance 1 Time.
+EF-ECHO-B-01,N01,1,Lose 1 Leadership.
+EF-ECHO-B-02,N01,0,Spend 2 Coin. The Echo ends without a test.
+EF-ECHO-B-02,N01,1,Test 7+. Pass: no further effect. Fail: lose 1 Morale. The Echo ends either way.
+EF-ECHO-E-02,N01,0,Gain 1 Coin.
+EF-ECHO-E-02,N01,1,"Gain 1 Food, subject to Baggage capacity."
+EF-ECHO-F-01,N01,0,Gain 1 Food and lose 1 Morale.
+EF-ECHO-F-01,N01,1,Refuse the offering. No immediate Resource or Morale change.
+EF-TOKEN-FIREPOTS-COMBAT,N01,0,"Use and discard Firepots before the first Combat round. Roll 3d6; each 4+ inflicts 1 enemy casualty, assigned as a Cavalry attack."
+EF-TOKEN-FIREPOTS-COMBAT,N01,1,Keep Firepots for a later Combat. No effect now.
+EF-ECHO-U-01,N20,0,"Keep Firepots and discard this Echo, allowing it to return later."
+EF-ECHO-U-01,N20,1,Discard Firepots and remove this Echo permanently.
+EF-ECHO-H-01,N10,0,Use your Priest to test 7+. Pass: prevent the Morale loss. Fail: lose 1 Morale.
+EF-ECHO-H-01,N10,1,Do not intervene. Lose 1 Morale.
+EF-ECHO-H-02,N01,0,Advance 1 Time.
+EF-ECHO-H-02,N01,1,"Test 6+ if you have Scouting, otherwise 8+. Pass: no further effect. Fail: lose 1 Morale."
+EF-ECHO-T-01,N10,0,Gain 1 Morale.
+EF-ECHO-T-01,N10,1,Gain 1 Leadership.
+EF-ECHO-V-01,N01,0,Lose 1 Food and gain 1 Leadership.
+EF-ECHO-V-01,N01,1,Reclaim the provisions. No immediate change.
+EF-EXPLORE-001,N01,0,"Buy 1 Resource at its current Market Buy price, subject to Baggage capacity."
+EF-EXPLORE-001,N01,1,Sell 1 carried Resource at its current Market Sell price.
+EF-EXPLORE-001,N01,2,Leave the caravan without trading. No effect.
+EF-EXPLORE-006,N05,0,"For matching pairs among the Infantry dice, optionally convert eligible Infantry to Cavalry, limited by available Cavalry. No conversion if no matching pairs or Infantry."
+EF-EXPLORE-006,N05,1,Make no conversion. Keep your Infantry.
+EF-EXPLORE-007,N01,0,"Spend the current Market Buy price to buy 1 Food; then roll 1d6, gaining 1 Levy on 5–6."
+EF-EXPLORE-007,N01,1,"Do not buy Food; roll 1d6, gaining 1 Levy on 5–6."
+EF-EXPLORE-014,N02,0,Spend 1 Coin and gain 1 Leadership.
+EF-EXPLORE-014,N02,1,Keep the Wood already received. No additional effect.
+EF-EXPLORE-017,N30,0,Lose 1 Infantry.
+EF-EXPLORE-017,N30,1,Lose 1 Morale instead.
+EF-EXPLORE-019,N10,0,Spend 1 {Roll.Result} and gain 1 Research.
+EF-EXPLORE-019,N10,1,Do not pay. No Research gained.
+EF-EXPLORE-024,N01,0,Spend 3 Coin and gain 1 Research.
+EF-EXPLORE-024,N01,1,Leave the offer. No effect.
+EF-EXPLORE-026,N01,0,Spend 1 Leadership and gain 1 Research.
+EF-EXPLORE-026,N01,1,Decline. No effect.
+EF-TOKEN-HIGH-OVERLOOK-CLEAR-ROAD-REVEAL,N01,0,Discard Clear Road to cancel the Explore card before resolving any of its effects.
+EF-TOKEN-HIGH-OVERLOOK-CLEAR-ROAD-REVEAL,N01,1,Resolve this Explore card normally and KEEP Clear Road for a future Explore card.
+EF-ECHO-KB-02,N10,0,Spend 1 Wood and advance 1 Time to repair the just-damaged Baggage slot.
+EF-ECHO-KB-02,N10,1,Leave the damaged Baggage slot unrepaired. No further effect.
+EF-ECHO-RG-01,N01,0,Spend 3 Coin. The Echo ends.
+EF-ECHO-RG-01,N01,1,Advance 2 Time instead of paying. The Echo ends.
+EF-ECHO-RG-01,N01,2,"Lose 1 Rapport with the nearest tribe, then fight the Tollmen. The Echo ends after Combat."
+EF-CAMP-001,N01,0,Gain 2 Coin.
+EF-CAMP-001,N01,1,Gain 1 Coin and 1 Leadership.
+EF-CAMP-001,N01,2,Spend 1 Wood to repair one damaged Baggage Train space.
+EF-CAMP-003,N01,0,Spend 1 Wood and 1 Coin to build a Chapel and gain a Priest.
+EF-CAMP-003,N01,1,Spend 1 Stone and 1 Coin to build an Academy.
+EF-CAMP-004,N01,0,Spend 1 Wood and 1 Coin to build a Market.
+EF-CAMP-004,N01,1,Spend 1 Wood to add 2 Baggage Train spaces.
+EF-CAMP-007,N01,0,Spend 1 Food. Gain 1 Leadership and 1 Morale.
+EF-CAMP-007,N01,1,"Spend 1 Food. Gain 1 Leadership and one Resource matching adjacent Terrain, subject to Baggage capacity."
+EF-CAMP-007,N01,2,"Spend 1 Food. Gain 1 Morale and one Resource matching adjacent Terrain, subject to Baggage capacity."
+EF-CAMP-009,N01,0,Spend 1 Food and add 2 Levy to the Host.
+EF-CAMP-009,N01,1,Gain 1 Morale.
+EF-CAMP-010,N01,0,Buy an Advancement or Armor for 1 less Research (minimum 1 Research). All other printed costs apply. Afterward regain 1 Leadership.
+EF-CAMP-010,N01,1,Gain 1 Research; optionally discard and replace the top Advancement. Afterward regain 1 Leadership.
+EF-CAMP-010,N10,0,"Buy the top Advancement card for 1 less Research (minimum 1 Research), plus any other printed cost."
+EF-CAMP-010,N10,1,"Buy Armor from the R&R offer for 1 less Research (minimum 1 Research), plus any other printed cost."
+EF-CAMP-010,N21,0,Discard the top Advancement card for free and reveal a new one.
+EF-CAMP-010,N21,1,Keep the top Advancement card. No further effect.
+EF-CAMP-012,N01,0,"Spend 1 Coin to gain Scouting (on Explore, draw 2 Terrain cards and choose one)."
+EF-CAMP-012,N01,1,Spend 2 Coin to gain Camp Steward (additional Work search benefit).
+EF-ECHO-U-02,N10,0,Discard Firepots and end this Echo.
+EF-ECHO-U-02,N10,1,Keep Firepots. No immediate change.
+EF-ECHO-L-01,N10,0,Lose 1 Leadership and keep Forced March.
+EF-ECHO-L-01,N10,1,Advance 2 Time and remove Forced March.
+EF-ECHO-L-02,N01,0,Lose 1 Leadership and keep Forced March.
+EF-ECHO-L-02,N01,1,Remove Forced March and gain 1 Morale.
+EF-EXPLORE-031,N01,0,"Gain 3 Coin, 1 Leadership and Reign in Blood (you cannot Disengage while active). Future consequences are possible."
+EF-EXPLORE-031,N01,1,Advance 1 Time to bury the dead. Future consequences are possible.
+EF-ECHO-G-02,N01,0,Lose 1 Leadership.
+EF-ECHO-G-02,N01,1,Spend 2 Coin.
+EF-ECHO-G-02,N01,2,Requires a Priest. Test 7+. Pass: no further effect. Fail: lose 1 Morale.
+EF-EXPLORE-012,N01,0,"Choose 1 Unit, then roll 1d6. On 1, lose that Unit; otherwise gain 1 Food."
+EF-EXPLORE-012,N01,1,Leave the fungi. No effect.
+EF-EXPLORE-016,N01,0,"Roll 1d6. On 6, lose 1 Infantry if possible; otherwise gain Coin equal to the die result."
+EF-EXPLORE-016,N01,1,Leave it. No effect.
+EF-EXPLORE-017,N01,0,Fight a Hill Clan force with Infantry equal to the current Year.
+EF-EXPLORE-017,N01,1,"Roll 1d6. On 5–6, negotiate safe passage; on 1–4, lose 1 Infantry or 1 Morale."
+EF-EXPLORE-022,N01,0,Test 6+ with combined Rapport DRM. Pass: gain 1 Leadership; fail: no effect.
+EF-EXPLORE-022,N01,1,Test 7+ with combined Rapport DRM. Pass: gain 3 Coin; fail: no effect.
+EF-EXPLORE-022,N01,2,Test 8+ with combined Rapport DRM. Pass: gain 6 Coin; fail: reduce Rapport with every encountered tribe (unmet tribes become Hostile).
+EF-EXPLORE-023,N01,0,"Gain Clear Road. Before resolving a future triggered Explore event, you may discard Clear Road to ignore it."
+EF-EXPLORE-023,N01,1,"At the next Clearing reveal, gain 1 Leadership if Barbarian; otherwise gain 1 Morale."
+EF-EXPLORE-028,N01,0,"Assign 1 Infantry and roll 1d6. On 4–6, gain Halberds or Longbows if available; on 1–3, lose the assigned Infantry."
+EF-EXPLORE-028,N01,1,Leave the dead alone. No effect.
+EF-EXPLORE-029,N01,0,"Roll 1d6. On 5–6, gain an Armor Advancement; on 1, lose 1d3 Units of your choice; on 2–4, no effect."
+EF-EXPLORE-029,N01,1,Leave the site. No effect.

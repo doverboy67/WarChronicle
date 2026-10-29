@@ -1,0 +1,378 @@
+{
+  "schemaVersion": 1,
+  "logType": "War Chronicle Game Log",
+  "gameId": "ec4bc809-4d8c-4e21-b1fa-6cc4021a66ce",
+  "appVersion": "v0.5.0.40",
+  "startedUtc": "2026-10-19T20:31:46.5743684Z",
+  "endedUtc": "2026-10-19T20:32:06.3993386Z",
+  "status": "Completed",
+  "outcome": "Defeat",
+  "endReason": "No Units remain in the Host. The campaign ends in defeat.",
+  "contentSets": [
+    "Base",
+    "No Quarter",
+    "PackC",
+    "SiaSL",
+    "SitA"
+  ],
+  "finalState": {
+    "year": 1,
+    "season": "Spring",
+    "time": 2,
+    "morale": 5,
+    "leadership": 3,
+    "host": {
+      "Archers": 0,
+      "Cavalry": 0,
+      "Infantry": 0,
+      "Levy": 0
+    },
+    "resources": {
+      "Coin": 5,
+      "Food": 2,
+      "Wood": 0,
+      "Stone": 1,
+      "Research": 0
+    },
+    "activeTokens": [],
+    "baggage": [
+      {
+        "position": 1,
+        "contents": "Food",
+        "quantity": 2,
+        "damaged": false
+      },
+      {
+        "position": 2,
+        "contents": null,
+        "quantity": 1,
+        "damaged": false
+      },
+      {
+        "position": 3,
+        "contents": "Stone",
+        "quantity": 1,
+        "damaged": false
+      },
+      {
+        "position": 4,
+        "contents": null,
+        "quantity": 1,
+        "damaged": false
+      }
+    ]
+  },
+  "chronicle": [
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "The Host is assembled. The road to Middelalderen begins here.",
+      "tone": 0,
+      "heading": "The March Begins",
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Advance 2 Time.",
+      "tone": 3,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false
+    },
+    {
+      "calendar": "Spring \u2022 Year 1 \u2022 Explore",
+      "text": "The Host leaves the Starting Clearing and advances into open country.",
+      "tone": 1,
+      "heading": "Plains",
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false
+    },
+    {
+      "calendar": "Spring \u2022 Year 1 \u2022 Explore",
+      "text": "Brigands step from the roadside and demand coin for safe passage.",
+      "tone": 0,
+      "heading": "Thieves (and Liars)",
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Pay the toll or refuse?",
+      "tone": 0,
+      "heading": "Thieves (and Liars)",
+      "choices": [
+        {
+          "id": "branch:0",
+          "label": "Give Them the 2 Coins",
+          "detail": "Give them 2 Coin and continue.",
+          "disabled": false,
+          "echoIndicator": false
+        },
+        {
+          "id": "branch:1",
+          "label": "Refuse",
+          "detail": "Refuse their demand.",
+          "disabled": false,
+          "echoIndicator": true
+        }
+      ],
+      "selectedChoiceId": "branch:1",
+      "echoIndicator": false
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "You choose: Refuse.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "The Host refuses the demand. The brigands do not forget.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": true
+    },
+    {
+      "calendar": "Spring \u2022 Year 1 \u2022 Arrival",
+      "text": "The Host reaches a settlement held by the Sun-Touched.",
+      "tone": 0,
+      "heading": "Arrival",
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Sun-Touched Rapport changes from Unmet to Hostile.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "First Contact roll: 2 \u002B 1 = 3.",
+      "tone": 3,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "The first words do not become second words. The Sun-Touched meet the Host with unmistakable hostility.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "The terms are simple, if not generous: 1 Wood for the Sun-Touched.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "The Host pays 1 Wood in tribute.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "The tribute is accepted, but hostility remains. Test 8\u002B to secure passage.",
+      "tone": 0,
+      "heading": "Passage",
+      "choices": [
+        {
+          "id": "gate:normal",
+          "label": "Roll 2d6",
+          "detail": "Rapport DRM: -1",
+          "disabled": false,
+          "echoIndicator": false
+        },
+        {
+          "id": "gate:leadership",
+          "label": "Spend 1 Leadership",
+          "detail": "Roll 3d6 and keep the best 2",
+          "disabled": false,
+          "echoIndicator": false
+        }
+      ],
+      "selectedChoiceId": "gate:normal",
+      "echoIndicator": false
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Roll: 1 \u002B 5 -1 = 5.",
+      "tone": 3,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "The passage test fails.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "The Sun-Touched reject the appeal and attack.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "The Host is destroyed in battle.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "No Units remain in the Host. The campaign ends in defeat.",
+      "tone": 2,
+      "heading": "Defeat",
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false
+    }
+  ],
+  "campOffers": [],
+  "exploreDraws": [
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "cardId": "EXPLORE-033",
+      "title": "Thieves (and Liars)",
+      "terrain": "Plains",
+      "matchedTerrain": true,
+      "outcome": "Triggered"
+    }
+  ],
+  "battles": [
+    {
+      "battleNumber": 1,
+      "startedUtc": "2026-10-19T20:31:55.4441277Z",
+      "endedUtc": "2026-10-19T20:32:06.3991501Z",
+      "sourceLabel": "The Honey Carts",
+      "enemyName": "Sun-Touched",
+      "isFinale": false,
+      "outcome": "Lost",
+      "initialPlayerUnits": {
+        "Archers": 0,
+        "Cavalry": 0,
+        "Infantry": 0,
+        "Levy": 2
+      },
+      "initialEnemyUnits": {
+        "Archers": 3,
+        "Cavalry": 0,
+        "Infantry": 0,
+        "Levy": 4
+      },
+      "finalPlayerUnits": {
+        "Archers": 0,
+        "Cavalry": 0,
+        "Infantry": 0,
+        "Levy": 0
+      },
+      "finalEnemyUnits": {
+        "Archers": 3,
+        "Cavalry": 0,
+        "Infantry": 0,
+        "Levy": 3
+      },
+      "entries": [
+        {
+          "text": "Combat begins against Sun-Touched.",
+          "subdued": false
+        },
+        {
+          "text": "Player Host: 2 Levy",
+          "subdued": true
+        },
+        {
+          "text": "Enemy Host: 3 Archers, 4 Levy",
+          "subdued": true
+        },
+        {
+          "text": "Priest phase skipped: no Priest is present.",
+          "subdued": false
+        },
+        {
+          "text": "Round 1 begins.",
+          "subdued": false
+        },
+        {
+          "text": "Archers: Player rolls none. Enemy rolls 1, 4, 5.",
+          "subdued": true
+        },
+        {
+          "text": "No casualties are inflicted by Archers.",
+          "subdued": false
+        },
+        {
+          "text": "Cavalry phase skipped: no Cavalry are present.",
+          "subdued": false
+        },
+        {
+          "text": "Infantry phase skipped: no Infantry are present.",
+          "subdued": false
+        },
+        {
+          "text": "Levy: Player rolls 1, 2. Enemy rolls 6*, 4, 3, 1.",
+          "subdued": true
+        },
+        {
+          "text": "1 Player Levy routs from the battle.",
+          "subdued": false
+        },
+        {
+          "text": "1 Enemy Levy routs from the battle.",
+          "subdued": false
+        },
+        {
+          "text": "Levy inflict 0 Player hits and 1 Enemy hit.",
+          "subdued": false
+        },
+        {
+          "text": "The Host loses 1 Levy.",
+          "subdued": false
+        },
+        {
+          "text": "The Host is destroyed. The Combat is lost.",
+          "subdued": false
+        }
+      ]
+    }
+  ],
+  "activeBattle": null,
+  "finaleLog": []
+}

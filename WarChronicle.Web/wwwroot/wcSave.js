@@ -6,6 +6,25 @@ window.wcSave = {
     load: function () {
         return window.localStorage.getItem(this.key);
     },
+    getLength: function () {
+        const json = window.localStorage.getItem(this.key);
+        return json === null ? -1 : json.length;
+    },
+    readChunk: function (start, size) {
+        const json = window.localStorage.getItem(this.key);
+        if (json === null) return null;
+        if (!Number.isInteger(start) || start < 0 || !Number.isInteger(size) || size < 1)
+            throw new Error("Invalid saved-game chunk request");
+        let end = Math.min(json.length, start + size);
+        // Keep a UTF-16 surrogate pair together across JS/.NET boundaries.
+        if (end > start && end < json.length) {
+            const high = json.charCodeAt(end - 1);
+            const low = json.charCodeAt(end);
+            if (high >= 0xD800 && high <= 0xDBFF && low >= 0xDC00 && low <= 0xDFFF)
+                end++;
+        }
+        return json.substring(start, end);
+    },
     save: function (json) {
         window.localStorage.setItem(this.key, json);
     },
@@ -231,3 +250,22 @@ window.wcChronicle = (function () {
 
     return { restoreAndScrollToFirstNew };
 })();
+
+// Simulation downloads are independent of player saves and completed-game archives.
+window.wcSimExport = {
+    _chunks: [],
+    start: function () { this._chunks = []; },
+    append: function (chunk) { this._chunks.push(chunk); },
+    finish: function (filename) {
+        const blob = new Blob(this._chunks, { type: 'application/json;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename || 'WC_Simulation.json';
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+        this._chunks = [];
+    }
+};

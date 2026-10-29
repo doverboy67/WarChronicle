@@ -169,7 +169,7 @@ public sealed partial class GameSession
         var firepotsActive = !isTest
             && HasToken("Firepots")
             && Baggage.Any(b => string.Equals(b.Contents, "Firepots", StringComparison.OrdinalIgnoreCase));
-        var painkillerActive = !isTest && HasToken("Painkiller");
+        var painkillerActive = !isTest && _painkillerDoses > 0;
 
         var state = new CombatState
         {
@@ -233,7 +233,7 @@ public sealed partial class GameSession
         if (reignInBloodActive)
             state.Log.Add(new("Reign in Blood is active. The Host may not Disengage from this Combat."));
         if (painkillerActive)
-            state.Log.Add(new("Painkiller is active. Each Host Unit loss is checked on 1d6; 5–6 prevents that loss.", true));
+            state.Log.Add(new($"Painkiller has {_painkillerDoses} remaining doses. You may spend a dose before accepting a casualty; on 5–6, prevent it.", true));
         if (firepotsActive)
             state.Log.Add(new("Firepots are ready and may be used before the first round.", true));
         state.Log.Add(new($"Player Host: {FormatCombatHost(state.PlayerUnits)}", true));
@@ -691,24 +691,20 @@ public sealed partial class GameSession
             var attempted = Math.Min(playerRouts, combat.PlayerUnits["Levy"]);
             var lost = 0;
             var prevented = 0;
-            var painkillerRolls = new List<int>();
             for (var i = 0; i < attempted; i++)
             {
-                if (combat.PainkillerActive)
+                var saved = false;
+                while (combat.PainkillerActive && _painkillerDoses > 0 && !saved)
                 {
+                    _painkillerDoses--;
                     var roll = _combatRandom.Next(1, 7);
-                    painkillerRolls.Add(roll);
-                    if (roll >= 5)
-                    {
-                        prevented++;
-                        continue;
-                    }
+                    saved = roll >= 5;
+                    combat.Log.Add(new($"Painkiller vs Levy rout: {roll}. {(saved ? "Saved." : "Failed.")} {_painkillerDoses} doses remain.", true));
                 }
-                lost++;
+                if (saved) prevented++; else lost++;
             }
+            if (_painkillerDoses == 0) ActiveTokens.Remove("Painkiller");
             combat.PlayerUnits["Levy"] -= lost;
-            if (combat.PainkillerActive)
-                combat.Log.Add(new($"Painkiller vs Levy routs: {string.Join(", ", painkillerRolls)}. {prevented} rout loss{(prevented == 1 ? string.Empty : "es")} prevented.", true));
             if (lost > 0)
                 combat.Log.Add(new($"{lost} Player Levy rout{(lost == 1 ? "s" : string.Empty)} from the battle."));
         }
@@ -861,7 +857,7 @@ public sealed partial class GameSession
         var combat = Combat!;
         var canShield = target != "Levy" && combat.PlayerShields > 0;
         var canLoose = combat.PlayerTactics.Contains("ADV-015") && combat.PlayerLeadership > 0;
-        if (!canShield && !canLoose)
+        if (!canShield && !canLoose && _painkillerDoses <= 0)
             return false;
 
         combat.PendingTargetType = target;
@@ -870,6 +866,8 @@ public sealed partial class GameSession
         combat.ChoicePrompt = $"YOUR HOST would lose 1 {SingularUnit(target)}. How do you respond?";
         combat.Choices.Clear();
         combat.Choices.Add(new($"defense:accept:{target}", $"Lose 1 of Your {SingularUnit(target)}"));
+        if (_painkillerDoses > 0)
+            combat.Choices.Add(new($"defense:painkiller:{target}", "Spend 1 Painkiller dose", $"Roll 1d6: 5–6 saves this casualty. {_painkillerDoses} doses remain; you can retry a failed dose."));
         if (canShield)
             combat.Choices.Add(new($"defense:shield:{target}", "Spend 1 Shield", "Prevent this Military casualty"));
         if (canLoose)
@@ -886,17 +884,6 @@ public sealed partial class GameSession
         var targetUnits = attackerIsPlayer ? combat.EnemyUnits : combat.PlayerUnits;
         if (!targetUnits.TryGetValue(target, out var count) || count <= 0)
             return;
-
-        if (!attackerIsPlayer && combat.PainkillerActive)
-        {
-            var roll = _combatRandom.Next(1, 7);
-            if (roll >= 5)
-            {
-                combat.Log.Add(new($"Painkiller roll {roll}: prevent the loss of 1 {SingularUnit(target)}."));
-                return;
-            }
-            combat.Log.Add(new($"Painkiller roll {roll}: the {SingularUnit(target)} loss is not prevented.", true));
-        }
 
         targetUnits[target] = count - 1;
         combat.Log.Add(new(attackerIsPlayer ? $"Enemy loses 1 {SingularUnit(target)}." : $"The Host loses 1 {SingularUnit(target)}."));
@@ -940,7 +927,10 @@ public sealed partial class GameSession
         {
             combat.Step = CombatStep.CasualtyChoice;
             combat.ChoicePrompt = "Feigned Withdrawal is available because your Cavalry inflicted a casualty.";
-            combat.Choices.Add(new("feigned:use", "Disengage now", "No Disengage penalty and no Cavalry pursuit"));
+            combat.Choices.Add(new("feigned:use", "Disengage now",
+                _activeFlowContext == FlowContext.Camp
+                    ? "The Camp Phase ends. No Disengage penalty or Cavalry pursuit."
+                    : "No Disengage penalty and no Cavalry pursuit"));
             combat.Choices.Add(new("feigned:continue", "Continue the battle"));
             return;
         }
@@ -978,11 +968,17 @@ public sealed partial class GameSession
                 ? "Forced Mobilization follows"
                 : _activeFlowContext == FlowContext.Explore
                     ? "Resume Mobilization and proceed to the Clearing"
-                    : "Leave the battle after this round";
+                    : _activeFlowContext == FlowContext.Camp
+                        ? "The Camp Phase ends when you Disengage"
+                        : "Leave the battle after this round";
             combat.Choices.Add(new(
                 combat.FeignedWithdrawalReady ? "round:feigned" : "round:disengage",
                 combat.FeignedWithdrawalReady ? "Disengage with Feigned Withdrawal" : "Disengage",
-                combat.FeignedWithdrawalReady ? "No Disengage penalty and no Cavalry pursuit" : disengageHint));
+                combat.FeignedWithdrawalReady
+                    ? _activeFlowContext == FlowContext.Camp
+                        ? "The Camp Phase ends. No Disengage penalty or Cavalry pursuit."
+                        : "No Disengage penalty and no Cavalry pursuit"
+                    : disengageHint));
         }
     }
 
@@ -1192,7 +1188,27 @@ public sealed partial class GameSession
         var type = parts[2];
         combat.Choices.Clear();
         combat.ChoicePrompt = string.Empty;
-        if (action == "shield" && combat.PlayerShields > 0)
+        if (action == "painkiller" && _painkillerDoses > 0)
+        {
+            _painkillerDoses--;
+            var roll = _combatRandom.Next(1, 7);
+            var saved = roll >= 5;
+            combat.Log.Add(new($"Spend Painkiller dose, roll {roll}: {(saved ? "casualty prevented" : "dose fails")}. {_painkillerDoses} doses remain."));
+            if (_painkillerDoses == 0) ActiveTokens.Remove("Painkiller");
+            if (!saved)
+            {
+                // A failed dose does not consume the incoming hit. Offer any
+                // remaining dose, Shield, or Loose Formation defense first.
+                if (PresentPlayerDefense(type))
+                    return;
+
+                // The last dose failed and no defenses remain. Resolve the
+                // pending casualty instead of leaving combat in CasualtyChoice
+                // with an empty choice list and an unconsumed enemy hit.
+                ApplyCombatCasualty(attackerIsPlayer: false, type);
+            }
+        }
+        else if (action == "shield" && combat.PlayerShields > 0)
         {
             combat.PlayerShields--;
             combat.Log.Add(new($"A Shield prevents the casualty to {type}."));

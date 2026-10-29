@@ -1,0 +1,696 @@
+{
+  "schemaVersion": 1,
+  "logType": "War Chronicle Game Log",
+  "gameId": "724d6d48-bd19-4a10-b70b-8ac848d0b43d",
+  "appVersion": "v0.5.0.29",
+  "startedUtc": "2026-10-04T07:43:34.5973798Z",
+  "endedUtc": "2026-10-04T07:45:05.0450257Z",
+  "status": "Completed",
+  "outcome": "Defeat",
+  "endReason": "No Units remain in the Host. The campaign ends in defeat.",
+  "contentSets": [
+    "Base",
+    "No Quarter"
+  ],
+  "finalState": {
+    "year": 1,
+    "season": "Spring",
+    "time": 8,
+    "morale": 5,
+    "leadership": 4,
+    "host": {
+      "Archers": 0,
+      "Cavalry": 0,
+      "Infantry": 0,
+      "Levy": 0
+    },
+    "resources": {
+      "Coin": 2,
+      "Food": 2,
+      "Wood": 1,
+      "Stone": 1,
+      "Research": 0
+    },
+    "activeTokens": [],
+    "baggage": [
+      {
+        "position": 1,
+        "contents": "Food",
+        "quantity": 2,
+        "damaged": false
+      },
+      {
+        "position": 2,
+        "contents": "Wood",
+        "quantity": 1,
+        "damaged": false
+      },
+      {
+        "position": 3,
+        "contents": "Stone",
+        "quantity": 1,
+        "damaged": false
+      },
+      {
+        "position": 4,
+        "contents": null,
+        "quantity": 1,
+        "damaged": false
+      }
+    ]
+  },
+  "chronicle": [
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "The Host is assembled. The road to Middelalderen begins here.",
+      "tone": 0,
+      "heading": "The March Begins",
+      "choices": null,
+      "selectedChoiceId": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Advance 2 Time.",
+      "tone": 3,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1 \u2022 Explore",
+      "text": "The Host leaves the Starting Clearing and climbs toward the high country.",
+      "tone": 1,
+      "heading": "Mountain",
+      "choices": null,
+      "selectedChoiceId": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1 \u2022 Explore",
+      "text": "Your scouts are lured into the highlands... Where tribal warriors strike from the rocks.",
+      "tone": 0,
+      "heading": "Hill Clan Ambush",
+      "choices": null,
+      "selectedChoiceId": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Choose response",
+      "tone": 0,
+      "heading": "Hill Clan Ambush",
+      "choices": [
+        {
+          "id": "branch:0",
+          "label": "Defend in Combat",
+          "detail": "Fight a Hill Clan force of 1 Infantry.",
+          "disabled": false
+        },
+        {
+          "id": "branch:1",
+          "label": "Flee",
+          "detail": "Roll 1d6. On 5\u20136, negotiate safe passage. On 1\u20134, lose 1 Infantry or 1 Morale.",
+          "disabled": false
+        }
+      ],
+      "selectedChoiceId": "branch:0"
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "You choose: Defend in Combat.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "The Host disengages after the first round.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1 \u2022 Arrival",
+      "text": "The road opens into an unclaimed clearing. The Host takes control without resistance.",
+      "tone": 0,
+      "heading": "A Vacant Clearing",
+      "choices": null,
+      "selectedChoiceId": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "The clearing is secure. Forage before making camp?",
+      "tone": 0,
+      "heading": "Arrival",
+      "choices": [
+        {
+          "id": "arrival:forage",
+          "label": "Forage",
+          "detail": "Advance 1 Time. On 4\u20136, gain 1 Resource matching the adjacent Terrain.",
+          "disabled": false
+        },
+        {
+          "id": "arrival:continue",
+          "label": "Continue",
+          "detail": "Proceed to Camp without foraging.",
+          "disabled": false
+        }
+      ],
+      "selectedChoiceId": "arrival:forage"
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Advance 1 Time.",
+      "tone": 3,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Forage roll: 1.",
+      "tone": 3,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "The search yields nothing useful.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1 \u2022 Scene",
+      "text": "A roadside shrine has become a place of local giving. Candles burn low, coins sit in the offering bowl, and food for the poor rests under cloth beside the stone.",
+      "tone": 0,
+      "heading": "Missing Alms",
+      "choices": null,
+      "selectedChoiceId": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Advance 1 Time.",
+      "tone": 3,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "When the Host stops nearby, a sudden uproar breaks out: silver is missing, and one of your men is being named as the thief. The charge cannot be proven, but the Host can feel how badly the locals want someone to answer for it.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "You leave the matter unsettled and march on rather than lose time to finding the truth.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "The Host turns its attention to Work.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1 \u2022 Camp",
+      "text": "While the road waits, the Host takes up the work at hand: hauling, mending, tending, building, and drilling for what comes next.",
+      "tone": 0,
+      "heading": "Work",
+      "choices": null,
+      "selectedChoiceId": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Advance 2 Time.",
+      "tone": 3,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Choose Work result",
+      "tone": 0,
+      "heading": "Work",
+      "choices": [
+        {
+          "id": "branch:0",
+          "label": "Gain 2 Coin",
+          "detail": "Gain 2 Coin.",
+          "disabled": false
+        },
+        {
+          "id": "branch:1",
+          "label": "Gain 1 Coin and 1 Leadership",
+          "detail": "Gain 1 Coin and 1 Leadership.",
+          "disabled": false
+        }
+      ],
+      "selectedChoiceId": "branch:1"
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "You choose: Gain 1 Coin and 1 Leadership.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Gain 1 Coin.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Gain 1 Leadership.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Advance 2 Time.",
+      "tone": 3,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1 \u2022 Explore",
+      "text": "The Host advances into open country.",
+      "tone": 1,
+      "heading": "Plains",
+      "choices": null,
+      "selectedChoiceId": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1 \u2022 Explore",
+      "text": "The plains offer distance, wind, and very little else. For once, the march is uneventful.",
+      "tone": 0,
+      "heading": "Uneventful Travel",
+      "choices": null,
+      "selectedChoiceId": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1 \u2022 Arrival",
+      "text": "The road enters a settlement of the Quietus, where the Host is noticed long before anyone chooses to acknowledge it.",
+      "tone": 0,
+      "heading": "Arrival",
+      "choices": null,
+      "selectedChoiceId": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Quietus Rapport changes from Unmet to Neutral.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "First Contact roll: 6 \u002B 2 = 8.",
+      "tone": 3,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Neither welcome nor threat greets the Host. The Quietus watch carefully and wait to see what you will do.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "The Quietus demand 1 Research in tribute.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "The Host cannot provide 1 Research. Pay Coin instead?",
+      "tone": 0,
+      "heading": "Tribute",
+      "choices": [
+        {
+          "id": "tribute:pay-fallback",
+          "label": "Pay 4 Coin",
+          "detail": "Pay the full fallback and continue.",
+          "disabled": false
+        },
+        {
+          "id": "tribute:decline",
+          "label": "Do not pay",
+          "detail": "Attempt passage without the tribute.",
+          "disabled": false
+        }
+      ],
+      "selectedChoiceId": "tribute:pay-fallback"
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "With no Research to offer, the Host pays 4 Coin instead.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1 \u2022 Arrival",
+      "text": "A stone well stands under black cloth, its bucket sealed with wax and bone. Quietus wardens say the water below is reserved for rites of passage, and that desperate mouths should not drink without blessing.",
+      "tone": 0,
+      "heading": "The Shrouded Well",
+      "choices": null,
+      "selectedChoiceId": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Choose an approach",
+      "tone": 0,
+      "heading": "The Shrouded Well",
+      "choices": [
+        {
+          "id": "branch:0",
+          "label": "Receive the Blessing (8\u002B)",
+          "detail": "Pass: Gain 1 Leadership. Fail: Lose 1 Morale.",
+          "disabled": false
+        },
+        {
+          "id": "branch:1",
+          "label": "Draw the Consecrated Water (9\u002B)",
+          "detail": "Pass: Gain 1 Research and 1 Food. Fail: Lose 1 Food.",
+          "disabled": false
+        },
+        {
+          "id": "branch:2",
+          "label": "Break the Wax (7\u002B)",
+          "detail": "Pass: Gain 1 Research. Fail: Lose 1 Rapport.",
+          "disabled": false
+        },
+        {
+          "id": "branch:3",
+          "label": "Attack",
+          "detail": "Win: Gain 1 Research and 1 Leadership. Disengage: Lose 1 Morale. Enemy Host: 1P, 1A, 1I, 2L",
+          "disabled": false
+        }
+      ],
+      "selectedChoiceId": "branch:2"
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "You choose: Break the Wax.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Break the Wax: Test 7\u002B",
+      "tone": 0,
+      "heading": "The Shrouded Well",
+      "choices": [
+        {
+          "id": "test:normal",
+          "label": "Roll 2d6",
+          "detail": null,
+          "disabled": false
+        },
+        {
+          "id": "test:leadership",
+          "label": "Spend 1 Leadership",
+          "detail": "Roll 3d6 and keep the best 2",
+          "disabled": false
+        }
+      ],
+      "selectedChoiceId": "test:normal"
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Roll: 3 \u002B 3 = 6.",
+      "tone": 3,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "You attempted to Break the Wax, but failed.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Lose 1 Rapport with Quietus.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1 \u2022 Chronicle",
+      "text": "The Quietus offer no argument and little explanation. The answer is simply no.",
+      "tone": 0,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "The Quietus become Hostile and attack.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "The Host is destroyed in battle.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "No Units remain in the Host. The campaign ends in defeat.",
+      "tone": 2,
+      "heading": "Defeat",
+      "choices": null,
+      "selectedChoiceId": null
+    }
+  ],
+  "campOffers": [
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "drawn": [
+        {
+          "id": "SCENE-019",
+          "title": "Missing Alms",
+          "cardType": "Scene"
+        },
+        {
+          "id": "CAMP-013",
+          "title": "Host a Common Table",
+          "cardType": "Camp"
+        },
+        {
+          "id": "CAMP-003",
+          "title": "Sacred Foundations",
+          "cardType": "Camp"
+        }
+      ],
+      "selectedCardId": "CAMP-001",
+      "selectedCardTitle": "Work"
+    }
+  ],
+  "battles": [
+    {
+      "battleNumber": 1,
+      "startedUtc": "2026-10-04T07:43:48.7307531Z",
+      "endedUtc": "2026-10-04T07:44:00.6864138Z",
+      "sourceLabel": "Hill Clan Ambush",
+      "enemyName": "Hill Clan",
+      "isFinale": false,
+      "outcome": "Disengaged",
+      "initialPlayerUnits": {
+        "Archers": 0,
+        "Cavalry": 0,
+        "Infantry": 0,
+        "Levy": 2
+      },
+      "initialEnemyUnits": {
+        "Archers": 0,
+        "Cavalry": 0,
+        "Infantry": 1,
+        "Levy": 0
+      },
+      "finalPlayerUnits": {
+        "Archers": 0,
+        "Cavalry": 0,
+        "Infantry": 0,
+        "Levy": 1
+      },
+      "finalEnemyUnits": {
+        "Archers": 0,
+        "Cavalry": 0,
+        "Infantry": 1,
+        "Levy": 0
+      },
+      "entries": [
+        {
+          "text": "Combat begins against Hill Clan.",
+          "subdued": false
+        },
+        {
+          "text": "Player Host: 2 Levy",
+          "subdued": true
+        },
+        {
+          "text": "Enemy Host: 1 Infantry",
+          "subdued": true
+        },
+        {
+          "text": "Priest phase skipped: no Priest is present.",
+          "subdued": false
+        },
+        {
+          "text": "Round 1 begins.",
+          "subdued": false
+        },
+        {
+          "text": "Archers phase skipped: no Archers are present.",
+          "subdued": false
+        },
+        {
+          "text": "Cavalry phase skipped: no Cavalry are present.",
+          "subdued": false
+        },
+        {
+          "text": "Infantry: Player rolls none. Enemy rolls 3.",
+          "subdued": true
+        },
+        {
+          "text": "No casualties are inflicted by Infantry.",
+          "subdued": false
+        },
+        {
+          "text": "Levy: Player rolls 1, 5. Enemy rolls none.",
+          "subdued": true
+        },
+        {
+          "text": "1 Player Levy routs from the battle.",
+          "subdued": false
+        },
+        {
+          "text": "No casualties are inflicted by Levy.",
+          "subdued": false
+        },
+        {
+          "text": "The Host breaks contact and disengages from the Combat.",
+          "subdued": false
+        }
+      ]
+    },
+    {
+      "battleNumber": 2,
+      "startedUtc": "2026-10-04T07:44:55.649445Z",
+      "endedUtc": "2026-10-04T07:45:05.044215Z",
+      "sourceLabel": "The Shrouded Well",
+      "enemyName": "Quietus",
+      "isFinale": false,
+      "outcome": "Lost",
+      "initialPlayerUnits": {
+        "Archers": 0,
+        "Cavalry": 0,
+        "Infantry": 0,
+        "Levy": 1
+      },
+      "initialEnemyUnits": {
+        "Archers": 1,
+        "Cavalry": 0,
+        "Infantry": 1,
+        "Levy": 2
+      },
+      "finalPlayerUnits": {
+        "Archers": 0,
+        "Cavalry": 0,
+        "Infantry": 0,
+        "Levy": 0
+      },
+      "finalEnemyUnits": {
+        "Archers": 1,
+        "Cavalry": 0,
+        "Infantry": 1,
+        "Levy": 2
+      },
+      "entries": [
+        {
+          "text": "Combat begins against Quietus.",
+          "subdued": false
+        },
+        {
+          "text": "Player Host: 1 Levy",
+          "subdued": true
+        },
+        {
+          "text": "Enemy Host: 1 Archers, 1 Infantry, 2 Levy",
+          "subdued": true
+        },
+        {
+          "text": "Proselytization roll: 3.",
+          "subdued": true
+        },
+        {
+          "text": "The enemy Priest fails to sway the Host.",
+          "subdued": false
+        },
+        {
+          "text": "Round 1 begins.",
+          "subdued": false
+        },
+        {
+          "text": "Archers: Player rolls none. Enemy rolls 6*.",
+          "subdued": true
+        },
+        {
+          "text": "Archers inflict 0 Player hits and 1 Enemy hit.",
+          "subdued": false
+        },
+        {
+          "text": "The Host loses 1 Levy.",
+          "subdued": false
+        },
+        {
+          "text": "The Host is destroyed. The Combat is lost.",
+          "subdued": false
+        }
+      ]
+    }
+  ],
+  "activeBattle": null,
+  "finaleLog": []
+}

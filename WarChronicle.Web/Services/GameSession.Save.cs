@@ -63,6 +63,7 @@ public sealed partial class GameSession
         public List<AvailableForceState> AvailableForces { get; set; } = [];
         public List<PersistentState> PersistentItems { get; set; } = [];
         public List<string> ActiveTokens { get; set; } = [];
+        public int PainkillerDoses { get; set; } = 0;
         public List<BaggageSlot> Baggage { get; set; } = [];
         public List<TribeState> Tribes { get; set; } = [];
         public List<PlayAreaElement> PlayArea { get; set; } = [];
@@ -190,6 +191,7 @@ public sealed partial class GameSession
             AvailableForces = AvailableForces.ToList(),
             PersistentItems = PersistentItems.ToList(),
             ActiveTokens = ActiveTokens.ToList(),
+            PainkillerDoses = _painkillerDoses,
             Baggage = Baggage.ToList(),
             Tribes = Tribes.ToList(),
             PlayArea = PlayArea.ToList(),
@@ -482,6 +484,11 @@ public sealed partial class GameSession
             ActiveTokens.Clear();
             foreach (var token in save.ActiveTokens)
                 ActiveTokens.Add(token);
+            _painkillerDoses = save.PainkillerDoses;
+            // Legacy saves with the unlimited Painkiller token receive four
+            // consumable doses, so an existing campaign remains playable.
+            if (_painkillerDoses == 0 && ActiveTokens.Contains("Painkiller"))
+                _painkillerDoses = 4;
             CopyList(Baggage, save.Baggage);
             CopyList(Tribes, save.Tribes);
             CopyList(PlayArea, save.PlayArea);

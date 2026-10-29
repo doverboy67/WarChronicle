@@ -4,8 +4,24 @@
 @inject WcDataCatalog Catalog
 @inject GameLogFileStore GameLogFiles
 @inject IJSRuntime JS
+@inject Microsoft.Extensions.Logging.ILoggerFactory SimulationLoggerFactory
 
 <PageTitle>War Chronicle</PageTitle>
+
+@if (!string.IsNullOrWhiteSpace(_saveCheckError))
+{
+    <div class="save-resume-overlay">
+        <section class="save-resume-card" role="alertdialog" aria-modal="true" aria-label="Saved game check unavailable">
+            <div class="eyebrow">Saved Chronicle</div>
+            <h2>Could not check for a saved campaign</h2>
+            <p>The browser may still contain your campaign. Nothing was deleted or overwritten.</p>
+            <p class="save-error">@_saveCheckError</p>
+            <div class="save-resume-actions">
+                <button class="primary-save-action" @onclick="RetrySavedGameCheckAsync">Retry saved-game check</button>
+            </div>
+        </section>
+    </div>
+}
 
 @if (_showResumePrompt)
 {
@@ -89,6 +105,45 @@
     </div>
 }
 
+@if (_showSimulationLab)
+{
+    <div class="save-resume-overlay wc-simulation-overlay">
+        <section class="save-resume-card wc-simulation-lab" role="dialog" aria-modal="true" aria-label="Debug Simulation Lab">
+            <div class="eyebrow">Debug • Simulation Lab</div>
+            <h2>Automated Campaign Test</h2>
+            <p>Runs the actual War Chronicle game engine in a separate, temporary session. Your current campaign and browser save are untouched.</p>
+            <p><strong>Content:</strong> @string.Join(", ", Session.EnabledContentSets.Select(SimulationContentSetName).OrderBy(x => x))<span> • </span><strong>Finale:</strong> @Session.MiddelalderenAdvancementCount Advancements</p>
+            <p><strong>Player:</strong> experimental policy based on prior campaign decisions. It may choose poorly; unsupported decisions stop with a diagnostic rather than skipping rules.</p>
+            <div class="save-resume-actions">
+                <button class="primary-save-action" disabled="@_simulationRunning" @onclick="RunSimulationAsync">Run One Campaign</button>
+                @if (_simulationRunning)
+                {
+                    <button @onclick="() => _simulationStopRequested = true">Stop after current decision</button>
+                }
+                <button disabled="@_simulationRunning" @onclick="() => _showSimulationLab = false">Close</button>
+            </div>
+            @if (_simulationRunning)
+            {
+                <p class="wc-sim-status">Running: @_simulationProgress</p>
+            }
+            @if (_simulationResult is { } sim)
+            {
+                <div class="wc-sim-summary">
+                    <h3>@sim.Status @(!string.IsNullOrWhiteSpace(sim.Outcome) ? $"— {sim.Outcome}" : "")</h3>
+                    <p>Year @sim.Year, @sim.Season • Time @sim.Time • @sim.Steps decisions • @sim.ElapsedMilliseconds ms</p>
+                    <p><strong>Host:</strong> @string.Join(", ", sim.Host.Select(x => $"{x.Key} {x.Value}"))</p>
+                    <p><strong>Morale:</strong> @sim.Morale • <strong>Leadership:</strong> @sim.Leadership • <strong>Battles:</strong> @sim.Battles</p>
+                    @if (!string.IsNullOrWhiteSpace(sim.Reason))
+                    {
+                        <p>@sim.Reason</p>
+                    }
+                    <button class="primary-save-action" @onclick="DownloadSimulationReportAsync">Download Full Simulation Report</button>
+                </div>
+            }
+        </section>
+    </div>
+}
+
 <div class="game-screen @(CombatInspectionMode ? "combat-inspection-mode" : string.Empty)">
     <section class="state-panel">
         <header class="state-header">
@@ -126,6 +181,7 @@
                             </select>
                             <button class="combat-demo" disabled="@(!Session.CanSimulateCampCard || string.IsNullOrWhiteSpace(_debugSelectedCardId))" @onclick="SimulateDebugCard">Simulate</button>
                         </div>
+                        <button class="combat-demo" @onclick="OpenSimulationLab">Simulation Lab</button>
                         <button class="combat-demo" @onclick="ExitDebugMode">Exit Debug</button>
                     </div>
                 }
@@ -1684,7 +1740,7 @@
 }
 
 @code {
-    private const string AppVersion = "v0.5.0.51";
+    private const string AppVersion = "v0.5.0.73";
 
     // Presentation coordinates only, expressed as fixed pixel offsets from
     // the center of the play-area panel. This keeps the physical relationship
@@ -1847,6 +1903,124 @@
             Session.SimulateCampCard(_debugSelectedCardId);
     }
 
+    // Simulation Lab is deliberately separate from the injected player Session:
+    // never subscribe the simulation to player persistence or reassign Session.
+    // The catalog uses short internal set keys; the Debug summary should use
+    // the player-facing expansion names so Riff Raff (PackC) is not mistaken
+    // for a missing content pack. Keep the underlying keys unchanged.
+    private static string SimulationContentSetName(string key) => key switch
+    {
+        "SitA" => "Seasons in the Abyss",
+        "SiaSL" => "Stranger in a Strange Land",
+        "PackC" => "Riff Raff",
+        _ => key
+    };
+
+    private bool _showSimulationLab;
+    private bool _simulationRunning;
+    private bool _simulationStopRequested;
+    private string _simulationProgress = string.Empty;
+    private SimulationResult? _simulationResult;
+    private string? _simulationReportJson;
+
+    private void OpenSimulationLab()
+    {
+        _showSimulationLab = true;
+        _simulationResult = null;
+        _simulationReportJson = null;
+        _simulationProgress = "";
+    }
+
+    private async Task RunSimulationAsync()
+    {
+        if (_simulationRunning) return;
+        _simulationRunning = true;
+        _simulationStopRequested = false;
+        _simulationResult = null;
+        _simulationReportJson = null;
+        StateHasChanged();
+
+        var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+        // The dedicated GameSession uses the same catalog and rules as normal play.
+        var simGame = new GameSession(SimulationLoggerFactory.CreateLogger<GameSession>());
+        simGame.StartNewGame(Catalog, Session.EnabledContentSets.ToArray());
+        simGame.SetMiddelalderenAdvancementCount(Session.MiddelalderenAdvancementCount);
+        var pilot = new SimulationPilot(simGame);
+        try
+        {
+            while (!pilot.Complete && !_simulationStopRequested)
+            {
+                pilot.Step();
+                if (pilot.Steps % 64 == 0)
+                {
+                    _simulationProgress = $"{simGame.CalendarStamp}, Time {simGame.Time}; {pilot.Steps} decisions";
+                    StateHasChanged();
+                    await Task.Yield(); // UI remains responsive; Stop works in browser.
+                }
+            }
+            stopwatch.Stop();
+            var status = _simulationStopRequested ? "Stopped" : pilot.StalledReason is not null ? "Stalled" : "Completed";
+            var reason = pilot.StalledReason ?? simGame.CampaignEndReason;
+            var host = simGame.Host.GroupBy(x => x.Type)
+                .ToDictionary(g => g.Key, g => g.Sum(x => x.Count));
+            var resources = simGame.Resources.ToDictionary(x => x.Name, x => x.Value);
+            var rapport = simGame.Tribes.ToDictionary(x => x.Name, x => x.Rapport);
+            var gameLog = simGame.CreateGameLogJson(AppVersion);
+            _simulationResult = new SimulationResult(
+                status, simGame.CampaignOutcome, reason, pilot.Steps, stopwatch.ElapsedMilliseconds,
+                simGame.Year, simGame.Season, simGame.Time, simGame.Morale, simGame.Leadership,
+                host, resources, rapport, simGame.AcquiredAdvancements.Select(x => x.Name).ToArray(),
+                simGame.BattleHistory.Count, pilot.Decisions.ToArray(), gameLog);
+            // Include the actual game-engine Chronicle and choice trace together.
+            // No simulation data is written to player saves or completed-game archive.
+            _simulationReportJson = System.Text.Json.JsonSerializer.Serialize(new
+            {
+                reportType = "War Chronicle Debug Simulation Report",
+                reportVersion = 1,
+                appVersion = AppVersion,
+                result = _simulationResult,
+                gameLog = System.Text.Json.JsonDocument.Parse(gameLog).RootElement.Clone()
+            }, new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
+            _simulationProgress = status;
+        }
+        catch (Exception ex)
+        {
+            stopwatch.Stop();
+            _simulationProgress = $"Simulation error: {ex.GetType().Name}: {ex.Message}";
+        }
+        finally
+        {
+            _simulationRunning = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task DownloadSimulationReportAsync()
+    {
+        if (_simulationReportJson is null) return;
+        try
+        {
+            await JS.InvokeVoidAsync("wcSimExport.start");
+            const int chunkSize = 8192;
+            var offset = 0;
+            while (offset < _simulationReportJson.Length)
+            {
+                var length = Math.Min(chunkSize, _simulationReportJson.Length - offset);
+                // Preserve UTF-16 surrogate pairs while crossing JS interop.
+                if (offset + length < _simulationReportJson.Length && length > 0 &&
+                    char.IsHighSurrogate(_simulationReportJson[offset + length - 1]) &&
+                    char.IsLowSurrogate(_simulationReportJson[offset + length])) length++;
+                await JS.InvokeVoidAsync("wcSimExport.append", _simulationReportJson.Substring(offset, length));
+                offset += length;
+            }
+            await JS.InvokeVoidAsync("wcSimExport.finish", $"WC_Simulation_{DateTime.UtcNow:yyyy-MM-dd_HH-mm-ss}.json");
+        }
+        catch (Exception ex)
+        {
+            _simulationProgress = $"Export failed: {ex.Message}";
+        }
+    }
+
     private void HandleVersionTap()
     {
         var now = DateTime.UtcNow;
@@ -1886,6 +2060,7 @@
     private int _lastChronicleCount;
     private bool _hasRenderedChronicle;
     private bool _saveCheckComplete;
+    private string? _saveCheckError;
     private string? _saveStatus;
     private string? _resumeError;
     private string? _savedBuildVersion;
@@ -1911,42 +2086,87 @@
         await Catalog.InitializeAsync();
     }
 
+    // A saved campaign may exceed Blazor Server's default 32-KB SignalR message limit.
+    // Read it in bounded segments instead of a single JS-to-.NET transfer.
+    private async Task<string?> LoadSavedGameInChunksAsync()
+    {
+        const int chunkSize = 8192; // Worst-case UTF-8 stays below the 32-KB message limit.
+        const int maxSaveLength = 16 * 1024 * 1024;
+        var length = await JS.InvokeAsync<int>("wcSave.getLength");
+        if (length < 0)
+            return null;
+        if (length > maxSaveLength)
+            throw new InvalidOperationException("Saved campaign is larger than the supported 16-million-character limit. Please back it up before retrying.");
+
+        var buffer = new System.Text.StringBuilder(length);
+        var offset = 0;
+        while (offset < length)
+        {
+            var part = await JS.InvokeAsync<string?>("wcSave.readChunk", offset, chunkSize);
+            if (string.IsNullOrEmpty(part) || offset + part.Length > length)
+                throw new InvalidOperationException("Saved campaign changed or was interrupted during loading.");
+            buffer.Append(part);
+            offset += part.Length;
+        }
+        if (await JS.InvokeAsync<int>("wcSave.getLength") != length)
+            throw new InvalidOperationException("Saved campaign changed while loading. Please retry.");
+        return buffer.ToString();
+    }
+
+    private async Task CheckSavedGameAsync()
+    {
+        _saveCheckError = null;
+        _showResumePrompt = false;
+        _showContentSetup = false;
+        try
+        {
+            var exists = await JS.InvokeAsync<bool>("wcSave.hasSave");
+            if (!exists)
+            {
+                _showContentSetup = true;
+                _savedBuildVersion = null;
+                _saveFormatCompatible = true;
+                _saveBuildMismatch = false;
+            }
+            else
+            {
+                // Preserve the resume prompt even if the save is incompatible.
+                _showResumePrompt = true;
+                var json = await LoadSavedGameInChunksAsync();
+                if (!string.IsNullOrWhiteSpace(json)
+                    && Session.TryReadSaveMetadata(json, out var buildVersion, out _, out var formatCompatible))
+                {
+                    _savedBuildVersion = buildVersion;
+                    _saveFormatCompatible = formatCompatible;
+                    _saveBuildMismatch = string.IsNullOrWhiteSpace(buildVersion)
+                        || !string.Equals(buildVersion, AppVersion, StringComparison.OrdinalIgnoreCase);
+                }
+                else
+                {
+                    _savedBuildVersion = null;
+                    _saveFormatCompatible = false;
+                    _saveBuildMismatch = true;
+                }
+            }
+        }
+        catch (Exception)
+        {
+            // Never silently replace a possibly saved campaign with New Chronicle.
+            _showResumePrompt = false;
+            _showContentSetup = false;
+            _saveCheckError = "The browser connection or saved-game read failed. Retry after the connection is restored.";
+        }
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private Task RetrySavedGameCheckAsync() => CheckSavedGameAsync();
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender && !_saveCheckComplete)
         {
             _saveCheckComplete = true;
-            try
-            {
-                _showResumePrompt = await JS.InvokeAsync<bool>("wcSave.hasSave");
-                _showContentSetup = !_showResumePrompt;
-
-                if (_showResumePrompt)
-                {
-                    var json = await JS.InvokeAsync<string?>("wcSave.load");
-                    if (!string.IsNullOrWhiteSpace(json)
-                        && Session.TryReadSaveMetadata(json, out var buildVersion, out _, out var formatCompatible))
-                    {
-                        _savedBuildVersion = buildVersion;
-                        _saveFormatCompatible = formatCompatible;
-                        _saveBuildMismatch = string.IsNullOrWhiteSpace(buildVersion)
-                            || !string.Equals(buildVersion, AppVersion, StringComparison.OrdinalIgnoreCase);
-                    }
-                    else
-                    {
-                        _savedBuildVersion = null;
-                        _saveFormatCompatible = false;
-                        _saveBuildMismatch = true;
-                    }
-                }
-            }
-            catch
-            {
-                _showResumePrompt = false;
-                _showContentSetup = true;
-            }
-
-            await InvokeAsync(StateHasChanged);
+            await CheckSavedGameAsync();
         }
 
         if (Session.GameEndedUtc is not null && _archivedGameLogId != Session.GameLogId)
@@ -2011,7 +2231,7 @@
 
         try
         {
-            var json = await JS.InvokeAsync<string?>("wcSave.load");
+            var json = await LoadSavedGameInChunksAsync();
             if (!string.IsNullOrWhiteSpace(json) && Session.TryRestoreSaveJson(json, Catalog))
             {
                 _showResumePrompt = false;
@@ -2273,11 +2493,11 @@
         "Scouting" => "When Exploring, draw 2 Terrain cards and choose 1.",
         "Camp Steward" => "After normal Work, you may also spend 1 Coin for 1 adjacent Terrain Resource, or buy 1 Resource at Market Buy value -1 Coin (minimum 1 Coin).",
         "Academy" => "Whenever you gain Research, roll 1d6 for each Research gained. Each 4–6 grants +1 additional Research.",
-        "Market" => "During Harvest, sell up to 2 Resources purged from the Baggage Train. Market Day may also be used at a Player Controlled Settlement.",
+        "Market" => "During Harvest, sell up to 2 Resources purged from the Baggage Train. At a Player Controlled Settlement, standard Camp actions may also be performed.",
         "Chapel" => PriestTooltip(),
         "Baggage Cart" => "Increases Baggage Train capacity by 2 spaces.",
         "Firepots" => "Before the first round of Combat, you may remove Firepots and roll 3d6. Each 4+ inflicts 1 casualty as if from a Cavalry attack.",
-        "Painkiller" => "Whenever a Military Unit or Levy would be lost from any game effect, roll 1d6 for that loss. On 5–6, prevent it.",
+        "Painkiller" => "Four consumable doses when acquired. You may spend a dose to prevent a threatened Military Unit or Levy loss (roll 1d6, 5–6 succeeds); you may retry by spending additional doses.",
         "Forced March" => "While active, normal Explore costs 1 Time instead of 2.",
         "Reign in Blood" => "While active, the Host may not Disengage from Combat.",
         _ => name

@@ -91,6 +91,7 @@ public sealed partial class GameSession
     private readonly Dictionary<string, int> _lastUnitTypeRolls = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, object?> _flowVars = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, int> _pendingSelectedUnits = new(StringComparer.OrdinalIgnoreCase);
+    private int _painkillerDoses; // Four limited doses, persisted in the campaign save.
     private readonly List<string> _seededEchoes = [];
     private readonly Dictionary<string, string> _echoOrigins = new(StringComparer.OrdinalIgnoreCase);
     private readonly HashSet<string> _enabledContentSets = new(StringComparer.OrdinalIgnoreCase) { "Base" };
@@ -498,6 +499,8 @@ public sealed partial class GameSession
             return false;
         if (card.Id == "CAMP-006" && ResourceValue("Coin") < 1)
             return false;
+        if (card.Id == "CAMP-007" && ResourceValue("Food") < 1)
+            return false;
         return true;
     }
 
@@ -530,6 +533,8 @@ public sealed partial class GameSession
             return "No available role can be afforded.";
         if (card.Id == "CAMP-006" && ResourceValue("Coin") < 1)
             return "You need at least 1 Coin to hire a Mercenary.";
+        if (card.Id == "CAMP-007" && ResourceValue("Food") < 1)
+            return "Hospitality on the Road requires 1 Food.";
         return string.Empty;
     }
 
@@ -2736,6 +2741,7 @@ public sealed partial class GameSession
         AvailableForces.Clear();
         PersistentItems.Clear();
         ActiveTokens.Clear();
+        _painkillerDoses = 0;
         Baggage.Clear();
         Tribes.Clear();
         PlayArea.Clear();
@@ -2923,14 +2929,22 @@ public sealed partial class GameSession
 
         if (clearRoadActive)
         {
+            // Show the actual printed effect BEFORE the once-use Clear Road decision.
+            // This reads from the triggered card, not from a card-specific fallback;
+            // importantly it does not execute the event or make any rolls.
+            var exploreEffectPreview = System.Net.WebUtility.HtmlDecode(
+                Regex.Replace(
+                    Regex.Replace(card.Effect ?? string.Empty, @"(?i)<br\s*/?>|</li>|</p>", ". "),
+                    @"<[^>]*>", " "));
+            exploreEffectPreview = Regex.Replace(exploreEffectPreview, @"\s+", " ").Trim();
             _specialPrompt = "HighOverlook";
             FlowPrompt = new(
                 FlowPromptKind.Choice,
-                "High Overlook",
-                "Clear Road can cancel this triggered Explore event before any part of it is resolved.",
+                "High Overlook — " + card.Title,
+                $"Before choosing, review {card.Title}. If resolved: {exploreEffectPreview} Clear Road can cancel this Explore event before any part of it is resolved.",
                 [
-                    new("high-overlook:resolve", "Resolve the Explore event", "Keep Clear Road for a future Explore event"),
-                    new("high-overlook:ignore", "Discard Clear Road and ignore this event")
+                    new("high-overlook:resolve", "Resolve the Explore event", "Resolve the printed event and keep Clear Road for a future Explore event."),
+                    new("high-overlook:ignore", "Discard Clear Road and ignore this event", "Spend Clear Road now: ignore the entire Explore event without rolling or applying its effects.")
                 ]);
             Changed?.Invoke();
             return;
@@ -3206,7 +3220,7 @@ public sealed partial class GameSession
         var total = d1 + d2;
         var rapport = total switch
         {
-            <= 5 => "Hostile",
+            <= 4 => "Hostile",
             >= 11 => "Friendly",
             _ => "Neutral"
         };
@@ -3749,10 +3763,21 @@ public sealed partial class GameSession
                 && string.Equals(PendingCampCard?.Id, "CAMP-010", StringComparison.OrdinalIgnoreCase)
                 && label.StartsWith("Armor Development", StringComparison.OrdinalIgnoreCase)
                 && _armorSupply.Count == 0;
+            // The optional Herd conversion must not be offered when there are no
+            // Infantry, no matching doubles, or no Cavalry available to convert.
+            var herdConvertChoice = _activeFlowContext == FlowContext.Explore
+                && string.Equals(PendingExploreCard?.Id, "EXPLORE-006", StringComparison.OrdinalIgnoreCase)
+                && label.StartsWith("Convert available pairs", StringComparison.OrdinalIgnoreCase);
+            var herdPairs = _lastRollResults.GroupBy(roll => roll).Sum(group => group.Count() / 2);
+            var herdUnavailableReason = !herdConvertChoice ? null
+                : HostCount("Infantry") == 0 ? "the Host has no Infantry to convert."
+                : herdPairs == 0 ? "no matching doubles were rolled."
+                : AvailableForceCount("Cavalry") <= 0 ? "no Cavalry remain in the available force."
+                : null;
             var conditionAllowed = BranchConditionAllowed(branch);
             var rewardExhaustedReason = ExhaustedExploreRewardReason(label);
             var branchAllowed = conditionAllowed && !drillArmorUnavailable
-                && rewardExhaustedReason is null;
+                && rewardExhaustedReason is null && herdUnavailableReason is null;
             var noQuarterTollChoice = _activeFlowContext == FlowContext.Explore
                 && PendingExploreCard?.Id is "EXPLORE-033" or "EXPLORE-034" or "EXPLORE-035";
             if (firepotsBaggageChoice)
@@ -3770,6 +3795,8 @@ public sealed partial class GameSession
             var detail = ReplacePlaceholders(GetString(branch, "notes") ?? string.Empty);
             if (drillArmorUnavailable)
                 detail = "Unavailable: no Armor Developments remain in the R&R offer.";
+            if (herdUnavailableReason is not null)
+                detail = $"Unavailable: {herdUnavailableReason}";
 
             if (hostileEchoParley)
             {
@@ -3831,7 +3858,7 @@ public sealed partial class GameSession
             {
                 detail = label switch
                 {
-                    "Market" => "Cost: 1 Wood + 1 Coin. During Harvest, you may sell up to 2 Resources purged from the Baggage Train. Market Day may also be used at a Player Controlled Settlement.",
+                    "Market" => "Cost: 1 Wood + 1 Coin. During Harvest, you may sell up to 2 Resources purged from the Baggage Train. At a Player Controlled Settlement, standard Camp actions may also be performed.",
                     "Baggage Cart" => "Cost: 1 Wood. Increase Baggage Train capacity by 2 slots.",
                     _ => detail
                 };
@@ -3841,7 +3868,7 @@ public sealed partial class GameSession
             {
                 detail = label switch
                 {
-                    "Take the Draught" => "Gain Painkiller. Painkiller: whenever a Military Unit or Levy would be lost, roll 1d6 for that loss; on 5–6, prevent it.",
+                    "Take the Draught" => "Gain 4 Painkiller doses. Before losing a Military Unit or Levy, you may spend 1 dose and roll 1d6; on 5–6 prevent that loss. On failure, you may spend another dose to retry.",
                     "Refuse the Dose" => "Gain +1 Morale.",
                     _ => detail
                 };
@@ -3923,6 +3950,19 @@ public sealed partial class GameSession
         }
 
         var prompt = ReplacePlaceholders(GetString(node, "prompt") ?? "Choose");
+        if (_activeFlowContext == FlowContext.Explore
+            && string.Equals(PendingExploreCard?.Id, "EXPLORE-006", StringComparison.OrdinalIgnoreCase))
+        {
+            var herdPairs = _lastRollResults.GroupBy(roll => roll).Sum(group => group.Count() / 2);
+            if (HostCount("Infantry") == 0)
+                prompt = "The Host has no Infantry to convert; no dice were rolled.";
+            else if (herdPairs == 0)
+                prompt = "No matching doubles were rolled. No Infantry can be converted.";
+            else if (AvailableForceCount("Cavalry") <= 0)
+                prompt = "Matching doubles were rolled, but no Cavalry remain available for conversion.";
+            else
+                prompt = $"{herdPairs} matching pair(s) rolled. You may convert up to {Math.Min(herdPairs, Math.Min(HostCount("Infantry"), AvailableForceCount("Cavalry")))} Infantry to Cavalry, or leave the herd alone.";
+        }
         if (hostileEchoParley)
         {
             prompt = $"Parley? Tribute: 2 {parleyResource} or 5 Coin.";
@@ -4088,6 +4128,12 @@ public sealed partial class GameSession
             ("CAMP-004", "Market") => CostRequirementReason(("Wood", 1), ("Coin", 1)),
             ("CAMP-004", "Baggage Cart") when HasBuilding("Baggage Cart") => "the Baggage Cart is already built.",
             ("CAMP-004", "Baggage Cart") => CostRequirementReason(("Wood", 1)),
+            ("CAMP-010", "Purchase Advancement/Armor") when ResourceValue("Research") == 0 =>
+                "requires at least 1 Research after the Drill discount; you have 0.",
+            ("CAMP-010", "Purchase Advancement/Armor") =>
+                "neither the top Advancement nor Armor is affordable after the discount and other printed costs.",
+            ("CAMP-010", "Top Advancement card") => DrillPurchaseUnavailableReason(_advancementDeck.FirstOrDefault(), "Advancement"),
+            ("CAMP-010", "Armor Development from R&R Offer") => DrillPurchaseUnavailableReason(_armorSupply.FirstOrDefault(), "Armor Development"),
             ("CAMP-012", "Train Scouts") when HasScouting => "Scouting is already in place.",
             ("CAMP-012", "Train Scouts") => $"requires 1 Coin; you have {ResourceValue("Coin")}.",
             ("CAMP-012", "Appoint Camp Steward") when HasToken("CampSteward") => "the Camp Steward is already in place.",
@@ -4195,9 +4241,9 @@ public sealed partial class GameSession
                 "Spend 1 Wood. Repair 1 damaged Baggage Train space.",
 
             ("CAMP-002", "Market") =>
-                "Buy and/or sell up to 2 Resources at current Market values. Purchases are subject to Baggage Train capacity.",
+                "This choice was retired in 0552.",
             ("CAMP-002", "Rest") =>
-                "Gain 1 Morale.",
+                "This choice was retired in 0552.",
 
             ("CAMP-003", "Chapel") =>
                 "Spend 1 Wood + 1 Coin. Gain a Priest. Priest: optional 5–6 Proselytization before Combat, prevent 1 Winter Attrition loss, and improve the Finale Resolve Check.",
@@ -4205,18 +4251,16 @@ public sealed partial class GameSession
                 "Spend 1 Stone + 1 Coin. Whenever you gain Research, roll 1d6 for each Research gained; each 4–6 grants +1 additional Research.",
 
             ("CAMP-004", "Market") =>
-                "Spend 1 Wood + 1 Coin. During Harvest, you may sell up to 2 Resources purged from the Baggage Train. Market Day may also be used at a Controlled Settlement.",
+                "Spend 1 Wood + 1 Coin. During Harvest, you may sell up to 2 Resources purged from the Baggage Train. The Market is active at Player Controlled Settlements.",
             ("CAMP-004", "Baggage Cart") =>
                 "Spend 1 Wood. Increase Baggage Train capacity by 2 spaces.",
 
-            ("CAMP-007", "Provision") =>
-                "Spend 2 Coin to gain 1 Food, Wood, or Stone. You may spend 1 additional Coin to gain 1 additional Food, Wood, or Stone.",
-            ("CAMP-007", "Rest") =>
-                "Gain 1 Morale.",
-            ("CAMP-007", "Buy 1 additional Resource") =>
-                "Spend 1 additional Coin. Gain 1 additional Food, Wood, or Stone.",
-            ("CAMP-007", "Done") =>
-                "Finish Supply Convoy without buying another Resource.",
+            ("CAMP-007", "Leadership and Morale") =>
+                "Spend 1 Food. Gain 1 Leadership and 1 Morale.",
+            ("CAMP-007", "Leadership and adjacent Terrain Resource") =>
+                $"Spend 1 Food. Gain 1 Leadership and 1 {AdjacentTerrainResource()} (Baggage capacity applies).",
+            ("CAMP-007", "Morale and adjacent Terrain Resource") =>
+                $"Spend 1 Food. Gain 1 Morale and 1 {AdjacentTerrainResource()} (Baggage capacity applies).",
 
             ("CAMP-009", "Raise Levies") =>
                 "Spend 1 Food. Add 2 Levy to your Host.",
@@ -4252,9 +4296,9 @@ public sealed partial class GameSession
                 "No immediate effect.",
 
             ("SCENE-020", "Send in a Fighter") =>
-                "Choose 1 Archer, Cavalry, Infantry, Mercenary, or Hedge Knight, then roll 1d6. 1: lose that Unit; 2–3: lose 1 Morale; 4–5: gain 2 Coin; 6: gain 3 Coin and 1 Morale.",
+                "Requires at least 1 Military Unit (Levy alone do not qualify). Roll 1d6: 1, lose 1 Morale; 2–3, no immediate effect; 4–5, gain 2 Coin; 6, gain 3 Coin and 1 Morale. The fighter is not removed by this roll.",
             ("SCENE-020", "Refuse the Challenge") =>
-                "Lose 1 Morale.",
+                "Lose 1 Leadership.",
 
             ("ARRIVAL-015", "Preserve the Tablets (9+)") =>
                 "Pass: Gain 1 Research and 1 Rapport. Fail: Lose 1 Coin.",
@@ -4262,10 +4306,10 @@ public sealed partial class GameSession
             ("SCENE-022", "Take the Firepots") =>
                 currentDetail,
             ("SCENE-022", "Condemn the Stockpile") =>
-                "Gain 1 Leadership and lose 1 Morale.",
+                "Gain 1 Leadership.",
 
             ("SCENE-023", "Take the Draught") =>
-                "Gain Painkiller. Whenever a Military Unit or Levy would be lost from any game effect, roll 1d6 for that loss; on 5–6, prevent it.",
+                "Gain 4 Painkiller doses. For each threatened Military Unit or Levy loss, you may spend 1 dose and roll 1d6; 5–6 prevents the loss. On failure, you may spend another dose to retry. Each roll consumes a dose.",
             ("SCENE-023", "Refuse the Dose") =>
                 "Gain 1 Morale.",
 
@@ -4275,11 +4319,11 @@ public sealed partial class GameSession
                 "No immediate effect.",
 
             ("SCENE-026", "Let the Rite Continue") =>
-                "Advance 1 Time.",
+                "No immediate Time, Resource, Leadership, or Morale change.",
             ("SCENE-026", "Interrupt the Priest") =>
-                "Gain 1 Leadership.",
+                "Advance 1 Time. Gain 1 Leadership.",
             ("SCENE-026", "Let Your Priest Judge It") =>
-                "Requires a Priest. Test 8+: pass, gain 1 Leadership and 1 Morale; fail, lose 1 Morale.",
+                "Requires a Priest. Test 7+: pass, gain 1 Leadership and 1 Morale; fail, advance 1 Time.",
 
             ("SCENE-027", "Laugh It Off") =>
                 "Gain 1 Morale.",
@@ -4570,6 +4614,48 @@ public sealed partial class GameSession
             return options;
         }
 
+        // Remember Tomorrow examines three cards and offers a remove, discard,
+        // then reorder sequence. Existing two-card inspections are unchanged.
+        if (string.Equals(PendingCampCard?.Id, "ECHO-S-02", StringComparison.OrdinalIgnoreCase)
+            && string.Equals(input, "ViewedCampCards", StringComparison.OrdinalIgnoreCase))
+        {
+            options.Add(new("select:__NONE__", "Remove none", "Keep all inspected cards eligible for the next decision."));
+            foreach (var card in _viewedCampCards.Where(c => c.CardType is "Camp" or "Echo"))
+                options.Add(new($"select:{card.Id}", IsHostileEcho(card)
+                    ? $"Return {card.Title} to the Echo supply"
+                    : $"Permanently remove {card.Title}"));
+            return options;
+        }
+
+        if (string.Equals(input, "RemainingViewedCampCards", StringComparison.OrdinalIgnoreCase))
+        {
+            options.Add(new("select:__NONE__", "Discard none"));
+            var cards = _viewedCampCards.ToArray();
+            for (var mask = 1; mask < (1 << cards.Length); mask++)
+            {
+                var chosen = cards.Where((c, index) => (mask & (1 << index)) != 0).ToArray();
+                options.Add(new($"select:{string.Join("|", chosen.Select(c => c.Id))}",
+                    $"Discard {string.Join(" and ", chosen.Select(c => c.Title))}"));
+            }
+            return options;
+        }
+
+        if (string.Equals(input, "ViewedCampOrder", StringComparison.OrdinalIgnoreCase))
+        {
+            if (_viewedCampCards.Count <= 1)
+                return options;
+            var cards = _viewedCampCards.ToArray();
+            foreach (var i in Enumerable.Range(0, cards.Length))
+                foreach (var k in Enumerable.Range(0, cards.Length).Where(k => k != i))
+                {
+                    var indexes = new[] { i, k }.Concat(Enumerable.Range(0, cards.Length).Where(x => x != i && x != k)).ToArray();
+                    var ordered = indexes.Select(x => cards[x]).ToArray();
+                    options.Add(new($"select:{string.Join("|", ordered.Select(c => c.Id))}",
+                        string.Join(" then ", ordered.Select(c => c.Title))));
+                }
+            return options;
+        }
+
         if (string.Equals(input, "ViewedCampCards", StringComparison.OrdinalIgnoreCase))
         {
             if (_viewedCampCards.Count == 0)
@@ -4824,7 +4910,10 @@ public sealed partial class GameSession
         {
             if (_activeFlowContext == FlowContext.Camp && string.IsNullOrWhiteSpace(GetString(matchedBranch.Value, "player_text")))
                 AddCampRollNarrative(RollComparableValue());
-            AddPlayerText(matchedBranch.Value);
+            if (input == "1d6PerHostInfantry" && HostCount("Infantry") == 0)
+                AddNarrativeText("The Host has no Infantry to convert; no dice are rolled.");
+            else
+                AddPlayerText(matchedBranch.Value);
             _activeNodeId = GetString(matchedBranch.Value, "next");
         }
         else
@@ -5364,10 +5453,26 @@ public sealed partial class GameSession
                 SetRapport(target, Convert.ToString(value) ?? string.Empty);
                 break;
             case "Damage":
-                DamageBaggageSlot(ToInt(value));
+                if (string.Equals(target, "BaggageSlot", StringComparison.OrdinalIgnoreCase)
+                    && string.Equals(Convert.ToString(value), "OneAvailable", StringComparison.OrdinalIgnoreCase))
+                {
+                    var availableSlots = Baggage.Where(b => !b.Damaged).ToArray();
+                    if (availableSlots.Length > 0)
+                    {
+                        var chosen = availableSlots[Random.Shared.Next(availableSlots.Length)];
+                        _flowVars["LastDamagedBaggageSlot"] = chosen.Position;
+                        DamageBaggageSlot(chosen.Position);
+                    }
+                }
+                else
+                    DamageBaggageSlot(ToInt(value));
                 break;
             case "Repair":
-                RepairBaggageSlot(ToInt(value));
+                if (string.Equals(Convert.ToString(value), "LastDamagedBaggageSlot", StringComparison.OrdinalIgnoreCase)
+                    && _flowVars.TryGetValue("LastDamagedBaggageSlot", out var damagedSlot))
+                    RepairBaggageSlot(ToInt(damagedSlot));
+                else
+                    RepairBaggageSlot(ToInt(value));
                 break;
             case "Capture":
                 CaptureCurrentSettlement();
@@ -5376,7 +5481,14 @@ public sealed partial class GameSession
                 GainAdvancement(target, flags);
                 break;
             case "GainToken":
-                GainPersistentToken(target, flags);
+                if (string.Equals(target, "PainkillerDose", StringComparison.OrdinalIgnoreCase))
+                {
+                    _painkillerDoses += Math.Max(0, ToInt(value));
+                    ActiveTokens.Add("Painkiller");
+                    AddNarrativeText($"Gain {ToInt(value)} Painkiller doses ({_painkillerDoses} remaining).");
+                }
+                else
+                    GainPersistentToken(target, flags);
                 break;
             case "RemoveToken":
                 RemovePersistentToken(target);
@@ -5422,6 +5534,61 @@ public sealed partial class GameSession
             case "Combat":
                 PresentCombatPrompt(target, Convert.ToString(value) ?? string.Empty, flags, next);
                 return false;
+            case "DrawReplacement":
+                if (_activeFlowContext == FlowContext.Camp)
+                {
+                    var replacement = DrawCampCard();
+                    if (replacement is not null)
+                    {
+                        CampHand.Add(replacement);
+                        AddNarrativeText($"Draw a replacement Camp card: {replacement.Title}.");
+                    }
+                }
+                break;
+            case "RemoveOrUnseed":
+                if (string.Equals(target, "SelectedViewedCampCard", StringComparison.OrdinalIgnoreCase))
+                {
+                    var selectedId = Convert.ToString(_flowVars.TryGetValue("SelectedToRemove", out var selectionId) ? selectionId : null);
+                    var selectedCard = _viewedCampCards.FirstOrDefault(c => c.Id == selectedId);
+                    if (selectedCard is not null && (selectedCard.CardType is "Camp" or "Echo"))
+                    {
+                        _viewedCampCards.Remove(selectedCard);
+                        if (IsHostileEcho(selectedCard))
+                        {
+                            _unseededEchoes.Add(selectedCard);
+                            AddNarrativeText($"Return {selectedCard.Title} to the unseeded Echo supply.");
+                        }
+                        else
+                        {
+                            _removedCampCards.Add(selectedCard);
+                            AddNarrativeText($"Permanently remove {selectedCard.Title}.");
+                        }
+                    }
+                }
+                break;
+            case "LoseIfPresent":
+                if (string.Equals(target, "ResourceInSelectedAdjacentSlot", StringComparison.OrdinalIgnoreCase))
+                {
+                    var slot = ToInt(_flowVars.TryGetValue("SelectedAdjacentSlot", out var selectedPos) ? selectedPos : 0);
+                    // Remove cargo from the actual damaged adjacent space rather
+                    // than another space holding the same Resource.
+                    ApplyLose("ResourceInSelectedAdjacentSlot", value, flags);
+                }
+                break;
+            case "SeedRandomScene":
+                // Seed a Scene from the unused supply, not from the drawn Camp hand.
+                if (_unseededScenes.Count > 0)
+                {
+                    var selectedIndex = Random.Shared.Next(_unseededScenes.Count);
+                    var selectedScene = _unseededScenes[selectedIndex];
+                    _unseededScenes.RemoveAt(selectedIndex);
+                    _campDiscard.Add(selectedScene);
+                    MarkLatestChronicleEntryEchoIndicator();
+                }
+                break;
+            case "LoseHalfFood":
+                ApplyLose("Food", (ResourceValue("Food") + 1) / 2, flags);
+                break;
             case "SeedRandomEcho":
             case "SeedEcho":
                 SeedEchoInternal(type, target, Convert.ToString(value));
@@ -5557,6 +5724,24 @@ public sealed partial class GameSession
         };
     }
 
+    // Nearest encountered tribe, not necessarily the tribe currently demanding Tribute.
+    // Prefer the Host's Clearing, then the closest encountered settlement behind it.
+    private string? NearestEncounteredTribe()
+    {
+        var clearing = PlayArea.LastOrDefault(p => p.Kind == PlayAreaKind.Clearing && p.IsHostLocation);
+        if (clearing is not null && !string.IsNullOrWhiteSpace(clearing.Controller)
+            && clearing.Controller != "Player" && GetTribeRapport(clearing.Controller) != "Unmet")
+            return clearing.Controller;
+        for (var i = PlayArea.Count - 1; i >= 0; i--)
+        {
+            var site = PlayArea[i];
+            if (site.Kind == PlayAreaKind.Clearing && !string.IsNullOrWhiteSpace(site.Controller)
+                && site.Controller != "Player" && GetTribeRapport(site.Controller) != "Unmet")
+                return site.Controller;
+        }
+        return Tribes.FirstOrDefault(t => t.Rapport != "Unmet")?.Name;
+    }
+
     private string NearestTribeRapport()
     {
         var clearing = PlayArea.LastOrDefault(p => p.Kind == PlayAreaKind.Clearing && p.IsHostLocation);
@@ -5650,6 +5835,15 @@ public sealed partial class GameSession
 
     private void RemovePersistentToken(string target)
     {
+        if (string.Equals(target, "PainkillerDose", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(target, "Painkiller", StringComparison.OrdinalIgnoreCase))
+        {
+            _painkillerDoses = 0;
+            ActiveTokens.Remove("Painkiller");
+            ActiveTokens.Remove("PainkillerDose");
+            AddNarrativeText("No Painkiller doses remain.");
+            return;
+        }
         if (string.Equals(target, "SelectedToken", StringComparison.OrdinalIgnoreCase)
             && _flowVars.TryGetValue("SelectedToken", out var selected))
             target = Convert.ToString(selected) ?? target;
@@ -5680,7 +5874,7 @@ public sealed partial class GameSession
         AddNarrativeText(target switch
         {
             "Academy" => "Build Academy. Whenever you gain Research, roll 1d6 for each Research gained; each 4–6 grants +1 additional Research.",
-            "Market" => "Build Market. During Harvest, sell up to 2 Resources purged from the Baggage Train; Market Day may also be used at a Player Controlled Settlement.",
+            "Market" => "Build Market. During Harvest, sell up to 2 Resources purged from the Baggage Train; At a Player Controlled Settlement, standard Camp actions may also be performed.",
             _ => $"Build {target}."
         });
     }
@@ -6090,7 +6284,7 @@ public sealed partial class GameSession
             return;
 
         var selection = Convert.ToString(_flowVars.TryGetValue("SelectedToDiscard", out var selected) ? selected : null) ?? string.Empty;
-        if (selection.StartsWith("__KEEP_", StringComparison.OrdinalIgnoreCase))
+        if (selection.StartsWith("__", StringComparison.OrdinalIgnoreCase))
             return;
 
         var ids = selection.Split('|', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
@@ -6109,6 +6303,19 @@ public sealed partial class GameSession
     {
         if (_viewedCampCards.Count == 0)
             return;
+
+        var order = Convert.ToString(_flowVars.TryGetValue("SelectedOrder", out var chosenOrder) ? chosenOrder : null) ?? string.Empty;
+        if (!string.IsNullOrEmpty(order))
+        {
+            var ids = order.Split('|', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            var ordered = ids.Select(id => _viewedCampCards.FirstOrDefault(c => c.Id == id))
+                .Where(c => c is not null).Select(c => c!).ToList();
+            if (ordered.Count == _viewedCampCards.Count)
+            {
+                _viewedCampCards.Clear();
+                _viewedCampCards.AddRange(ordered);
+            }
+        }
 
         var selection = Convert.ToString(_flowVars.TryGetValue("SelectedToDiscard", out var selected) ? selected : null) ?? string.Empty;
         if (string.Equals(selection, "__KEEP_REVERSED__", StringComparison.OrdinalIgnoreCase))
@@ -6193,6 +6400,10 @@ public sealed partial class GameSession
         string enemySpec;
         switch (target)
         {
+            case "Tollmen":
+                enemyName = "The Lord's Tollmen";
+                enemySpec = $"{Year + 1}I";
+                break;
             case "BanditHorde":
                 enemyName = "Bandit Horde";
                 enemySpec = $"{count}I";
@@ -6712,9 +6923,10 @@ public sealed partial class GameSession
 
         if (IsPhysicalResource(target))
         {
+            var before = ResourceValue(target);
             var gained = AddPhysicalResource(target, amount);
             if (gained > 0)
-                AddNarrativeText($"Gain {gained} {target}.");
+                AddNarrativeText($"Gain {gained} {target} ({before} → {ResourceValue(target)}).");
             if (gained < amount)
                 AddNarrativeText($"No Baggage space for {amount - gained} {target}.");
             return;
@@ -6722,20 +6934,22 @@ public sealed partial class GameSession
 
         if (string.Equals(target, "Leadership", StringComparison.OrdinalIgnoreCase))
         {
+            var before = Leadership;
             Leadership += amount;
             if (_activeFlowContext == FlowContext.Camp
                 && string.Equals(PendingCampCard?.Id, "CAMP-010", StringComparison.OrdinalIgnoreCase)
                 && amount == 1)
                 AddNarrativeText("Regain the 1 Leadership committed to Drill the Host.");
             else
-                AddNarrativeText($"Gain {amount} Leadership.");
+                AddNarrativeText($"Gain {amount} Leadership ({before} → {Leadership}).");
             return;
         }
 
         if (string.Equals(target, "Morale", StringComparison.OrdinalIgnoreCase))
         {
+            var before = Morale;
             Morale += amount;
-            AddNarrativeText($"Gain {amount} Morale.");
+            AddNarrativeText($"Gain {amount} Morale ({before} → {Morale}).");
             return;
         }
 
@@ -6750,8 +6964,9 @@ public sealed partial class GameSession
             return;
         }
 
+        var resourceBefore = ResourceValue(target);
         AdjustResource(target, amount);
-        AddNarrativeText($"Gain {amount} {target}.");
+        AddNarrativeText($"Gain {amount} {target} ({resourceBefore} → {ResourceValue(target)}).");
         if (string.Equals(target, "Research", StringComparison.OrdinalIgnoreCase))
             ResolveAcademyResearchBonus(amount);
     }
@@ -6842,9 +7057,10 @@ public sealed partial class GameSession
 
         if (IsPhysicalResource(target))
         {
+            var before = ResourceValue(target);
             var lost = RemovePhysicalResource(target, amount);
             if (lost > 0)
-                AddNarrativeText($"Lose {lost} {target}.");
+                AddNarrativeText($"Lose {lost} {target} ({before} → {ResourceValue(target)}).");
             if (applyShortfall && lost < amount)
                 ApplyShortfall(amount - lost);
             return;
@@ -6853,8 +7069,9 @@ public sealed partial class GameSession
         if (string.Equals(target, "Leadership", StringComparison.OrdinalIgnoreCase))
         {
             var lost = Math.Min(Leadership, amount);
+            var before = Leadership;
             Leadership -= lost;
-            AddNarrativeText($"Lose {lost} Leadership.");
+            AddNarrativeText($"Lose {lost} Leadership ({before} → {Leadership}).");
             if (applyShortfall && lost < amount)
                 ApplyShortfall(amount - lost);
             return;
@@ -6862,8 +7079,9 @@ public sealed partial class GameSession
 
         if (string.Equals(target, "Morale", StringComparison.OrdinalIgnoreCase))
         {
+            var before = Morale;
             Morale -= amount;
-            AddNarrativeText($"Lose {amount} Morale.");
+            AddNarrativeText($"Lose {amount} Morale ({before} → {Morale}).");
             return;
         }
 
@@ -6871,7 +7089,7 @@ public sealed partial class GameSession
         var actual = Math.Min(available, amount);
         AdjustResource(target, -actual);
         if (actual > 0)
-            AddNarrativeText($"Lose {actual} {target}.");
+            AddNarrativeText($"Lose {actual} {target} ({available} → {ResourceValue(target)}).");
         if (applyShortfall && actual < amount)
             ApplyShortfall(amount - actual);
         else if (!ifAble && actual < amount)
@@ -6902,7 +7120,10 @@ public sealed partial class GameSession
 
         if (IsPhysicalResource(target))
         {
+            var before = ResourceValue(target);
             var spent = RemovePhysicalResource(target, amount);
+            if (spent > 0)
+                AddNarrativeText($"Spend {spent} {target} ({before} → {ResourceValue(target)}).");
             if (applyShortfall && spent < amount)
                 ApplyShortfall(amount - spent);
             return;
@@ -6910,8 +7131,11 @@ public sealed partial class GameSession
 
         if (string.Equals(target, "Leadership", StringComparison.OrdinalIgnoreCase))
         {
+            var before = Leadership;
             var spent = Math.Min(Leadership, amount);
             Leadership -= spent;
+            if (spent > 0)
+                AddNarrativeText($"Spend {spent} Leadership ({before} → {Leadership}).");
             if (applyShortfall && spent < amount)
                 ApplyShortfall(amount - spent);
             return;
@@ -6920,6 +7144,8 @@ public sealed partial class GameSession
         var available = ResourceValue(target);
         var actual = Math.Min(available, amount);
         AdjustResource(target, -actual);
+        if (actual > 0)
+            AddNarrativeText($"Spend {actual} {target} ({available} → {ResourceValue(target)}).");
         if (applyShortfall && actual < amount)
             ApplyShortfall(amount - actual);
     }
@@ -7136,7 +7362,9 @@ public sealed partial class GameSession
 
         var tribe = string.Equals(target, "CurrentTribe", StringComparison.OrdinalIgnoreCase)
             ? _currentArrivalTribe
-            : target;
+            : string.Equals(target, "NearestTribe", StringComparison.OrdinalIgnoreCase)
+                ? NearestEncounteredTribe()
+                : target;
         if (string.IsNullOrWhiteSpace(tribe))
             return;
 
@@ -7372,6 +7600,31 @@ public sealed partial class GameSession
             SeedSpecificEcho(id);
     }
 
+    // A Drill purchase must be affordable at selection time, not merely when
+    // PurchaseAdvancement eventually executes. A minimum 1 Research remains
+    // payable even when the printed Research price would fall to zero.
+    private bool CanAffordDrillAdvancement(AdvancementOfferState? advancement)
+    {
+        if (advancement is null)
+            return false;
+
+        var discountedResearch = Math.Max(1, ParseResearchCost(advancement.Cost) - 1);
+        return ResourceValue("Research") >= discountedResearch
+            && ResourceValue("Coin") >= ParseCostAmount(advancement.Cost, "C")
+            && Leadership >= ParseCostAmount(advancement.Cost, "L");
+    }
+
+    private string DrillPurchaseUnavailableReason(AdvancementOfferState? advancement, string offerName)
+    {
+        if (advancement is null)
+            return $"no {offerName} is currently available.";
+        var research = Math.Max(1, ParseResearchCost(advancement.Cost) - 1);
+        return $"{advancement.Name} requires {research} Research, "
+            + $"{ParseCostAmount(advancement.Cost, "C")} Coin, and "
+            + $"{ParseCostAmount(advancement.Cost, "L")} Leadership after the Drill discount; "
+            + $"you have {ResourceValue("Research")} Research, {ResourceValue("Coin")} Coin, and {Leadership} Leadership.";
+    }
+
     private bool CampBranchAllowed(string label)
     {
         if (PendingCampCard is null)
@@ -7385,8 +7638,13 @@ public sealed partial class GameSession
             ("CAMP-004", "Market") => !HasBuilding("Market") && CanPayCostBundle("1W+1C"),
             ("CAMP-004", "Baggage Cart") => !HasBuilding("Baggage Cart") && CanPayCostBundle("1W"),
             ("CAMP-012", "Train Scouts") => !HasScouting && ResourceValue("Coin") >= 1,
-            ("CAMP-007", "Provision") => ResourceValue("Coin") >= 2 && new[] { "Food", "Wood", "Stone" }.Any(r => CanMakeRoomForPhysicalResource(r, 1)),
-            ("CAMP-007", "Buy 1 additional Resource") => ResourceValue("Coin") >= 1 && new[] { "Food", "Wood", "Stone" }.Any(r => CanMakeRoomForPhysicalResource(r, 1)),
+            ("CAMP-010", "Purchase Advancement/Armor") => CanAffordDrillAdvancement(_advancementDeck.FirstOrDefault())
+                || CanAffordDrillAdvancement(_armorSupply.FirstOrDefault()),
+            ("CAMP-010", "Top Advancement card") => CanAffordDrillAdvancement(_advancementDeck.FirstOrDefault()),
+            ("CAMP-010", "Armor Development from R&R Offer") => CanAffordDrillAdvancement(_armorSupply.FirstOrDefault()),
+            ("CAMP-007", "Leadership and Morale") => ResourceValue("Food") >= 1,
+            ("CAMP-007", "Leadership and adjacent Terrain Resource") => ResourceValue("Food") >= 1 && CanMakeRoomForPhysicalResource(AdjacentTerrainResource(), 1),
+            ("CAMP-007", "Morale and adjacent Terrain Resource") => ResourceValue("Food") >= 1 && CanMakeRoomForPhysicalResource(AdjacentTerrainResource(), 1),
             ("CAMP-009", "Raise Levies") => ResourceValue("Food") >= 1 && AvailableForceCount("Levy") > 0 && HostCount("Levy") < 6,
             ("CAMP-012", "Appoint Camp Steward") => !HasToken("CampSteward") && ResourceValue("Coin") >= 2,
             ("SCENE-020", "Send in a Fighter") => Host.Any(u => u.Count > 0 && u.Type is "Archers" or "Cavalry" or "Infantry" or "Mercenaries" or "Hedge Knights"),
@@ -8078,20 +8336,24 @@ public sealed partial class GameSession
             return 0;
 
         var prevented = 0;
-        if (applyPainkiller
-            && HasToken("Painkiller")
+        if (applyPainkiller && _painkillerDoses > 0
             && type is "Archers" or "Cavalry" or "Infantry" or "Levy" or "Mercenaries" or "Hedge Knights")
         {
-            var rolls = new List<int>();
-            for (var i = 0; i < attempted; i++)
+            // Noncombat losses resolve automatically; retry each threatened casualty
+            // with the remaining finite doses, up to a successful 5–6.
+            for (var i = 0; i < attempted && _painkillerDoses > 0; i++)
             {
-                var roll = Random.Shared.Next(1, 7);
-                rolls.Add(roll);
-                if (roll >= 5)
-                    prevented++;
+                var saved = false;
+                while (_painkillerDoses > 0 && !saved)
+                {
+                    _painkillerDoses--;
+                    var roll = Random.Shared.Next(1, 7);
+                    saved = roll >= 5;
+                    AddNarrativeText($"Painkiller dose: rolled {roll}. {(saved ? "Casualty prevented." : "Casualty still threatened.")} {_painkillerDoses} doses remain.");
+                }
+                if (saved) prevented++;
             }
-
-            AddNarrativeText($"Painkiller: roll {string.Join(", ", rolls)}. Prevent {prevented} of {attempted} {SingularizeUnitLabel(type, attempted)} loss{(attempted == 1 ? string.Empty : "es")}.");
+            if (_painkillerDoses == 0) ActiveTokens.Remove("Painkiller");
         }
 
         var lost = attempted - prevented;
@@ -8268,7 +8530,7 @@ public sealed partial class GameSession
     private static string PersistentTokenRulesText(string token) => token switch
     {
         "Firepots" => "Before the first Combat round, you may remove Firepots and roll 3d6. Each 4+ inflicts 1 casualty as if from a Cavalry attack.",
-        "Painkiller" => "Whenever a Military Unit or Levy would be lost from any game effect, roll 1d6 for that loss. On 5–6, prevent it.",
+        "Painkiller" => "Four consumable doses when acquired. You may spend one before a Military Unit or Levy loss; roll 1d6, and on 5–6 prevent the casualty. After a failure you may spend another dose to retry.",
         "ForcedMarch" or "Forced March" => "While active, normal Explore costs 1 Time instead of 2. Gaining Slow March removes Forced March.",
         "SlowMarch" or "Slow March" => "While active, each normal Explore costs 3 Time instead of 2. Gaining Forced March removes Slow March.",
         "BadReputation" or "Bad Reputation" => "The next time you would gain Rapport with any tribe, gain none instead; then remove this reminder.",

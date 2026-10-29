@@ -1087,7 +1087,7 @@ h1, h2, h3, p { margin-top: 0; }
     border-color: #9d8f75;
     box-shadow: inset 3px 0 0 #8b7954;
 }
-.chronicle-choice strong { display: block; font-size: .9rem; font-weight: 650; }
+.chronicle-choice-label > strong { display: block; font-size: .9rem; font-weight: 650; }
 .chronicle-choice span { display: block; margin-top: 3px; font-size: .76rem; color: #756b58; }
 
 /* Follow-on lines belong to the event immediately above them, so do not
@@ -2742,3 +2742,9 @@ body.wc-action-busy::after {
 .custom-finale-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 20px; border-top: 1px solid #c8bba1; font-size: .84rem; }
 .custom-finale-error { color: #9b2525; font-weight: 700; }
 @media (max-width: 720px) { .custom-finale-grid { grid-template-columns: 1fr; } .custom-span-all { grid-column: auto; } .custom-finale-footer { flex-direction: column; align-items: stretch; } }
+
+/* Debug-only Simulation Lab (v0.5.0.65) */
+.wc-simulation-lab { max-width: 690px; max-height: 90vh; overflow-y: auto; }
+.wc-simulation-lab .wc-sim-summary { margin-top: 1.2rem; padding: 1rem; border: 1px solid #8d9298; border-radius: 8px; }
+.wc-simulation-lab .wc-sim-summary h3 { margin-top: 0; }
+.wc-simulation-lab .wc-sim-status { font-weight: 600; }

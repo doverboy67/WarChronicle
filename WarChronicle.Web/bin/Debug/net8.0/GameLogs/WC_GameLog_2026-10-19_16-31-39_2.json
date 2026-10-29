@@ -1,0 +1,458 @@
+{
+  "schemaVersion": 1,
+  "logType": "War Chronicle Game Log",
+  "gameId": "4ab564a8-bcae-44f8-9f96-1ab3852726b6",
+  "appVersion": "v0.5.0.40",
+  "startedUtc": "2026-10-19T20:31:10.6078052Z",
+  "endedUtc": "2026-10-19T20:31:39.594121Z",
+  "status": "Completed",
+  "outcome": "Defeat",
+  "endReason": "No Units remain in the Host. The campaign ends in defeat.",
+  "contentSets": [
+    "Base",
+    "No Quarter",
+    "PackC",
+    "SiaSL",
+    "SitA"
+  ],
+  "finalState": {
+    "year": 1,
+    "season": "Spring",
+    "time": 2,
+    "morale": 5,
+    "leadership": 3,
+    "host": {
+      "Archers": 0,
+      "Cavalry": 0,
+      "Infantry": 0,
+      "Levy": 0
+    },
+    "resources": {
+      "Coin": 5,
+      "Food": 1,
+      "Wood": 1,
+      "Stone": 1,
+      "Research": 0
+    },
+    "activeTokens": [],
+    "baggage": [
+      {
+        "position": 1,
+        "contents": "Food",
+        "quantity": 1,
+        "damaged": false
+      },
+      {
+        "position": 2,
+        "contents": "Wood",
+        "quantity": 1,
+        "damaged": false
+      },
+      {
+        "position": 3,
+        "contents": "Stone",
+        "quantity": 1,
+        "damaged": false
+      },
+      {
+        "position": 4,
+        "contents": null,
+        "quantity": 1,
+        "damaged": false
+      }
+    ]
+  },
+  "chronicle": [
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "The Host is assembled. The road to Middelalderen begins here.",
+      "tone": 0,
+      "heading": "The March Begins",
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Advance 2 Time.",
+      "tone": 3,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false
+    },
+    {
+      "calendar": "Spring \u2022 Year 1 \u2022 Explore",
+      "text": "The Starting Clearing falls behind as the Host steps out beneath a wide, open sky.",
+      "tone": 1,
+      "heading": "Plains",
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false
+    },
+    {
+      "calendar": "Spring \u2022 Year 1 \u2022 Explore",
+      "text": "A sunken field, filled with bones and discarded charms. The plague visited here once...",
+      "tone": 0,
+      "heading": "Plague Pit",
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Search the plague pit?",
+      "tone": 0,
+      "heading": "Plague Pit",
+      "choices": [
+        {
+          "id": "branch:0",
+          "label": "Search",
+          "detail": "Roll 1d6. On 5\u20136, gain 1 Armor Advancement; on 1, lose 1d3 Units of your choice; on 2\u20134, no effect.",
+          "disabled": false,
+          "echoIndicator": false
+        },
+        {
+          "id": "branch:1",
+          "label": "Leave it",
+          "detail": "No effect.",
+          "disabled": false,
+          "echoIndicator": false
+        }
+      ],
+      "selectedChoiceId": "branch:0",
+      "echoIndicator": false
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "You choose: Search.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Roll: 5.",
+      "tone": 3,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Among the dead, you uncover knowledge of improved armor.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Gain Armor.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false
+    },
+    {
+      "calendar": "Spring \u2022 Year 1 \u2022 Arrival",
+      "text": "Pale faces watch from the settlement as the Host approaches. The Pale Hands have seen you coming.",
+      "tone": 0,
+      "heading": "Arrival",
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Pale Hands Rapport changes from Unmet to Neutral.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "First Contact roll: 3 \u002B 4 = 7.",
+      "tone": 3,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Neither welcome nor threat greets the Host. The Pale Hands watch carefully and wait to see what you will do.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Passage has a price. The Pale Hands require 1 Food before the Host proceeds.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "The Host pays 1 Food in tribute.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false
+    },
+    {
+      "calendar": "Spring \u2022 Year 1 \u2022 Arrival",
+      "text": "Strips of parchment hang from a dead tree, each bearing a name, accusation, or last confession. Pale Hands witnesses ask your host to hear the claims before passing beneath the branches.",
+      "tone": 0,
+      "heading": "The Witness Tree",
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Choose an approach",
+      "tone": 0,
+      "heading": "The Witness Tree",
+      "choices": [
+        {
+          "id": "branch:0",
+          "label": "Hear the Claims (8\u002B)",
+          "detail": "Pass: Gain 1 Leadership. Fail: Lose 1 Morale.",
+          "disabled": false,
+          "echoIndicator": false
+        },
+        {
+          "id": "branch:1",
+          "label": "Name the Guilty (9\u002B)",
+          "detail": "Pass: Gain 1 Research and 1 Leadership. Fail: Lose 1 Coin.",
+          "disabled": false,
+          "echoIndicator": false
+        },
+        {
+          "id": "branch:2",
+          "label": "Twist the Testimony (7\u002B)",
+          "detail": "Pass: Gain 3 Coin. Fail: Lose 1 Rapport.",
+          "disabled": false,
+          "echoIndicator": false
+        },
+        {
+          "id": "branch:3",
+          "label": "Attack",
+          "detail": "Win: Gain 1 Research and 1 Leadership. Disengage: Lose 1 Leadership. Enemy Host: 2I, 4L",
+          "disabled": false,
+          "echoIndicator": false
+        }
+      ],
+      "selectedChoiceId": "branch:2",
+      "echoIndicator": false
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "You choose: Twist the Testimony.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Twist the Testimony: Test 7\u002B",
+      "tone": 0,
+      "heading": "The Witness Tree",
+      "choices": [
+        {
+          "id": "test:normal",
+          "label": "Roll 2d6",
+          "detail": null,
+          "disabled": false,
+          "echoIndicator": false
+        },
+        {
+          "id": "test:leadership",
+          "label": "Spend 1 Leadership",
+          "detail": "Roll 3d6 and keep the best 2",
+          "disabled": false,
+          "echoIndicator": false
+        }
+      ],
+      "selectedChoiceId": "test:normal",
+      "echoIndicator": false
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Roll: 3 \u002B 2 = 5.",
+      "tone": 3,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "You attempted to Twist the Testimony, but failed.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Lose 1 Rapport with Pale Hands.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false
+    },
+    {
+      "calendar": "Spring \u2022 Year 1 \u2022 Chronicle",
+      "text": "The Pale Hands remain unconvinced.",
+      "tone": 0,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "The Pale Hands become Hostile and attack.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "The Host is destroyed in battle.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "No Units remain in the Host. The campaign ends in defeat.",
+      "tone": 2,
+      "heading": "Defeat",
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false
+    }
+  ],
+  "campOffers": [],
+  "exploreDraws": [
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "cardId": "EXPLORE-029",
+      "title": "Plague Pit",
+      "terrain": "Plains",
+      "matchedTerrain": true,
+      "outcome": "Triggered"
+    }
+  ],
+  "battles": [
+    {
+      "battleNumber": 1,
+      "startedUtc": "2026-10-19T20:31:34.1594108Z",
+      "endedUtc": "2026-10-19T20:31:39.5939398Z",
+      "sourceLabel": "The Witness Tree",
+      "enemyName": "Pale Hands",
+      "isFinale": false,
+      "outcome": "Lost",
+      "initialPlayerUnits": {
+        "Archers": 0,
+        "Cavalry": 0,
+        "Infantry": 0,
+        "Levy": 2
+      },
+      "initialEnemyUnits": {
+        "Archers": 0,
+        "Cavalry": 0,
+        "Infantry": 2,
+        "Levy": 4
+      },
+      "finalPlayerUnits": {
+        "Archers": 0,
+        "Cavalry": 0,
+        "Infantry": 0,
+        "Levy": 0
+      },
+      "finalEnemyUnits": {
+        "Archers": 0,
+        "Cavalry": 0,
+        "Infantry": 2,
+        "Levy": 4
+      },
+      "entries": [
+        {
+          "text": "Combat begins against Pale Hands.",
+          "subdued": false
+        },
+        {
+          "text": "Player Host: 2 Levy",
+          "subdued": true
+        },
+        {
+          "text": "Enemy Host: 2 Infantry, 4 Levy",
+          "subdued": true
+        },
+        {
+          "text": "Priest phase skipped: no Priest is present.",
+          "subdued": false
+        },
+        {
+          "text": "Round 1 begins.",
+          "subdued": false
+        },
+        {
+          "text": "Archers phase skipped: no Archers are present.",
+          "subdued": false
+        },
+        {
+          "text": "Cavalry phase skipped: no Cavalry are present.",
+          "subdued": false
+        },
+        {
+          "text": "Infantry: Player rolls none. Enemy rolls 6*, 6*.",
+          "subdued": true
+        },
+        {
+          "text": "Infantry inflict 0 Player hits and 2 Enemy hits.",
+          "subdued": false
+        },
+        {
+          "text": "The Host loses 1 Levy.",
+          "subdued": false
+        },
+        {
+          "text": "The Host loses 1 Levy.",
+          "subdued": false
+        },
+        {
+          "text": "The Host is destroyed. The Combat is lost.",
+          "subdued": false
+        }
+      ]
+    }
+  ],
+  "activeBattle": null,
+  "finaleLog": []
+}

@@ -1,0 +1,2252 @@
+{
+  "schemaVersion": 1,
+  "logType": "War Chronicle Game Log",
+  "gameId": "0527bd63-8cbd-43a0-9b09-f5b301ae535d",
+  "appVersion": "v0.5.0.51",
+  "startedUtc": "2026-10-22T01:55:19.1888072Z",
+  "endedUtc": "2026-10-22T02:04:34.69162Z",
+  "status": "Completed",
+  "outcome": "Defeat",
+  "endReason": "No Units remain in the Host. The campaign ends in defeat.",
+  "contentSets": [
+    "Base",
+    "No Quarter",
+    "PackC",
+    "SiaSL",
+    "SitA"
+  ],
+  "finaleAdvancementCount": 5,
+  "finalState": {
+    "year": 1,
+    "season": "Summer",
+    "time": 19,
+    "morale": 7,
+    "leadership": 4,
+    "host": {
+      "Archers": 0,
+      "Cavalry": 0,
+      "Infantry": 0,
+      "Levy": 0
+    },
+    "resources": {
+      "Coin": 2,
+      "Food": 1,
+      "Wood": 1,
+      "Stone": 0,
+      "Research": 0
+    },
+    "activeTokens": [],
+    "baggage": [
+      {
+        "position": 1,
+        "contents": "Food",
+        "quantity": 1,
+        "damaged": false
+      },
+      {
+        "position": 2,
+        "contents": "Wood",
+        "quantity": 1,
+        "damaged": false
+      },
+      {
+        "position": 3,
+        "contents": null,
+        "quantity": 1,
+        "damaged": false
+      },
+      {
+        "position": 4,
+        "contents": null,
+        "quantity": 1,
+        "damaged": false
+      }
+    ]
+  },
+  "chronicle": [
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "The Host is assembled. The road to Middelalderen begins here.",
+      "tone": 0,
+      "heading": "The March Begins",
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1 \u2022 Mobilization Phase",
+      "text": "The Host is ready to leave the Starting Clearing.",
+      "tone": 0,
+      "heading": "Explore Step",
+      "choices": [
+        {
+          "id": "phase-gate:explore",
+          "label": "Explore",
+          "detail": "Advance along the road.",
+          "disabled": false,
+          "echoIndicator": false
+        }
+      ],
+      "selectedChoiceId": "phase-gate:explore",
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Advance 2 Time.",
+      "tone": 3,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1 \u2022 Explore",
+      "text": "The Starting Clearing falls behind as the Host steps out beneath a wide, open sky.",
+      "tone": 1,
+      "heading": "Plains",
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1 \u2022 Explore",
+      "text": "The miles pass quietly. Nothing on the open road demands the Host\u0027s attention.",
+      "tone": 0,
+      "heading": "Uneventful Travel",
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1 \u2022 Mobilization Phase",
+      "text": "The Explore Step is complete. When you are ready, reveal what waits at the end of the road.",
+      "tone": 0,
+      "heading": "Arrival Step",
+      "choices": [
+        {
+          "id": "phase-gate:arrival",
+          "label": "Proceed to Arrival",
+          "detail": "Reveal the next Clearing.",
+          "disabled": false,
+          "echoIndicator": false
+        }
+      ],
+      "selectedChoiceId": "phase-gate:arrival",
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1 \u2022 Arrival",
+      "text": "The Host reaches a settlement held by the Sun-Touched.",
+      "tone": 0,
+      "heading": "Arrival",
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Sun-Touched Rapport changes from Unmet to Neutral.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "First Contact roll: 1 \u002B 5 = 6.",
+      "tone": 3,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Neither welcome nor threat greets the Host. The Sun-Touched watch carefully and wait to see what you will do.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "The Sun-Touched demand 1 Stone in tribute.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "The Host pays 1 Stone in tribute.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1 \u2022 Arrival",
+      "text": "A hungry settlement watches your column pass. Their wardens have stores hidden, but not enough for everyone through the season. What you take or give here will be remembered.",
+      "tone": 0,
+      "heading": "Last Grain Before Frost",
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Choose an approach",
+      "tone": 0,
+      "heading": "Last Grain Before Frost",
+      "choices": [
+        {
+          "id": "branch:0",
+          "label": "Offer Relief (8\u002B)",
+          "detail": "Pass: Gain 1 Food and 1 Leadership. Fail: Lose 1 Food.",
+          "disabled": false,
+          "echoIndicator": false
+        },
+        {
+          "id": "branch:1",
+          "label": "Share the Burden (9\u002B)",
+          "detail": "Pass: Gain 1 Morale and 1 Food. Fail: Lose 1 Coin.",
+          "disabled": false,
+          "echoIndicator": false
+        },
+        {
+          "id": "branch:2",
+          "label": "Take the Stores (7\u002B)",
+          "detail": "Pass: Gain 2 Food. Fail: Lose 1 Rapport with Sun-Touched.",
+          "disabled": false,
+          "echoIndicator": false
+        },
+        {
+          "id": "branch:3",
+          "label": "Attack",
+          "detail": "Win: Gain 2 Food and 1 Leadership. Disengage: Lose 1 Morale. Enemy Host: 2A, 1I, 3L",
+          "disabled": false,
+          "echoIndicator": false
+        }
+      ],
+      "selectedChoiceId": "branch:0",
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "You choose: Offer Relief.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Offer Relief: Test 8\u002B",
+      "tone": 0,
+      "heading": "Last Grain Before Frost",
+      "choices": [
+        {
+          "id": "test:normal",
+          "label": "Roll 2d6",
+          "detail": null,
+          "disabled": false,
+          "echoIndicator": false
+        },
+        {
+          "id": "test:leadership",
+          "label": "Spend 1 Leadership",
+          "detail": "Roll 3d6 and keep the best 2",
+          "disabled": false,
+          "echoIndicator": false
+        }
+      ],
+      "selectedChoiceId": "test:normal",
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Roll: 2 \u002B 3 = 5.",
+      "tone": 3,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "You attempted to Offer Relief, but failed.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Lose 1 Food.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1 \u2022 Chronicle",
+      "text": "The Sun-Touched refuse your terms.",
+      "tone": 0,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1 \u2022 Camp Phase",
+      "text": "The Host pauses after the march. Draw the Camp hand and see what the road has brought with it.",
+      "tone": 0,
+      "heading": "Make Camp",
+      "choices": [
+        {
+          "id": "phase-gate:camp",
+          "label": "Begin Camp",
+          "detail": "Draw the Camp hand.",
+          "disabled": false,
+          "echoIndicator": false
+        }
+      ],
+      "selectedChoiceId": "phase-gate:camp",
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1 \u2022 Scene",
+      "text": "A local priest leads an unfamiliar rite just beyond camp. The drums, chants, and strange gestures unsettle the Host. Soon your soldiers are watching more than resting.",
+      "tone": 0,
+      "heading": "Disturbing the Priest",
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Advance 1 Time.",
+      "tone": 3,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Choose response",
+      "tone": 0,
+      "heading": "Disturbing the Priest",
+      "choices": [
+        {
+          "id": "branch:0",
+          "label": "Let the Rite Continue",
+          "detail": "Advance 1 Time.",
+          "disabled": false,
+          "echoIndicator": true
+        },
+        {
+          "id": "branch:1",
+          "label": "Interrupt the Priest",
+          "detail": "Gain 1 Leadership.",
+          "disabled": false,
+          "echoIndicator": true
+        },
+        {
+          "id": "branch:2",
+          "label": "Let Your Priest Judge It",
+          "detail": "Unavailable: requires a Priest. Requires a Priest. Test 8\u002B: pass, gain 1 Leadership and 1 Morale; fail, lose 1 Morale.",
+          "disabled": true,
+          "echoIndicator": false
+        }
+      ],
+      "selectedChoiceId": "branch:1",
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "You choose: Interrupt the Priest.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Gain 1 Leadership.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": true,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1 \u2022 Camp",
+      "text": "Choose one standard Camp card from the Camp hand, or Work.",
+      "tone": 0,
+      "heading": "Choose Camp Action",
+      "choices": null,
+      "selectedChoiceId": "CAMP-009",
+      "echoIndicator": false,
+      "campOffers": [
+        {
+          "id": "CAMP-009",
+          "title": "Raise Local Levies",
+          "flavor": "Not every man who joins the host seeks glory. Some answer because the road has reached their door.",
+          "effect": "\u003Cb\u003EAdvance 2 Time and Choose 1:\u003C/b\u003E\u003Cbr\u003E\u003Cbr\u003E\u003Cb\u003ERaise Levies:\u003C/b\u003E Spend 1 Food. Add 2 Levy to your Host.\u003Cbr\u003E\u003Cbr\u003E\u003Ci\u003E- or -\u003C/i\u003E\u003Cbr\u003E\u003Cb\u003ERest:\u003C/b\u003E Gain 1 Morale.",
+          "keyword": "Field",
+          "location": "Any",
+          "disabled": false,
+          "unavailableReason": "",
+          "showCampStewardNote": false,
+          "showFieldStaffNote": false
+        },
+        {
+          "id": "CAMP-013",
+          "title": "Host a Common Table",
+          "flavor": "Bread shared in peace can carry a promise farther than a threat ever will.",
+          "effect": "\u003Cb\u003EAdvance 2 Time, Spend 1 Food.\u003Cbr\u003E\u003Cbr\u003EChoose a Neutral or Friendly tribe\u003C/b\u003E and test 6\u002B, applying any Rapport DRM. Leadership may not be spent on this test.\u003Cbr\u003E\u003Cbr\u003E\u003Cul\u003E\u003Cli\u003E\u003Cb\u003EPass:\u003C/b\u003E Gain 2 Coins and 1 Leadership, then:\u003Cul\u003E\u003Cli\u003EIf the tribe is Neutral, gain 1 Rapport with that tribe.\u003C/li\u003E\u003Cli\u003EIf the tribe is Friendly, gain 1 additional Leadership instead.\u003C/li\u003E\u003C/ul\u003E\u003C/li\u003E\u003Cli\u003E\u003Cb\u003EFail:\u003C/b\u003E No effect.\u003C/li\u003E\u003C/ul\u003E",
+          "keyword": "Field",
+          "location": "Controlled",
+          "disabled": true,
+          "unavailableReason": "Not available at this location.",
+          "showCampStewardNote": false,
+          "showFieldStaffNote": false
+        },
+        {
+          "id": "CAMP-001",
+          "title": "Work",
+          "flavor": "While the road waits, the Host takes up the work at hand: hauling, mending, tending, building, and drilling for what comes next.",
+          "effect": "\u003Cb\u003EAdvance 2 Time and Choose 1:\u003C/b\u003E\u003Cbr\u003E\u003Cul\u003E\u003Cli\u003E\u003Cb\u003EGain 2 Coin.\u003C/b\u003E\u003C/li\u003E\u003Cli\u003E\u003Cb\u003EGain 1 Coin and 1 Leadership.\u003C/b\u003E\u003C/li\u003E\u003Cli\u003E\u003Cb\u003ERepair Baggage:\u003C/b\u003E Spend 1 Wood to repair 1 damaged Baggage Train space.\u003C/li\u003E\u003C/ul\u003E\u003Cbr\u003E\u003Cb\u003EIf you have Camp Steward:\u003C/b\u003E After resolving Work, you may \u003Cb\u003Esearch the surrounding area for opportunities\u003C/b\u003E. Roll 1d6:\u003Cbr\u003E\u003Cul\u003E\u003Cli\u003E\u003Cb\u003E1\u20134, A Willing Trader:\u003C/b\u003E Buy 1 Resource for 1 Coin less than Market Buy (minimum 1 Coin), or sell 1 Resource at Market Sell value.\u003C/li\u003E\u003Cli\u003E\u003Cb\u003E5\u20136, A Fortunate Discovery:\u003C/b\u003E Gain 1 Resource matching adjacent Terrain for free.\u003C/li\u003E\u003C/ul\u003E\u003Ci\u003EYou may purge Baggage contents to make room for a new Resource.\u003C/i\u003E",
+          "keyword": "Field",
+          "location": "Any",
+          "disabled": false,
+          "unavailableReason": "",
+          "showCampStewardNote": false,
+          "showFieldStaffNote": false
+        }
+      ]
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "The Host turns its attention to Raise Local Levies.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1 \u2022 Camp",
+      "text": "Not every man who joins the host seeks glory. Some answer because the road has reached their door.",
+      "tone": 0,
+      "heading": "Raise Local Levies",
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Advance 2 Time.",
+      "tone": 3,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Choose Raise Local Levies result",
+      "tone": 0,
+      "heading": "Raise Local Levies",
+      "choices": [
+        {
+          "id": "branch:0",
+          "label": "Raise Levies",
+          "detail": "Spend 1 Food. Add 2 Levy to your Host.",
+          "disabled": false,
+          "echoIndicator": false
+        },
+        {
+          "id": "branch:1",
+          "label": "Rest",
+          "detail": "Gain 1 Morale.",
+          "disabled": false,
+          "echoIndicator": false
+        }
+      ],
+      "selectedChoiceId": "branch:0",
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "You choose: Raise Levies.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Gain 2 Levy.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1 \u2022 Mobilization Phase",
+      "text": "The Host is ready to continue the march.",
+      "tone": 0,
+      "heading": "Explore Step",
+      "choices": [
+        {
+          "id": "phase-gate:explore",
+          "label": "Explore",
+          "detail": "Advance along the road.",
+          "disabled": false,
+          "echoIndicator": false
+        }
+      ],
+      "selectedChoiceId": "phase-gate:explore",
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Advance 2 Time.",
+      "tone": 3,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1 \u2022 Explore",
+      "text": "Open country stretches ahead, generous with distance and stingy with shelter.",
+      "tone": 1,
+      "heading": "Plains",
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1 \u2022 Explore",
+      "text": "The plains offer distance, wind, and very little else. For once, the march is uneventful.",
+      "tone": 0,
+      "heading": "Uneventful Travel",
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1 \u2022 Mobilization Phase",
+      "text": "The Explore Step is complete. When you are ready, reveal what waits at the end of the road.",
+      "tone": 0,
+      "heading": "Arrival Step",
+      "choices": [
+        {
+          "id": "phase-gate:arrival",
+          "label": "Proceed to Arrival",
+          "detail": "Reveal the next Clearing.",
+          "disabled": false,
+          "echoIndicator": false
+        }
+      ],
+      "selectedChoiceId": "phase-gate:arrival",
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1 \u2022 Arrival",
+      "text": "The road opens into an unclaimed clearing. The Host takes control without resistance.",
+      "tone": 0,
+      "heading": "A Vacant Clearing",
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "The clearing is secure. Forage before making camp?",
+      "tone": 0,
+      "heading": "Arrival",
+      "choices": [
+        {
+          "id": "arrival:forage",
+          "label": "Forage",
+          "detail": "Advance 1 Time. On 4\u20136, gain 1 Resource matching the adjacent Terrain.",
+          "disabled": false,
+          "echoIndicator": false
+        },
+        {
+          "id": "arrival:continue",
+          "label": "Continue",
+          "detail": "Proceed to Camp without foraging.",
+          "disabled": false,
+          "echoIndicator": false
+        }
+      ],
+      "selectedChoiceId": "arrival:forage",
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Advance 1 Time.",
+      "tone": 3,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Forage roll: 5.",
+      "tone": 3,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "The Host finds useful supplies while foraging.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Gain 1 Food.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1 \u2022 Camp Phase",
+      "text": "The Host pauses after the march. Draw the Camp hand and see what the road has brought with it.",
+      "tone": 0,
+      "heading": "Make Camp",
+      "choices": [
+        {
+          "id": "phase-gate:camp",
+          "label": "Begin Camp",
+          "detail": "Draw the Camp hand.",
+          "disabled": false,
+          "echoIndicator": false
+        }
+      ],
+      "selectedChoiceId": "phase-gate:camp",
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1 \u2022 Scene",
+      "text": "A delegation comes before the Host with torn cloaks, empty hands, and voices too loud to ignore. They come not with tribute, but with a plea. Their need is plain. So is the question beneath it: will the Host stand with those who once stood aside for them?",
+      "tone": 0,
+      "heading": "Stand Up and Shout",
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Advance 1 Time.",
+      "tone": 3,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Choose the tribe with the highest Rapport",
+      "tone": 0,
+      "heading": "Stand Up and Shout",
+      "choices": [
+        {
+          "id": "select:Sun-Touched",
+          "label": "Sun-Touched",
+          "detail": "Neutral",
+          "disabled": false,
+          "echoIndicator": false
+        }
+      ],
+      "selectedChoiceId": "select:Sun-Touched",
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "You select Sun-Touched.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "How will the Host answer the plea?",
+      "tone": 0,
+      "heading": "Stand Up and Shout",
+      "choices": [
+        {
+          "id": "branch:0",
+          "label": "Answer the Call",
+          "detail": "Spend 2 Food or 2 Coin. Gain 1 Morale.",
+          "disabled": false,
+          "echoIndicator": false
+        },
+        {
+          "id": "branch:1",
+          "label": "Send Protection",
+          "detail": "Unavailable: requires at least 1 Infantry or Archer in the Host. Lose 1 Infantry or 1 Archer. Gain 1 Morale.",
+          "disabled": true,
+          "echoIndicator": false
+        },
+        {
+          "id": "branch:2",
+          "label": "Turn Them Away",
+          "detail": "Lose 1 Rapport with that tribe.",
+          "disabled": false,
+          "echoIndicator": true
+        }
+      ],
+      "selectedChoiceId": "branch:0",
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "You choose: Answer the Call.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "How will the Host provide aid?",
+      "tone": 0,
+      "heading": "Stand Up and Shout",
+      "choices": [
+        {
+          "id": "branch:0",
+          "label": "Spend 2 Food",
+          "detail": "Unavailable: requires 2 Food; you have 1. Spend 2 Food. Gain 1 Morale.",
+          "disabled": true,
+          "echoIndicator": false
+        },
+        {
+          "id": "branch:1",
+          "label": "Spend 2 Coin",
+          "detail": "Spend 2 Coin. Gain 1 Morale.",
+          "disabled": false,
+          "echoIndicator": false
+        }
+      ],
+      "selectedChoiceId": "branch:1",
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "You choose: Spend 2 Coin.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Gain 1 Morale.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1 \u2022 Camp",
+      "text": "Choose one standard Camp card from the Camp hand, or Work.",
+      "tone": 0,
+      "heading": "Choose Camp Action",
+      "choices": null,
+      "selectedChoiceId": "CAMP-001",
+      "echoIndicator": false,
+      "campOffers": [
+        {
+          "id": "CAMP-008",
+          "title": "Respite",
+          "flavor": "The march pauses long enough for weariness to loosen its grip.",
+          "effect": "\u003Ccenter\u003E\u003Cb\u003EAdvance 2 Time, Spend 1 Leadership.\u003Cbr\u003E\u003Cbr\u003EGain 2 Leadership and 1 Morale.\u003C/b\u003E\u003C/center\u003E",
+          "keyword": "Field",
+          "location": "Controlled",
+          "disabled": false,
+          "unavailableReason": "",
+          "showCampStewardNote": false,
+          "showFieldStaffNote": false
+        },
+        {
+          "id": "CAMP-007",
+          "title": "Supply Convoy",
+          "flavor": "Coin opens storehouses that pride or haste would leave closed.",
+          "effect": "\u003Cb\u003EAdvance 2 Time and Choose 1:\u003C/b\u003E\u003Cbr\u003E\u003Cbr\u003E\u003Cb\u003EProvision:\u003C/b\u003E Spend 2 Coin to gain 1 Food, Wood, or Stone. You may spend 1 additional Coin to gain 1 additional Food, Wood, or Stone.\u003Cbr\u003E\u003Ci\u003ESubject to Baggage Train capacity.\u003C/i\u003E\u003Cbr\u003E\u003Cbr\u003E\u003Ci\u003E- or -\u003C/i\u003E\u003Cbr\u003E\u003Cb\u003ERest:\u003C/b\u003E Gain 1 Morale.",
+          "keyword": "Field",
+          "location": "Controlled",
+          "disabled": false,
+          "unavailableReason": "",
+          "showCampStewardNote": false,
+          "showFieldStaffNote": false
+        },
+        {
+          "id": "CAMP-001",
+          "title": "Work",
+          "flavor": "While the road waits, the Host takes up the work at hand: hauling, mending, tending, building, and drilling for what comes next.",
+          "effect": "\u003Cb\u003EAdvance 2 Time and Choose 1:\u003C/b\u003E\u003Cbr\u003E\u003Cul\u003E\u003Cli\u003E\u003Cb\u003EGain 2 Coin.\u003C/b\u003E\u003C/li\u003E\u003Cli\u003E\u003Cb\u003EGain 1 Coin and 1 Leadership.\u003C/b\u003E\u003C/li\u003E\u003Cli\u003E\u003Cb\u003ERepair Baggage:\u003C/b\u003E Spend 1 Wood to repair 1 damaged Baggage Train space.\u003C/li\u003E\u003C/ul\u003E\u003Cbr\u003E\u003Cb\u003EIf you have Camp Steward:\u003C/b\u003E After resolving Work, you may \u003Cb\u003Esearch the surrounding area for opportunities\u003C/b\u003E. Roll 1d6:\u003Cbr\u003E\u003Cul\u003E\u003Cli\u003E\u003Cb\u003E1\u20134, A Willing Trader:\u003C/b\u003E Buy 1 Resource for 1 Coin less than Market Buy (minimum 1 Coin), or sell 1 Resource at Market Sell value.\u003C/li\u003E\u003Cli\u003E\u003Cb\u003E5\u20136, A Fortunate Discovery:\u003C/b\u003E Gain 1 Resource matching adjacent Terrain for free.\u003C/li\u003E\u003C/ul\u003E\u003Ci\u003EYou may purge Baggage contents to make room for a new Resource.\u003C/i\u003E",
+          "keyword": "Field",
+          "location": "Any",
+          "disabled": false,
+          "unavailableReason": "",
+          "showCampStewardNote": false,
+          "showFieldStaffNote": false
+        }
+      ]
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "The Host turns its attention to Work.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1 \u2022 Camp",
+      "text": "While the road waits, the Host takes up the work at hand: hauling, mending, tending, building, and drilling for what comes next.",
+      "tone": 0,
+      "heading": "Work",
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Advance 2 Time.",
+      "tone": 3,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Choose Work result",
+      "tone": 0,
+      "heading": "Work",
+      "choices": [
+        {
+          "id": "branch:0",
+          "label": "Gain 2 Coin",
+          "detail": "Gain 2 Coin.",
+          "disabled": false,
+          "echoIndicator": false
+        },
+        {
+          "id": "branch:1",
+          "label": "Gain 1 Coin and 1 Leadership",
+          "detail": "Gain 1 Coin and 1 Leadership.",
+          "disabled": false,
+          "echoIndicator": false
+        },
+        {
+          "id": "branch:2",
+          "label": "Repair 1 damaged Baggage Train space \u2014 Spend 1 Wood",
+          "detail": "Unavailable: there are no damaged Baggage Train spaces to repair. Spend 1 Wood. Repair 1 damaged Baggage Train space.",
+          "disabled": true,
+          "echoIndicator": false
+        }
+      ],
+      "selectedChoiceId": "branch:1",
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "You choose: Gain 1 Coin and 1 Leadership.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Gain 1 Coin.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Gain 1 Leadership.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1 \u2022 Mobilization Phase",
+      "text": "The Host is ready to continue the march.",
+      "tone": 0,
+      "heading": "Explore Step",
+      "choices": [
+        {
+          "id": "phase-gate:explore",
+          "label": "Explore",
+          "detail": "Advance along the road.",
+          "disabled": false,
+          "echoIndicator": false
+        }
+      ],
+      "selectedChoiceId": "phase-gate:explore",
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Advance 2 Time.",
+      "tone": 3,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1 \u2022 Explore",
+      "text": "Open country stretches ahead, generous with distance and stingy with shelter.",
+      "tone": 1,
+      "heading": "Plains",
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1 \u2022 Explore",
+      "text": "A company of battle-worn knights seeks shelter. They claim to be the last of their order.",
+      "tone": 0,
+      "heading": "Hedge Knights",
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Choose how many Hedge Knights to recruit",
+      "tone": 0,
+      "heading": "Hedge Knights",
+      "choices": [
+        {
+          "id": "select:0",
+          "label": "Recruit none",
+          "detail": null,
+          "disabled": false,
+          "echoIndicator": false
+        },
+        {
+          "id": "select:1",
+          "label": "Recruit 1",
+          "detail": "2 Coin",
+          "disabled": false,
+          "echoIndicator": false
+        },
+        {
+          "id": "select:2",
+          "label": "Recruit 2",
+          "detail": "4 Coin",
+          "disabled": false,
+          "echoIndicator": false
+        }
+      ],
+      "selectedChoiceId": "select:0",
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1 \u2022 Arrival",
+      "text": "Dark stonework and guarded approaches leave little doubt whose settlement lies ahead: the Nightstone.",
+      "tone": 0,
+      "heading": "Arrival",
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Nightstone Rapport changes from Unmet to Hostile.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "First Contact roll: 2 \u002B 3 = 5.",
+      "tone": 3,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "The first words do not become second words. The Nightstone meet the Host with unmistakable hostility.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Passage has a price. The Nightstone require 1 Food before the Host proceeds.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "1 Food changes hands. Whatever the Nightstone think of the Host, the tribute is paid.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "The tribute is accepted, but hostility remains. Test 8\u002B to secure passage.",
+      "tone": 0,
+      "heading": "Passage",
+      "choices": [
+        {
+          "id": "gate:normal",
+          "label": "Roll 2d6",
+          "detail": "Rapport DRM: -1",
+          "disabled": false,
+          "echoIndicator": false
+        },
+        {
+          "id": "gate:leadership",
+          "label": "Spend 1 Leadership",
+          "detail": "Roll 3d6 and keep the best 2",
+          "disabled": false,
+          "echoIndicator": false
+        }
+      ],
+      "selectedChoiceId": "gate:leadership",
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Roll: 2, 4, 1 (keep best 2), DRM -1 = 5.",
+      "tone": 3,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "The passage test fails.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "The Nightstone reject the appeal and attack.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "The Host disengages and is forced onward.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "The Host is forced onward before it can make camp.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Advance 2 Time.",
+      "tone": 3,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1 \u2022 Explore",
+      "text": "There is no welcome behind you, only the climb ahead. The Host pushes into the high country.",
+      "tone": 1,
+      "heading": "Mountain",
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1 \u2022 Explore",
+      "text": "The climb is hard enough without adding drama. The high road offers no encounter beyond stone, wind, and tired legs.",
+      "tone": 0,
+      "heading": "Uneventful Travel",
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1 \u2022 Mobilization Phase",
+      "text": "The Explore Step is complete. When you are ready, reveal what waits at the end of the road.",
+      "tone": 0,
+      "heading": "Arrival Step",
+      "choices": [
+        {
+          "id": "phase-gate:arrival",
+          "label": "Proceed to Arrival",
+          "detail": "Reveal the next Clearing.",
+          "disabled": false,
+          "echoIndicator": false
+        }
+      ],
+      "selectedChoiceId": "phase-gate:arrival",
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1 \u2022 Arrival",
+      "text": "The road opens into an unclaimed clearing. The Host takes control without resistance.",
+      "tone": 0,
+      "heading": "A Vacant Clearing",
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "The clearing is secure. Forage before making camp?",
+      "tone": 0,
+      "heading": "Arrival",
+      "choices": [
+        {
+          "id": "arrival:forage",
+          "label": "Forage",
+          "detail": "Unavailable: Hostile settlement adjacent: Nightstone",
+          "disabled": true,
+          "echoIndicator": false
+        },
+        {
+          "id": "arrival:continue",
+          "label": "Continue",
+          "detail": "Proceed to Camp without foraging.",
+          "disabled": false,
+          "echoIndicator": false
+        }
+      ],
+      "selectedChoiceId": "arrival:continue",
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "The Host leaves the clearing undisturbed and makes camp.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "The spring campaign draws to a close. The Host pauses to reckon with the season behind it.",
+      "tone": 0,
+      "heading": "End of Spring",
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1 \u2022 End of Season",
+      "text": "The Host must reckon with the season before the march continues.",
+      "tone": 0,
+      "heading": "End of Spring",
+      "choices": [
+        {
+          "id": "phase-gate:end-season",
+          "label": "Begin End of Spring",
+          "detail": "Vulnerability, Harvest, and consolidation follow.",
+          "disabled": false,
+          "echoIndicator": false
+        }
+      ],
+      "selectedChoiceId": "phase-gate:end-season",
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Before the Host can settle its stores, the wider world shifts around it.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1 \u2022 End of Spring",
+      "text": "The Market shifts, and Hostile tribes may raid the road behind you.",
+      "tone": 0,
+      "heading": "Vulnerability",
+      "choices": [
+        {
+          "id": "phase-gate:vulnerability",
+          "label": "Resolve Vulnerability",
+          "detail": "Roll Market Vulnerability and Barbarian Activation.",
+          "disabled": false,
+          "echoIndicator": false
+        }
+      ],
+      "selectedChoiceId": "phase-gate:vulnerability",
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Market Vulnerability die: Wood -.",
+      "tone": 3,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "The Market shifts. Wood falls from 3 to 2 Coin to buy.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Barbarian Activation die: Barbarian icon.",
+      "tone": 3,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "SETTLEMENT LOST: Nightstone raiders strike the rear-most controlled settlement and seize it for themselves.",
+      "tone": 2,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1 \u2022 End of Spring",
+      "text": "Eligible Terrain produces Food, Wood, and Stone. The supplies will be staged for packing.",
+      "tone": 0,
+      "heading": "Harvest",
+      "choices": [
+        {
+          "id": "phase-gate:harvest",
+          "label": "Gather the Harvest",
+          "detail": "Then prepare and pack the Baggage Train.",
+          "disabled": false,
+          "echoIndicator": false
+        }
+      ],
+      "selectedChoiceId": "phase-gate:harvest",
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Harvest brings in 1 Food. The new supplies are staged beside the Baggage Train before anything is packed away.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "3 Terrain are cut off by Hostile settlements and produce nothing.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "The Host packs 1 Food from the new Harvest.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1 \u2022 End of Spring",
+      "text": "The first two Clearings behind the Host remain. Older parts of the route fall away.",
+      "tone": 0,
+      "heading": "Supply Line Consolidation",
+      "choices": [
+        {
+          "id": "phase-gate:consolidation",
+          "label": "Consolidate the Route",
+          "detail": "Trim the active route.",
+          "disabled": false,
+          "echoIndicator": false
+        }
+      ],
+      "selectedChoiceId": "phase-gate:consolidation",
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "The road behind the Host falls out of the Chronicle: 2 Clearings and 1 Terrain card leave the active route.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "End of Spring is complete.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Summer \u2022 Year 1 \u2022 Camp Phase",
+      "text": "The Host pauses after the march. Draw the Camp hand and see what the road has brought with it.",
+      "tone": 0,
+      "heading": "Make Camp",
+      "choices": [
+        {
+          "id": "phase-gate:camp",
+          "label": "Begin Camp",
+          "detail": "Draw the Camp hand.",
+          "disabled": false,
+          "echoIndicator": false
+        }
+      ],
+      "selectedChoiceId": "phase-gate:camp",
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Summer \u2022 Year 1 \u2022 Camp",
+      "text": "Choose one standard Camp card from the Camp hand, or Work.",
+      "tone": 0,
+      "heading": "Choose Camp Action",
+      "choices": null,
+      "selectedChoiceId": "CAMP-011",
+      "echoIndicator": false,
+      "campOffers": [
+        {
+          "id": "CAMP-006",
+          "title": "Hire Mercenaries",
+          "flavor": "There are always swords for hire where fear is near and silver is honest.",
+          "effect": "\u003Cb\u003EAdvance 2 Time Recruit up to 2 Mercenaries\u003C/b\u003E (Infantry class) \u003Cb\u003Efor 1 Coin each.\u003C/b\u003E\u003Cbr\u003E\u003Cbr\u003E\u003Cb\u003EMercenaries:\u003C/b\u003E\u003Cbr\u003E\u003Cul\u003E\u003Cli\u003EMay exceed Host MU limits\u003C/li\u003E\u003Cli\u003EUse white Mercenary tokens.\u003C/li\u003E\u003C/ul\u003E\u003Cbr\u003E\u003Ci\u003EReminder: Mercenaries disband in Winter.\u003C/i\u003E",
+          "keyword": "Field",
+          "location": "Barbarian",
+          "disabled": true,
+          "unavailableReason": "Not available at this location.",
+          "showCampStewardNote": false,
+          "showFieldStaffNote": false
+        },
+        {
+          "id": "CAMP-011",
+          "title": "Send Terms Ahead",
+          "flavor": "A gift sent ahead may cool a grudge that steel would only sharpen.",
+          "effect": "\u003Cb\u003EAdvance 2 Time. Choose 1 Hostile tribe.\u003C/b\u003E Spend one of the following as a gift to that tribe: \u003Cb\u003E2 Coin, 1 Food, 1 Wood, 1 Stone, or 1 Research\u003C/b\u003E. Then make a 6\u002B test. Do not apply the Hostile Rapport DRM, and Leadership may not be spent on this test.\u003Cbr\u003E\u003Cbr\u003E\u003Cb\u003EPass:\u003C/b\u003E Gain 1 Rapport with that tribe and gain 1 Morale.\u003Cbr\u003E\u003Cbr\u003E\u003Cb\u003EFail:\u003C/b\u003E No effect.",
+          "keyword": "Field",
+          "location": "Any",
+          "disabled": false,
+          "unavailableReason": "",
+          "showCampStewardNote": false,
+          "showFieldStaffNote": false
+        },
+        {
+          "id": "CAMP-010",
+          "title": "Drill the Host",
+          "flavor": "A host that trains in earnest soon learns what kind of war it means to fight.",
+          "effect": "\u003Cb\u003EAdvance 2 Time, Spend 1 Leadership.\u003Cbr\u003E\u003Cbr\u003EChoose 1:\u003C/b\u003E\u003Cbr\u003E\u003Cul\u003E\u003Cli\u003EYou may immediately purchase either the top card of the Advancement deck or 1 Armor Development from the R\u0026R Offer. It costs 1 less Research Token, to a minimum of 1. You must still pay all other printed costs.\u003C/li\u003E\u003Cli\u003EGain 1 Research. You may discard the top Tactics card for free and reveal the next one, though you may not purchase it during this phase.\u003C/li\u003E\u003C/ul\u003E\u003Cbr\u003E\u003Cbr\u003E\u003Cb\u003EAfter making your choice, gain 1 Leadership\u003C/b\u003E",
+          "keyword": "Field",
+          "location": "Any",
+          "disabled": false,
+          "unavailableReason": "",
+          "showCampStewardNote": false,
+          "showFieldStaffNote": false
+        },
+        {
+          "id": "CAMP-001",
+          "title": "Work",
+          "flavor": "While the road waits, the Host takes up the work at hand: hauling, mending, tending, building, and drilling for what comes next.",
+          "effect": "\u003Cb\u003EAdvance 2 Time and Choose 1:\u003C/b\u003E\u003Cbr\u003E\u003Cul\u003E\u003Cli\u003E\u003Cb\u003EGain 2 Coin.\u003C/b\u003E\u003C/li\u003E\u003Cli\u003E\u003Cb\u003EGain 1 Coin and 1 Leadership.\u003C/b\u003E\u003C/li\u003E\u003Cli\u003E\u003Cb\u003ERepair Baggage:\u003C/b\u003E Spend 1 Wood to repair 1 damaged Baggage Train space.\u003C/li\u003E\u003C/ul\u003E\u003Cbr\u003E\u003Cb\u003EIf you have Camp Steward:\u003C/b\u003E After resolving Work, you may \u003Cb\u003Esearch the surrounding area for opportunities\u003C/b\u003E. Roll 1d6:\u003Cbr\u003E\u003Cul\u003E\u003Cli\u003E\u003Cb\u003E1\u20134, A Willing Trader:\u003C/b\u003E Buy 1 Resource for 1 Coin less than Market Buy (minimum 1 Coin), or sell 1 Resource at Market Sell value.\u003C/li\u003E\u003Cli\u003E\u003Cb\u003E5\u20136, A Fortunate Discovery:\u003C/b\u003E Gain 1 Resource matching adjacent Terrain for free.\u003C/li\u003E\u003C/ul\u003E\u003Ci\u003EYou may purge Baggage contents to make room for a new Resource.\u003C/i\u003E",
+          "keyword": "Field",
+          "location": "Any",
+          "disabled": false,
+          "unavailableReason": "",
+          "showCampStewardNote": false,
+          "showFieldStaffNote": false
+        }
+      ]
+    },
+    {
+      "calendar": "Summer \u2022 Year 1",
+      "text": "The Host turns its attention to Send Terms Ahead.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Summer \u2022 Year 1 \u2022 Camp",
+      "text": "A gift sent ahead may cool a grudge that steel would only sharpen.",
+      "tone": 0,
+      "heading": "Send Terms Ahead",
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Summer \u2022 Year 1",
+      "text": "Advance 2 Time.",
+      "tone": 3,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Summer \u2022 Year 1",
+      "text": "Choose 1 Hostile tribe",
+      "tone": 0,
+      "heading": "Send Terms Ahead",
+      "choices": [
+        {
+          "id": "select:Nightstone",
+          "label": "Nightstone",
+          "detail": "Spend a gift (2 Coin, 1 Food, 1 Wood, 1 Stone, or 1 Research), then test 6\u002B with no Hostile DRM. Leadership may not be spent. Pass: gain 1 Rapport and 1 Morale.",
+          "disabled": false,
+          "echoIndicator": false
+        }
+      ],
+      "selectedChoiceId": "select:Nightstone",
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Summer \u2022 Year 1",
+      "text": "You select Nightstone.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Summer \u2022 Year 1",
+      "text": "Choose a gift to send before making the test.",
+      "tone": 0,
+      "heading": "Send Terms Ahead",
+      "choices": [
+        {
+          "id": "branch:0",
+          "label": "Spend 2 Coin",
+          "detail": "You have 4 Coin. The gift is spent before the test.",
+          "disabled": false,
+          "echoIndicator": false
+        },
+        {
+          "id": "branch:1",
+          "label": "Spend 1 Food",
+          "detail": "You have 1 Food. The gift is spent before the test.",
+          "disabled": false,
+          "echoIndicator": false
+        },
+        {
+          "id": "branch:2",
+          "label": "Spend 1 Wood",
+          "detail": "You have 1 Wood. The gift is spent before the test.",
+          "disabled": false,
+          "echoIndicator": false
+        },
+        {
+          "id": "branch:3",
+          "label": "Spend 1 Stone",
+          "detail": "Unavailable: requires 1 Stone; you have 0.",
+          "disabled": true,
+          "echoIndicator": false
+        },
+        {
+          "id": "branch:4",
+          "label": "Spend 1 Research",
+          "detail": "Unavailable: requires 1 Research; you have 0.",
+          "disabled": true,
+          "echoIndicator": false
+        }
+      ],
+      "selectedChoiceId": "branch:0",
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Summer \u2022 Year 1",
+      "text": "You choose: Spend 2 Coin.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Summer \u2022 Year 1",
+      "text": "Spend 2 Coin as a gift.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Summer \u2022 Year 1",
+      "text": "Test 6\u002B",
+      "tone": 0,
+      "heading": "Send Terms Ahead",
+      "choices": [
+        {
+          "id": "test:normal",
+          "label": "Roll 2d6",
+          "detail": "Leadership may not be spent. Pass: gain 1 Rapport with Nightstone and 1 Morale.",
+          "disabled": false,
+          "echoIndicator": false
+        }
+      ],
+      "selectedChoiceId": "test:normal",
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Summer \u2022 Year 1",
+      "text": "Roll: 3 \u002B 4 = 7.",
+      "tone": 3,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Summer \u2022 Year 1",
+      "text": "The test ends in success.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Summer \u2022 Year 1",
+      "text": "Gain 1 Rapport with Nightstone. The Nightstone are now Neutral.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Summer \u2022 Year 1",
+      "text": "Gain 1 Morale.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Summer \u2022 Year 1",
+      "text": "Choose what to do with this card after play.",
+      "tone": 0,
+      "heading": "Send Terms Ahead",
+      "choices": [
+        {
+          "id": "camp-disposition:discard",
+          "label": "Discard",
+          "detail": "Return this card to the Camp discard pile.",
+          "disabled": false,
+          "echoIndicator": false
+        },
+        {
+          "id": "camp-disposition:remove",
+          "label": "Remove from game",
+          "detail": "This card will not return this game.",
+          "disabled": false,
+          "echoIndicator": false
+        }
+      ],
+      "selectedChoiceId": "camp-disposition:discard",
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Summer \u2022 Year 1",
+      "text": "Send Terms Ahead is discarded.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Summer \u2022 Year 1 \u2022 Mobilization Phase",
+      "text": "The Host is ready to continue the march.",
+      "tone": 0,
+      "heading": "Explore Step",
+      "choices": [
+        {
+          "id": "phase-gate:explore",
+          "label": "Explore",
+          "detail": "Advance along the road.",
+          "disabled": false,
+          "echoIndicator": false
+        }
+      ],
+      "selectedChoiceId": "phase-gate:explore",
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Summer \u2022 Year 1",
+      "text": "Advance 2 Time.",
+      "tone": 3,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Summer \u2022 Year 1 \u2022 Explore",
+      "text": "The Host climbs toward the high country.",
+      "tone": 1,
+      "heading": "Mountain",
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Summer \u2022 Year 1 \u2022 Explore",
+      "text": "The pass is held by hard men with blades drawn and no patience for bargaining.",
+      "tone": 0,
+      "heading": "Some Heads Are Gonna Roll",
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Summer \u2022 Year 1",
+      "text": "Pay the toll or refuse?",
+      "tone": 0,
+      "heading": "Some Heads Are Gonna Roll",
+      "choices": [
+        {
+          "id": "branch:0",
+          "label": "Give Them the 4 Coins",
+          "detail": "Unavailable: requires 4 Coin; you have 2.",
+          "disabled": true,
+          "echoIndicator": false
+        },
+        {
+          "id": "branch:1",
+          "label": "Refuse",
+          "detail": "Refuse their demand.",
+          "disabled": false,
+          "echoIndicator": true
+        }
+      ],
+      "selectedChoiceId": "branch:1",
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Summer \u2022 Year 1",
+      "text": "You choose: Refuse.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Summer \u2022 Year 1",
+      "text": "The Host refuses the demand. The brigands do not forget.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": true,
+      "campOffers": null
+    },
+    {
+      "calendar": "Summer \u2022 Year 1 \u2022 Arrival",
+      "text": "The Host reaches a settlement held by the Quietus.",
+      "tone": 0,
+      "heading": "Arrival",
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Summer \u2022 Year 1",
+      "text": "Quietus Rapport changes from Unmet to Hostile.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Summer \u2022 Year 1",
+      "text": "First Contact roll: 1 \u002B 3 = 4.",
+      "tone": 3,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Summer \u2022 Year 1",
+      "text": "Whatever goodwill might have existed dies quickly. The Quietus make it plain that the Host is not welcome.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Summer \u2022 Year 1",
+      "text": "The terms are simple, if not generous: 3 Coin for the Quietus.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Summer \u2022 Year 1",
+      "text": "The Host cannot provide the demanded 3 Coin in full.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Summer \u2022 Year 1",
+      "text": "The hostile tribe refuses passage without tribute and attacks.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Summer \u2022 Year 1",
+      "text": "The Host is destroyed in battle.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Summer \u2022 Year 1",
+      "text": "No Units remain in the Host. The campaign ends in defeat.",
+      "tone": 2,
+      "heading": "Defeat",
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    }
+  ],
+  "campOffers": [
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "drawn": [
+        {
+          "id": "CAMP-009",
+          "title": "Raise Local Levies",
+          "cardType": "Camp"
+        },
+        {
+          "id": "SCENE-026",
+          "title": "Disturbing the Priest",
+          "cardType": "Scene"
+        },
+        {
+          "id": "CAMP-013",
+          "title": "Host a Common Table",
+          "cardType": "Camp"
+        }
+      ],
+      "selectedCardId": "CAMP-009",
+      "selectedCardTitle": "Raise Local Levies"
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "drawn": [
+        {
+          "id": "CAMP-008",
+          "title": "Respite",
+          "cardType": "Camp"
+        },
+        {
+          "id": "CAMP-007",
+          "title": "Supply Convoy",
+          "cardType": "Camp"
+        },
+        {
+          "id": "SCENE-029",
+          "title": "Stand Up and Shout",
+          "cardType": "Scene"
+        }
+      ],
+      "selectedCardId": "CAMP-001",
+      "selectedCardTitle": "Work"
+    },
+    {
+      "calendar": "Summer \u2022 Year 1",
+      "drawn": [
+        {
+          "id": "CAMP-006",
+          "title": "Hire Mercenaries",
+          "cardType": "Camp"
+        },
+        {
+          "id": "CAMP-011",
+          "title": "Send Terms Ahead",
+          "cardType": "Camp"
+        },
+        {
+          "id": "CAMP-010",
+          "title": "Drill the Host",
+          "cardType": "Camp"
+        }
+      ],
+      "selectedCardId": "CAMP-011",
+      "selectedCardTitle": "Send Terms Ahead"
+    }
+  ],
+  "exploreDraws": [
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "cardId": "EXPLORE-027",
+      "title": "Smugglers\u2019 Caves",
+      "terrain": "Plains",
+      "matchedTerrain": false,
+      "outcome": "TerrainMismatch"
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "cardId": "EXPLORE-015",
+      "title": "Ancient Pathway",
+      "terrain": "Plains",
+      "matchedTerrain": false,
+      "outcome": "TerrainMismatch"
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "cardId": "EXPLORE-030",
+      "title": "Hedge Knights",
+      "terrain": "Plains",
+      "matchedTerrain": true,
+      "outcome": "Triggered"
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "cardId": "EXPLORE-004",
+      "title": "Migrating Herds",
+      "terrain": "Mountain",
+      "matchedTerrain": false,
+      "outcome": "TerrainMismatch"
+    },
+    {
+      "calendar": "Summer \u2022 Year 1",
+      "cardId": "EXPLORE-035",
+      "title": "Some Heads Are Gonna Roll",
+      "terrain": "Mountain",
+      "matchedTerrain": true,
+      "outcome": "Triggered"
+    }
+  ],
+  "battles": [
+    {
+      "battleNumber": 1,
+      "startedUtc": "2026-10-22T01:56:57.5399702Z",
+      "endedUtc": "2026-10-22T01:57:10.5263174Z",
+      "sourceLabel": "Stone for the Dead",
+      "enemyName": "Nightstone",
+      "isFinale": false,
+      "outcome": "Disengaged",
+      "initialPlayerUnits": {
+        "Archers": 0,
+        "Cavalry": 0,
+        "Infantry": 0,
+        "Levy": 4
+      },
+      "initialEnemyUnits": {
+        "Archers": 1,
+        "Cavalry": 0,
+        "Infantry": 2,
+        "Levy": 2
+      },
+      "finalPlayerUnits": {
+        "Archers": 0,
+        "Cavalry": 0,
+        "Infantry": 0,
+        "Levy": 2
+      },
+      "finalEnemyUnits": {
+        "Archers": 1,
+        "Cavalry": 0,
+        "Infantry": 2,
+        "Levy": 2
+      },
+      "entries": [
+        {
+          "text": "Combat begins against Nightstone.",
+          "subdued": false
+        },
+        {
+          "text": "Player Host: 4 Levy",
+          "subdued": true
+        },
+        {
+          "text": "Enemy Host: 1 Archers, 2 Infantry, 2 Levy",
+          "subdued": true
+        },
+        {
+          "text": "Priest phase skipped: no Priest is present.",
+          "subdued": false
+        },
+        {
+          "text": "Round 1 begins.",
+          "subdued": false
+        },
+        {
+          "text": "Archers: Player rolls none. Enemy rolls 2.",
+          "subdued": true
+        },
+        {
+          "text": "No casualties are inflicted by Archers.",
+          "subdued": false
+        },
+        {
+          "text": "Cavalry phase skipped: no Cavalry are present.",
+          "subdued": false
+        },
+        {
+          "text": "Infantry: Player rolls none. Enemy rolls 2, 6*.",
+          "subdued": true
+        },
+        {
+          "text": "Infantry inflict 0 Player hits and 1 Enemy hit.",
+          "subdued": false
+        },
+        {
+          "text": "The Host loses 1 Levy.",
+          "subdued": false
+        },
+        {
+          "text": "Levy: Player rolls 3, 3, 3. Enemy rolls 4, 6*.",
+          "subdued": true
+        },
+        {
+          "text": "Levy inflict 0 Player hits and 1 Enemy hit.",
+          "subdued": false
+        },
+        {
+          "text": "The Host loses 1 Levy.",
+          "subdued": false
+        },
+        {
+          "text": "The Host breaks contact and disengages from the Combat.",
+          "subdued": false
+        }
+      ]
+    },
+    {
+      "battleNumber": 2,
+      "startedUtc": "2026-10-22T02:03:13.3681051Z",
+      "endedUtc": "2026-10-22T02:04:34.6912937Z",
+      "sourceLabel": "The Candle Toll",
+      "enemyName": "Quietus",
+      "isFinale": false,
+      "outcome": "Lost",
+      "initialPlayerUnits": {
+        "Archers": 0,
+        "Cavalry": 0,
+        "Infantry": 0,
+        "Levy": 2
+      },
+      "initialEnemyUnits": {
+        "Archers": 1,
+        "Cavalry": 0,
+        "Infantry": 1,
+        "Levy": 2
+      },
+      "finalPlayerUnits": {
+        "Archers": 0,
+        "Cavalry": 0,
+        "Infantry": 0,
+        "Levy": 0
+      },
+      "finalEnemyUnits": {
+        "Archers": 1,
+        "Cavalry": 0,
+        "Infantry": 1,
+        "Levy": 1
+      },
+      "entries": [
+        {
+          "text": "Combat begins against Quietus.",
+          "subdued": false
+        },
+        {
+          "text": "Player Host: 2 Levy",
+          "subdued": true
+        },
+        {
+          "text": "Enemy Host: 1 Archers, 1 Infantry, 2 Levy",
+          "subdued": true
+        },
+        {
+          "text": "Proselytization roll: 1.",
+          "subdued": true
+        },
+        {
+          "text": "The enemy Priest fails to sway the Host.",
+          "subdued": false
+        },
+        {
+          "text": "Round 1 begins.",
+          "subdued": false
+        },
+        {
+          "text": "Archers: Player rolls none. Enemy rolls 3.",
+          "subdued": true
+        },
+        {
+          "text": "No casualties are inflicted by Archers.",
+          "subdued": false
+        },
+        {
+          "text": "Cavalry phase skipped: no Cavalry are present.",
+          "subdued": false
+        },
+        {
+          "text": "Infantry: Player rolls none. Enemy rolls 2.",
+          "subdued": true
+        },
+        {
+          "text": "No casualties are inflicted by Infantry.",
+          "subdued": false
+        },
+        {
+          "text": "Levy: Player rolls 5, 6*. Enemy rolls 6*, 6*.",
+          "subdued": true
+        },
+        {
+          "text": "Levy inflict 1 Player hit and 2 Enemy hits.",
+          "subdued": false
+        },
+        {
+          "text": "Enemy loses 1 Levy.",
+          "subdued": false
+        },
+        {
+          "text": "The Host loses 1 Levy.",
+          "subdued": false
+        },
+        {
+          "text": "The Host loses 1 Levy.",
+          "subdued": false
+        },
+        {
+          "text": "The Host is destroyed. The Combat is lost.",
+          "subdued": false
+        }
+      ]
+    }
+  ],
+  "activeBattle": null,
+  "finaleLog": []
+}

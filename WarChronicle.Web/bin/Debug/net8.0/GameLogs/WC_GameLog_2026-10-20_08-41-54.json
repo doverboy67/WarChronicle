@@ -1,0 +1,723 @@
+{
+  "schemaVersion": 1,
+  "logType": "War Chronicle Game Log",
+  "gameId": "672340d0-50bb-4571-9ba3-5c5deb30cb4d",
+  "appVersion": "v0.5.0.43",
+  "startedUtc": "2026-10-20T12:37:40.8591306Z",
+  "endedUtc": "2026-10-20T12:41:54.8337152Z",
+  "status": "Completed",
+  "outcome": "Defeat",
+  "endReason": "No Units remain in the Host. The campaign ends in defeat.",
+  "contentSets": [
+    "Base",
+    "PackC",
+    "SiaSL",
+    "SitA"
+  ],
+  "finalState": {
+    "year": 1,
+    "season": "Spring",
+    "time": 8,
+    "morale": 5,
+    "leadership": 3,
+    "host": {
+      "Archers": 0,
+      "Cavalry": 0,
+      "Infantry": 0,
+      "Levy": 0
+    },
+    "resources": {
+      "Coin": 4,
+      "Food": 2,
+      "Wood": 1,
+      "Stone": 1,
+      "Research": 0
+    },
+    "activeTokens": [
+      "Painkiller"
+    ],
+    "baggage": [
+      {
+        "position": 1,
+        "contents": "Food",
+        "quantity": 2,
+        "damaged": false
+      },
+      {
+        "position": 2,
+        "contents": "Wood",
+        "quantity": 1,
+        "damaged": false
+      },
+      {
+        "position": 3,
+        "contents": "Stone",
+        "quantity": 1,
+        "damaged": false
+      },
+      {
+        "position": 4,
+        "contents": null,
+        "quantity": 1,
+        "damaged": false
+      }
+    ]
+  },
+  "chronicle": [
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "The Host is assembled. The road to Middelalderen begins here.",
+      "tone": 0,
+      "heading": "The March Begins",
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Advance 2 Time.",
+      "tone": 3,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1 \u2022 Explore",
+      "text": "The last familiar ground disappears behind the Host as the road narrows beneath the trees.",
+      "tone": 1,
+      "heading": "Forest",
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1 \u2022 Explore",
+      "text": "A company of battle-worn knights seeks shelter. They claim to be the last of their order.",
+      "tone": 0,
+      "heading": "Hedge Knights",
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Choose how many Hedge Knights to recruit",
+      "tone": 0,
+      "heading": "Hedge Knights",
+      "choices": [
+        {
+          "id": "select:0",
+          "label": "Recruit none",
+          "detail": null,
+          "disabled": false,
+          "echoIndicator": false
+        },
+        {
+          "id": "select:1",
+          "label": "Recruit 1",
+          "detail": "2 Coin",
+          "disabled": false,
+          "echoIndicator": false
+        },
+        {
+          "id": "select:2",
+          "label": "Recruit 2",
+          "detail": "4 Coin",
+          "disabled": false,
+          "echoIndicator": false
+        }
+      ],
+      "selectedChoiceId": "select:0",
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1 \u2022 Arrival",
+      "text": "The road opens into an unclaimed clearing. The Host takes control without resistance.",
+      "tone": 0,
+      "heading": "A Vacant Clearing",
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "The clearing is secure. Forage before making camp?",
+      "tone": 0,
+      "heading": "Arrival",
+      "choices": [
+        {
+          "id": "arrival:forage",
+          "label": "Forage",
+          "detail": "Advance 1 Time. On 4\u20136, gain 1 Resource matching the adjacent Terrain.",
+          "disabled": false,
+          "echoIndicator": false
+        },
+        {
+          "id": "arrival:continue",
+          "label": "Continue",
+          "detail": "Proceed to Camp without foraging.",
+          "disabled": false,
+          "echoIndicator": false
+        }
+      ],
+      "selectedChoiceId": "arrival:forage",
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Advance 1 Time.",
+      "tone": 3,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Forage roll: 2.",
+      "tone": 3,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "The search yields nothing useful.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1 \u2022 Scene",
+      "text": "A battlefield surgeon offers the Host a bitter black draught used by mercenaries who need men standing longer than men should. He does not call it medicine. He calls it time bought in advance.",
+      "tone": 0,
+      "heading": "Painkiller",
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Advance 1 Time.",
+      "tone": 3,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Choose response",
+      "tone": 0,
+      "heading": "Painkiller",
+      "choices": [
+        {
+          "id": "branch:0",
+          "label": "Take the Draught",
+          "detail": "Gain Painkiller. Whenever a Military Unit or Levy would be lost from any game effect, roll 1d6 for that loss; on 5\u20136, prevent it.",
+          "disabled": false,
+          "echoIndicator": true
+        },
+        {
+          "id": "branch:1",
+          "label": "Refuse the Dose",
+          "detail": "Gain 1 Morale.",
+          "disabled": false,
+          "echoIndicator": false
+        }
+      ],
+      "selectedChoiceId": "branch:0",
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "You choose: Take the Draught.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Gain Painkiller. Painkiller: Whenever a Military Unit or Levy would be lost from any game effect, roll 1d6 for that loss. On 5\u20136, prevent it.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": true,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1 \u2022 Camp",
+      "text": "Choose one standard Camp card from the Camp hand, or Work.",
+      "tone": 0,
+      "heading": "Choose Camp Action",
+      "choices": null,
+      "selectedChoiceId": "CAMP-001",
+      "echoIndicator": false,
+      "campOffers": [
+        {
+          "id": "CAMP-009",
+          "title": "Raise Local Levies",
+          "flavor": "Not every man who joins the host seeks glory. Some answer because the road has reached their door.",
+          "effect": "\u003Cb\u003EAdvance 2 Time and Choose 1:\u003C/b\u003E\u003Cbr\u003E\u003Cbr\u003E\u003Cb\u003ERaise Levies:\u003C/b\u003E Spend 1 Food. Add 2 Levy to your Host.\u003Cbr\u003E\u003Cbr\u003E\u003Ci\u003E- or -\u003C/i\u003E\u003Cbr\u003E\u003Cb\u003ERest:\u003C/b\u003E Gain 1 Morale.",
+          "keyword": "Field",
+          "location": "Any",
+          "disabled": false,
+          "unavailableReason": "",
+          "showCampStewardNote": false,
+          "showFieldStaffNote": false
+        },
+        {
+          "id": "CAMP-002",
+          "title": "Market Day",
+          "flavor": "The market rarely favors the impatient, but it often rewards the watchful.",
+          "effect": "If you have constructed a Market, you may also perform this at any Controlled Settlement.\u003Cbr\u003E\u003Cbr\u003E\u003Cb\u003EAdvance 1 Time and Choose 1:\u003C/b\u003E\u003Cbr\u003E\u003Cbr\u003E\u003Cb\u003EMarket:\u003C/b\u003E Buy and/or Sell up to 2 Resources at Market value. \u003Ci\u003ESubject to Baggage Train capacity.\u003C/i\u003E\u003Cbr\u003E\u003Cb\u003E\u003Ccenter\u003E\u003Ci\u003E- or -\u003C/i\u003E\u003C/center\u003E\u003C/b\u003E\u003Cb\u003ERest:\u003C/b\u003E Gain 1 Morale.",
+          "keyword": "Civic",
+          "location": "Barbarian",
+          "disabled": true,
+          "unavailableReason": "Not available at this location.",
+          "showCampStewardNote": false,
+          "showFieldStaffNote": false
+        },
+        {
+          "id": "CAMP-001",
+          "title": "Work",
+          "flavor": "While the road waits, the Host takes up the work at hand: hauling, mending, tending, building, and drilling for what comes next.",
+          "effect": "\u003Cb\u003EAdvance 2 Time and Choose 1:\u003C/b\u003E\u003Cbr\u003E\u003Cul\u003E\u003Cli\u003E\u003Cb\u003EGain 2 Coin.\u003C/b\u003E\u003C/li\u003E\u003Cli\u003E\u003Cb\u003EGain 1 Coin and 1 Leadership.\u003C/b\u003E\u003C/li\u003E\u003Cli\u003E\u003Cb\u003ERepair Baggage:\u003C/b\u003E Spend 1 Wood to repair 1 damaged Baggage Train space.\u003C/li\u003E\u003C/ul\u003E\u003Cbr\u003E\u003Cb\u003EIf you have Camp Steward:\u003C/b\u003E After resolving your normal Work option, you may also choose 1:\u003Cbr\u003E\u003Cul\u003E\u003Cli\u003ESpend \u003Cb\u003E1 Coin\u003C/b\u003E to collect 1 Resource matching the adjacent Terrain.\u003C/li\u003E\u003Cli\u003EBuy 1 Resource from the Market for \u003Cb\u003E1 Coin less\u003C/b\u003E than its current Buy value (minimum 1 Coin).\u003C/li\u003E\u003C/ul\u003E",
+          "keyword": "Field",
+          "location": "Any",
+          "disabled": false,
+          "unavailableReason": "",
+          "showCampStewardNote": false,
+          "showFieldStaffNote": false
+        }
+      ]
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "The Host turns its attention to Work.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1 \u2022 Camp",
+      "text": "While the road waits, the Host takes up the work at hand: hauling, mending, tending, building, and drilling for what comes next.",
+      "tone": 0,
+      "heading": "Work",
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Advance 2 Time.",
+      "tone": 3,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Choose Work result",
+      "tone": 0,
+      "heading": "Work",
+      "choices": [
+        {
+          "id": "branch:0",
+          "label": "Gain 2 Coin",
+          "detail": "Gain 2 Coin.",
+          "disabled": false,
+          "echoIndicator": false
+        },
+        {
+          "id": "branch:1",
+          "label": "Gain 1 Coin and 1 Leadership",
+          "detail": "Gain 1 Coin and 1 Leadership.",
+          "disabled": false,
+          "echoIndicator": false
+        },
+        {
+          "id": "branch:2",
+          "label": "Repair 1 damaged Baggage Train space \u2014 Spend 1 Wood",
+          "detail": "Unavailable: there are no damaged Baggage Train spaces to repair. Spend 1 Wood. Repair 1 damaged Baggage Train space.",
+          "disabled": true,
+          "echoIndicator": false
+        }
+      ],
+      "selectedChoiceId": "branch:1",
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "You choose: Gain 1 Coin and 1 Leadership.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Gain 1 Coin.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Gain 1 Leadership.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Advance 2 Time.",
+      "tone": 3,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1 \u2022 Explore",
+      "text": "The trees close around the column, swallowing the road a few dozen paces at a time.",
+      "tone": 1,
+      "heading": "Forest",
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1 \u2022 Explore",
+      "text": "The woods remain only woods. No ambush, omen, or opportunity interrupts the march.",
+      "tone": 0,
+      "heading": "Uneventful Travel",
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1 \u2022 Arrival",
+      "text": "The Host reaches a settlement held by the Pale Hands.",
+      "tone": 0,
+      "heading": "Arrival",
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Pale Hands Rapport changes from Unmet to Hostile.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "First Contact roll: 3 \u002B 2 = 5.",
+      "tone": 3,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Whatever goodwill might have existed dies quickly. The Pale Hands make it plain that the Host is not welcome.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Passage has a price. The Pale Hands require 2 Coin before the Host proceeds.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "The Host surrenders 2 Coin, and the Pale Hands accept the tribute.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "The tribute is accepted, but hostility remains. Test 8\u002B to secure passage.",
+      "tone": 0,
+      "heading": "Passage",
+      "choices": [
+        {
+          "id": "gate:normal",
+          "label": "Roll 2d6",
+          "detail": "Rapport DRM: -1",
+          "disabled": false,
+          "echoIndicator": false
+        },
+        {
+          "id": "gate:leadership",
+          "label": "Spend 1 Leadership",
+          "detail": "Roll 3d6 and keep the best 2",
+          "disabled": false,
+          "echoIndicator": false
+        }
+      ],
+      "selectedChoiceId": "gate:leadership",
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "Roll: 3, 5, 1 (keep best 2), DRM -1 = 7.",
+      "tone": 3,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "The passage test fails.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "The Pale Hands reject the appeal and attack.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "The Host is destroyed in battle.",
+      "tone": 1,
+      "heading": null,
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "text": "No Units remain in the Host. The campaign ends in defeat.",
+      "tone": 2,
+      "heading": "Defeat",
+      "choices": null,
+      "selectedChoiceId": null,
+      "echoIndicator": false,
+      "campOffers": null
+    }
+  ],
+  "campOffers": [
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "drawn": [
+        {
+          "id": "CAMP-009",
+          "title": "Raise Local Levies",
+          "cardType": "Camp"
+        },
+        {
+          "id": "CAMP-002",
+          "title": "Market Day",
+          "cardType": "Camp"
+        },
+        {
+          "id": "SCENE-023",
+          "title": "Painkiller",
+          "cardType": "Scene"
+        }
+      ],
+      "selectedCardId": "CAMP-001",
+      "selectedCardTitle": "Work"
+    }
+  ],
+  "exploreDraws": [
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "cardId": "EXPLORE-030",
+      "title": "Hedge Knights",
+      "terrain": "Forest",
+      "matchedTerrain": true,
+      "outcome": "Triggered"
+    },
+    {
+      "calendar": "Spring \u2022 Year 1",
+      "cardId": "EXPLORE-017",
+      "title": "Hill Clan Ambush",
+      "terrain": "Forest",
+      "matchedTerrain": false,
+      "outcome": "TerrainMismatch"
+    }
+  ],
+  "battles": [
+    {
+      "battleNumber": 1,
+      "startedUtc": "2026-10-20T12:41:46.3451883Z",
+      "endedUtc": "2026-10-20T12:41:54.8311712Z",
+      "sourceLabel": "Ashes on the Guideposts",
+      "enemyName": "Pale Hands",
+      "isFinale": false,
+      "outcome": "Lost",
+      "initialPlayerUnits": {
+        "Archers": 0,
+        "Cavalry": 0,
+        "Infantry": 0,
+        "Levy": 2
+      },
+      "initialEnemyUnits": {
+        "Archers": 0,
+        "Cavalry": 0,
+        "Infantry": 3,
+        "Levy": 1
+      },
+      "finalPlayerUnits": {
+        "Archers": 0,
+        "Cavalry": 0,
+        "Infantry": 0,
+        "Levy": 0
+      },
+      "finalEnemyUnits": {
+        "Archers": 0,
+        "Cavalry": 0,
+        "Infantry": 3,
+        "Levy": 1
+      },
+      "entries": [
+        {
+          "text": "Combat begins against Pale Hands.",
+          "subdued": false
+        },
+        {
+          "text": "Painkiller is active. Each Host Unit loss is checked on 1d6; 5\u20136 prevents that loss.",
+          "subdued": true
+        },
+        {
+          "text": "Player Host: 2 Levy",
+          "subdued": true
+        },
+        {
+          "text": "Enemy Host: 3 Infantry, 1 Levy",
+          "subdued": true
+        },
+        {
+          "text": "Priest phase skipped: no Priest is present.",
+          "subdued": false
+        },
+        {
+          "text": "Round 1 begins.",
+          "subdued": false
+        },
+        {
+          "text": "Archers phase skipped: no Archers are present.",
+          "subdued": false
+        },
+        {
+          "text": "Cavalry phase skipped: no Cavalry are present.",
+          "subdued": false
+        },
+        {
+          "text": "Infantry: Player rolls none. Enemy rolls 1, 6*, 1.",
+          "subdued": true
+        },
+        {
+          "text": "Infantry inflict 0 Player hits and 1 Enemy hit.",
+          "subdued": false
+        },
+        {
+          "text": "Painkiller roll 4: the Levy loss is not prevented.",
+          "subdued": true
+        },
+        {
+          "text": "The Host loses 1 Levy.",
+          "subdued": false
+        },
+        {
+          "text": "Levy: Player rolls 5. Enemy rolls 6*.",
+          "subdued": true
+        },
+        {
+          "text": "Levy inflict 0 Player hits and 1 Enemy hit.",
+          "subdued": false
+        },
+        {
+          "text": "Painkiller roll 2: the Levy loss is not prevented.",
+          "subdued": true
+        },
+        {
+          "text": "The Host loses 1 Levy.",
+          "subdued": false
+        },
+        {
+          "text": "The Host is destroyed. The Combat is lost.",
+          "subdued": false
+        }
+      ]
+    }
+  ],
+  "activeBattle": null,
+  "finaleLog": []
+}
